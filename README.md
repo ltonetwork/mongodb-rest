@@ -16,10 +16,10 @@ Supported REST requests:
 
 * GET /db/collection - Returns all documents
 * GET /db/collection?query=%7B%22isDone%22%3A%20false%7D - Returns all documents satisfying query
-* GET /db/collection/_id - Returns document with _id
+* GET /db/collection/id - Returns document with _id_
 * POST /db/collection - Insert new document in collection (document in POST body)
-* PUT /db/collection/_id - Update document with _id (updated document in PUT body)
-* DELETE /db/collection/_id - Delete document with _id
+* PUT /db/collection/id - Update document with _id_ (updated document in PUT body)
+* DELETE /db/collection/id - Delete document with _id_
 
 Miscellaneous commands:
 
