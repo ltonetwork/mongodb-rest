@@ -1,4 +1,16 @@
-REST server for MongoDB
+Name
+----
+
+mongodb-rest - REST server for MongoDB
+
+Description
+-----------
+
+This is an attempt at creating a REST server for MongoDB using Node.
+It uses the native node.js MongoDB driver.
+
+Notes
+-----
 
 Supported REST requests:
 
@@ -13,10 +25,14 @@ Miscellaneous commands:
 
 POST /#connect - Connects to default database or database provided in post body
 
-Todo:
+Todo
+----
 
 REST - PUT /db/collection - Update collection with changes in PUT body
 Other useful commands (quit, reconnect, addUser, removeUser, etc)
 Error handling - It's not-implemented at all at the moment
 
+See Also
+--------
 
+http://github.com/christkv/node-mongodb-native
