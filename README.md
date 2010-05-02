@@ -25,6 +25,10 @@ Miscellaneous commands:
 
 * POST /#connect - Connects to default database or database provided in post body
 
+Flavors:
+
+* Setup "sproutcore" as flavor, it will then change _id as returned by MongoDB into guid, as used by SproutCore. I'm not sure whether this will eventually be useful, though it does allow for simpler DataSources.
+
 Todo
 ----
 
