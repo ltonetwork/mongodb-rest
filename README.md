@@ -8,6 +8,8 @@ Description
 
 This is an attempt at creating a REST server for MongoDB using Node.
 It uses the native node.js MongoDB driver.
+It will now create the database connection itself, the 'connect' command is no longer needed. 
+Initial performance testing shows over 700 req/sec.
 
 Notes
 -----
@@ -20,10 +22,6 @@ Supported REST requests:
 * POST /db/collection - Insert new document in collection (document in POST body)
 * PUT /db/collection/id - Update document with _id_ (updated document in PUT body)
 * DELETE /db/collection/id - Delete document with _id_
-
-Miscellaneous commands:
-
-* POST /#connect - Connects to default database or database provided in post body
 
 Flavors:
 

@@ -20,22 +20,21 @@
     along with mongodb-rest.  If not, see <http://www.gnu.org/licenses/>.
 */ 
 
-var fs = require('fs');
-var mongodb_rest = require('./lib/mongodb_rest');
+var fs = require('fs'),
+    MongoDbRest = require('./lib/mongodb_rest').MongoDbRest;
 
 fs.readFile('./settings.json', function(err, data) {
-    var settings, custom_settings;
+    var settings;
     if (err) {
         sys.puts('No settings.json found. Using default settings');
-        mongodb_rest.start(mongodb_rest.default_settings);
+        new MongoDbRest().start();
         process.exit(0);
     }
     try {
-        custom_settings = JSON.parse(data);
+        settings = JSON.parse(data);
     } catch (e) {
         sys.puts('Error parsing settings.json');
         process.exit(1);
     }
-    settings = custom_settings || mongodb_rest.default_settings;
-    mongodb_rest.start(settings);
+    new MongoDbRest(settings).start();
 });
