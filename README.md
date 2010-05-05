@@ -6,9 +6,9 @@ mongodb-rest - REST server for MongoDB
 Description
 -----------
 
-This is an attempt at creating a REST server for MongoDB using Node.
-It uses the native node.js MongoDB driver.
-It will now create the database connection itself, the 'connect' command is no longer needed. 
+This is a REST server for MongoDB using Node, using the native node.js MongoDB driver.
+
+This project now includes unit tests in the unit folder.
 
 Notes
 -----
@@ -34,7 +34,8 @@ Todo
 * Other useful commands (quit, reconnect, addUser, removeUser, etc)
 * Error handling - It's fairly limited at the moment
 
-See Also
---------
+Credits
+-------
 
-http://github.com/christkv/node-mongodb-native
+* MongoDB Driver: http://github.com/christkv/node-mongodb-native
+* Testing framework: http://github.com/bentomas/node-async-testing
