@@ -23,18 +23,18 @@
 var fs = require("fs"),
     MongoDbRest = require("./lib/mongodb_rest").MongoDbRest;
 
-fs.readFile("./settings.json", function(err, data) {
-    var settings;
+fs.readFile("./config.json", function(err, data) {
+    var config;
     if (err) {
-        sys.puts("No settings.json found. Using default settings");
+        sys.puts("No config.json found. Using default configuration");
         new MongoDbRest().start();
         process.exit(0);
     }
     try {
-        settings = JSON.parse(data);
+        config = JSON.parse(data);
     } catch (e) {
-        sys.puts("Error parsing settings.json");
+        sys.puts("Error parsing config.json");
         process.exit(1);
     }
-    new MongoDbRest(settings).start();
+    new MongoDbRest(config).start();
 });
