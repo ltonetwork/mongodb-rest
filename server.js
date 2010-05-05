@@ -21,13 +21,15 @@
 */ 
 
 var fs = require("fs"),
+		sys = require("sys"),
     MongoDbRest = require("./lib/mongodb_rest").MongoDbRest;
 
 fs.readFile("./config.json", function(err, data) {
     var config;
+		var server;
     if (err) {
         sys.puts("No config.json found. Using default configuration");
-        new MongoDbRest().start();
+        server = new MongoDbRest();
         process.exit(0);
     }
     try {
@@ -36,5 +38,12 @@ fs.readFile("./config.json", function(err, data) {
         sys.puts("Error parsing config.json");
         process.exit(1);
     }
-    new MongoDbRest(config).start();
+    server = new MongoDbRest(config);
+		server.addListener("log", function (request, response, status) {
+			sys.puts(request.connection.remoteAddress+" - - "+(new Date())+" - \""+request.method+" "+request.url+" HTTP/"+request.httpVersion+"\" "+status+" "+response.body.length);	
+		});
+		server.addListener("listening", function (address, port) {
+			sys.puts("Server running at http://"+address+":"+port+'/');
+		});
+		server.start();
 });
