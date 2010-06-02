@@ -24,7 +24,7 @@ var fs = require("fs"),
 		sys = require("sys"),
     MongoDbRest = require("./lib/mongodb_rest").MongoDbRest;
 
-fs.readFile("./config.json", function(err, data) {
+fs.readFile("./config.json", 'utf8', function(err, data) {
     var config;
 		var server;
     if (err) {
