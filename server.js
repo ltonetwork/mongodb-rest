@@ -10,7 +10,7 @@
 var fs = require("fs"),
 		sys = require("sys"),
 		express = require('express');
-
+		
 var config = { "db": {
   'port': 27017,
   'host': "localhost"
@@ -34,7 +34,7 @@ app.configure(function(){
 });
 
 try {
-  config = JSON.parse(fs.readFileSync("./config.json"));
+  config = JSON.parse(fs.readFileSync(process.cwd()+"/config.json"));
 } catch(e) {
   // ignore
 }
@@ -45,6 +45,6 @@ require('./lib/main');
 require('./lib/command');
 require('./lib/rest');
 
-if(process.argv[0] != "expresso") {
+if(!process.argv[2] || !process.argv[2].indexOf("expresso")) {
   app.listen(config.server.port, config.server.address);
 }
