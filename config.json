@@ -8,5 +8,5 @@
 		"address": "0.0.0.0"
 	},
 	"flavor": "sproutcore",
-	"debug": false
+	"debug": true
 }

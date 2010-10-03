@@ -11,7 +11,7 @@ var fs = require("fs"),
 		sys = require("sys"),
 		express = require('express');
 
-var config = module.exports.config = { "db": {
+var config = { "db": {
   'port': 27017,
   'host': "localhost"
   },
@@ -20,7 +20,7 @@ var config = module.exports.config = { "db": {
     'address': "0.0.0.0"
   },
   'flavor': "regular",
-  'debug': false
+  'debug': true
 };
 
 var app = module.exports.app = express.createServer();
@@ -29,27 +29,22 @@ app.configure(function(){
     app.use(express.bodyDecoder());
     app.use(express.staticProvider(__dirname + '/public'));
     app.use(express.logger());
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
 });
+
+try {
+  config = JSON.parse(fs.readFileSync("./config.json"));
+} catch(e) {
+  // ignore
+}
+
+module.exports.config = config;
 
 require('./lib/main');
 require('./lib/command');
 require('./lib/rest');
 
-fs.readFile("./config.json", 'utf8', function(err, data) {
-    if (err) {
-        sys.puts("No config.json found. Using default configuration");
-    }
-    try {
-        config = JSON.parse(data);
-    } catch (e) {
-        sys.puts("Error parsing config.json");
-        process.exit(1);
-    }
-    
-    if(process.argv[0] == "node") {
-      app.listen(config.server.port, config.server.address);
-    }
-    
-});
-
-
+if(process.argv[0] == "node") {
+  app.listen(config.server.port, config.server.address);
+}
