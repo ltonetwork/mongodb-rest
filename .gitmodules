@@ -1,9 +1,0 @@
-[submodule "node-mongodb-native"]
-	path = node-mongodb-native
-	url = http://github.com/christkv/node-mongodb-native.git
-[submodule "vendor"]
-	path = vendor
-	url = http://github.com/christkv/node-mongodb-native.git
-[submodule "vendor/node-mongodb-native"]
-	path = vendor/node-mongodb-native
-	url = http://github.com/christkv/node-mongodb-native.git

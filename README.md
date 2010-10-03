@@ -8,7 +8,12 @@ Description
 
 This is a REST server for MongoDB using Node, using the native node.js MongoDB driver.
 
-This project now includes unit tests in the unit folder.
+Major update, now using Express
+
+Installation
+------------
+
+You'll need mongodb - install using `npm install mongodb`
 
 Notes
 -----
@@ -25,7 +30,13 @@ Supported REST requests:
 
 Flavors:
 
-* Setup "sproutcore" as flavor, it will then change _id as returned by MongoDB into guid, as used by SproutCore. I'm not sure whether this will eventually be useful, though it does allow for simpler DataSources.
+* Setup "sproutcore" as flavor, it will then change _id as returned by MongoDB into guid, as used by SproutCore, this allows for simpler DataSources.
+
+Test
+----
+
+Testing is now done using expresso. Just run `expresso` in the main folder.
+The SproutCore needs to be run separately at the moment.
 
 Todo
 ----
@@ -37,5 +48,5 @@ Todo
 Credits
 -------
 
-* MongoDB Driver: http://github.com/christkv/node-mongodb-native
-* Testing framework: http://github.com/bentomas/node-async-testing
+* [MongoDB Driver](http://github.com/christkv/node-mongodb-native)
+* [Express](http://expressjs.com/)
