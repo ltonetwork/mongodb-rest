@@ -27,9 +27,9 @@ var app = module.exports.app = express.createServer();
 
 app.configure(function(){
     app.use(express.bodyDecoder());
-    app.use(express.staticProvider(__dirname + '/public'));
+    app.use(express.staticProvider(__dirname + '/lib/public'));
     app.use(express.logger());
-    app.set('views', __dirname + '/views');
+    app.set('views', __dirname + '/lib/views');
     app.set('view engine', 'jade');
 });
 
@@ -45,6 +45,6 @@ require('./lib/main');
 require('./lib/command');
 require('./lib/rest');
 
-if(process.argv[0] == "node") {
+if(process.argv[0] != "expresso") {
   app.listen(config.server.port, config.server.address);
 }
