@@ -13,7 +13,8 @@ Major update, now using Express
 Installation
 ------------
 
-You'll need mongodb - install using `npm install mongodb`
+Installation is now via npm: `npm install mongodb-rest`.
+After that you can just issue `mongodb-rest` on the command line and the server should start.
 
 Notes
 -----
@@ -50,3 +51,4 @@ Credits
 
 * [MongoDB Driver](http://github.com/christkv/node-mongodb-native)
 * [Express](http://expressjs.com/)
+* [npm](http://npmjs.org/)
