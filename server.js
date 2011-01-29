@@ -10,6 +10,10 @@
 var fs = require("fs"),
 		sys = require("sys"),
 		express = require('express');
+
+var argv = require('optimist')
+           .default("config", process.cwd()+"/config.json")
+           .argv;
 		
 var config = { "db": {
   'port': 27017,
@@ -34,9 +38,9 @@ app.configure(function(){
 });
 
 try {
-  config = JSON.parse(fs.readFileSync(process.cwd()+"/config.json"));
+  config = JSON.parse(fs.readFileSync(argv.config));
 } catch(e) {
-  // ignore
+  throw new Error("could not read config "+process.cwd()+argv.config+" internal error: "+e.toString());
 }
 
 module.exports.config = config;
@@ -45,6 +49,6 @@ require('./lib/main');
 require('./lib/command');
 require('./lib/rest');
 
-if(!process.argv[2] || !process.argv[2].indexOf("expresso")) {
+if(!process.argv[2] || process.argv[2].indexOf("expresso") == -1) {
   app.listen(config.server.port, config.server.address);
 }
