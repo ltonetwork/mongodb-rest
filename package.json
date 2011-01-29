@@ -1,7 +1,7 @@
 {
   "name": "mongodb-rest",
   "description": "REST API Server for MongoDB",
-  "version": "0.6.4",
+  "version": "0.6.4a",
   "author": "Tom de Grunt <tom@degrunt.nl>",
   "contributors": [ 
     { "name": "Tom de Grunt", "email": "tom@degrunt.nl" }, 
