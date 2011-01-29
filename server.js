@@ -6,11 +6,7 @@
     Copyright (c) 2010 Tom de Grunt.
 		This file is part of mongodb-rest.
 */ 
-
-var fs = require("fs"),
-		sys = require("sys"),
-		express = require('express');
-
+var fs = require("fs");
 var argv = require('optimist')
            .default("config", process.cwd()+"/config.json")
            .argv;
@@ -27,28 +23,10 @@ var config = { "db": {
   'debug': true
 };
 
-var app = module.exports.app = express.createServer();
-
-app.configure(function(){
-    app.use(express.bodyDecoder());
-    app.use(express.staticProvider(__dirname + '/public'));
-    app.use(express.logger());
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-});
-
 try {
-  config = JSON.parse(fs.readFileSync(argv.config));
+	  config = JSON.parse(fs.readFileSync(argv.config));
 } catch(e) {
-  throw new Error("could not read config "+process.cwd()+argv.config+" internal error: "+e.toString());
+  throw new Error("could not read config "+argv.config+" internal error: "+e.toString());
 }
 
-module.exports.config = config;
-
-require('./lib/main');
-require('./lib/command');
-require('./lib/rest');
-
-if(!process.argv[2] || process.argv[2].indexOf("expresso") == -1) {
-  app.listen(config.server.port, config.server.address);
-}
+require("mongodb-rest/embeded").listen(config);
