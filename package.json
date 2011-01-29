@@ -6,7 +6,7 @@
   "contributors": [ 
     { "name": "Tom de Grunt", "email": "tom@degrunt.nl" }, 
   ],
-  "dependencies": { "express": ">= 1.0.0rc3", "mongodb": ">= 0.7.9" },
+  "dependencies": { "express": ">= 1.0.0rc3", "mongodb": ">= 0.7.9", "jade": ">= 0.6.0" },
   "keywords": ["mongodb", "mongo", "db", "web", "rest", "restful"],
   "directories": { "lib": "./lib" },
   "bin": { "mongodb-rest": "./bin/mongodb-rest" },
