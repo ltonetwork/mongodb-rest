@@ -4,7 +4,7 @@
   "version": "0.6.6",
   "author": "Tom de Grunt <tom@degrunt.nl>",
   "contributors": [ 
-    { "name": "Tom de Grunt", "email": "tom@degrunt.nl" }, 
+    { "name": "Tom de Grunt", "email": "tom@degrunt.nl" } 
   ],
   "dependencies": { "express": ">= 1.0.0rc3", "mongodb": ">= 0.7.9", "jade": ">= 0.6.3" },
   "keywords": ["mongodb", "mongo", "db", "web", "rest", "restful"],
