@@ -34,6 +34,7 @@ Supported REST requests:
 * `DELETE /db/collection/id` - Delete document with _id_
 
 REST responses:
+
 * all responses are containing json({success: true or false, data: the data to be returned or which has been submitted})
 
 Flavors:
