@@ -25,9 +25,16 @@ Supported REST requests:
 * `GET /db/collection?query=%7B%22isDone%22%3A%20false%7D` - Returns all documents satisfying query
 * `GET /db/collection?query=%7B%22isDone%22%3A%20false%7D&limit=2&skip=2` - Ability to add options to query (limit, skip, etc)
 * `GET /db/collection/id` - Returns document with _id_
+* `GET /db/collection/id?deep=true` - Returns document with _id_ and fetches all its deep nested object references
 * `POST /db/collection` - Insert new document in collection (document in POST body)
-* `PUT /db/collection/id` - Update document with _id_ (updated document in PUT body)
+  * when you need to post Object Reference send it as {namespace: "collection", oid: "123dsas2sdasd"}
+* `PUT /db/collection/id` - Update document with _id_ (updated document in PUT body)w
+  * when you need to update Object Reference send it as {namespace: "collection", oid: "123dsas2sdasd"}
+  * when you send {"field.innerField":"..."} it will automaticly be converted to {field:{innerField:"..."}
 * `DELETE /db/collection/id` - Delete document with _id_
+
+REST responses:
+* all responses are containing json({success: true or false, data: the data to be returned or which has been submitted})
 
 Flavors:
 
