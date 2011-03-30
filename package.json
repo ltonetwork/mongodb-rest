@@ -1,14 +1,14 @@
 {
   "name": "mongodb-rest",
   "description": "REST API Server for MongoDB",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "author": "Tom de Grunt <tom@degrunt.nl>",
   "contributors": [ 
     { "name": "Tom de Grunt", "email": "tom@degrunt.nl" } 
   ],
-  "dependencies": { "express": ">= 1.0.0rc3", "mongodb": ">= 0.7.9", "jade": ">= 0.6.3" },
+  "dependencies": { "express": ">= 2.2.0", "mongodb": ">= 0.7.9", "jade": ">= 0.10.2" },
   "keywords": ["mongodb", "mongo", "db", "web", "rest", "restful"],
   "directories": { "lib": "./lib" },
   "bin": { "mongodb-rest": "./bin/mongodb-rest" },
-  "engines": { "node": ">= 0.2.0" }
+  "engines": { "node": ">= 0.4.2" }
 }
