@@ -37,10 +37,15 @@ Content Type:
 
 * Please make sure `application/json` is used as Content-Type when using POST/PUT with request body's.
 
+Dependencies:
+
+* Are all indicated in package.json. So far I indicate the lowest version with which I tested the code. Sadly this can result in non-working code when later versions are used.
+
 Testing
 -------
 
-Testing is now done using expresso. Just run `expresso -s` in the main folder.
+Testing is now done using expresso. Just run the following in the main folder:
+`expresso -s test/create.test.js test/delete.test.js test/update.test.js`
 The SproutCore test needs to be run separately at the moment.
 
 Future

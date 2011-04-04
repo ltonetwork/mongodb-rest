@@ -1,10 +1,11 @@
-var server = require('../server');
+var server = require('../server'),
+    assert = require('assert');
     app = server.app;
 
 server.config.flavor = "regular";
 
 module.exports = {
-'Update a Document': function(assert){
+'Update a Document': function(){
     
     // First create the document
     assert.response(app, {

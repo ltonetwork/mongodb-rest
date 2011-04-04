@@ -1,8 +1,9 @@
-var server = require('../server');
+var server = require('../server'),
+    assert = require('assert');
     app = server.app;
 
 module.exports = {
-  'SproutCore flavor': function(assert){
+  'SproutCore flavor': function(){
     server.config.flavor = "sproutcore";
     
     // First create the document
