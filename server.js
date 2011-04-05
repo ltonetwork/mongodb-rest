@@ -25,14 +25,6 @@ var config = { "db": {
 
 var app = module.exports.app = express.createServer();
 
-app.configure(function(){
-    app.use(express.bodyParser());
-    app.use(express.static(__dirname + '/public'));
-    app.use(express.logger());
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-});
-
 try {
   config = JSON.parse(fs.readFileSync(process.cwd()+"/config.json"));
 } catch(e) {
@@ -40,6 +32,19 @@ try {
 }
 
 module.exports.config = config;
+
+app.configure(function(){
+    app.use(express.bodyParser());
+    app.use(express.static(__dirname + '/public'));
+    app.use(express.logger());
+    app.set('views', __dirname + '/views');
+    app.set('view engine', 'jade');
+	
+	if (config.accessControl){
+		var accesscontrol = require('./lib/accesscontrol');
+		app.use(accesscontrol.handle);
+	}	
+});
 
 require('./lib/main');
 require('./lib/command');
