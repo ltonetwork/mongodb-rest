@@ -20,10 +20,12 @@ var config = { "db": {
     'address': "0.0.0.0"
   },
   'flavor': "regular",
-  'debug': true
+  'debug': true,
+  'access-contorol-allow-origin' : '*'
 };
 
 var app = module.exports.app = express.createServer();
+app.colcache = {};
 
 app.configure(function(){
     app.use(express.bodyParser());
@@ -38,7 +40,12 @@ try {
 } catch(e) {
   // ignore
 }
-
+if(config['access-contorol-allow-origin']){
+    app.use(function(req, res, next){
+        res.header('access-contorol-allow-origin', config['access-contorol-allow-origin']);
+        next();
+    });
+}
 module.exports.config = config;
 
 require('./lib/main');
