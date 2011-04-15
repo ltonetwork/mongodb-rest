@@ -32,10 +32,10 @@ app.get('/:db/:collection/:id?', function(req, res) {
       options[o] = req.query[o];
     } 
   }
-  var colns = req.params.db + '/' + req.params.collection;
+
   var process = function(err, collection) {
-    if(!app.colcache.hasOwnProperty(colns)){
-      app.colcache[colns] = collection;
+    if(!app.colcache.hasOwnProperty(req.params.db + '/' + req.params.collection)){
+      app.colcache[req.params.db + '/' + req.params.collection] = collection;
     }
     collection.find(query, options, function(err, cursor) {
       cursor.toArray(function(err, docs){
@@ -62,8 +62,8 @@ app.get('/:db/:collection/:id?', function(req, res) {
     });
   };
   
-  if(enableCache && app.colcache.hasOwnProperty(colns)){
-    process(null, app.colcache[colns]);
+  if(enableCache && app.colcache.hasOwnProperty(req.params.db+'/'+req.params.collection)){
+    process(null, app.colcache[req.params.db + '/' + req.params.collection]);
   }else{
     var db = new mongo.Db(req.params.db, new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true}));
     db.open(function(err,db) {
@@ -77,10 +77,9 @@ app.get('/:db/:collection/:id?', function(req, res) {
  */
 app.post('/:db/:collection', function(req, res) {
   if(req.body) {
-    var colns = req.params.db + '/' + req.params.collection;
     var process = function(err, collection) {
-      if(!app.colcache.hasOwnProperty(colns)){
-        app.colcache[colns] = collection;
+      if(!app.colcache.hasOwnProperty(req.params.db + '/' + req.params.collection)){
+        app.colcache[req.params.db+'/'+req.params.collection] = collection;
       }
       // We only support inserting one document at a time
       collection.insert(Array.isArray(req.body) ? req.body[0] : req.body, function(err, docs) {
@@ -92,8 +91,8 @@ app.post('/:db/:collection', function(req, res) {
           }
       });
     };
-    if(enableCache && app.colcache.hasOwnProperty(colns)){
-      process(null, app.colcache[colns]);
+    if(enableCache && app.colcache.hasOwnProperty(req.params.db+''+req.params.collection)){
+      process(err, app.colcache[req.params.db+'/'+req.params.collection]);
     }else{
       var db = new mongo.Db(req.params.db, new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true}));
       db.open(function(err, db) {
@@ -111,10 +110,9 @@ app.post('/:db/:collection', function(req, res) {
  */
 app.put('/:db/:collection/:id', function(req, res) {
   var spec = {'_id': new BSON.ObjectID(req.params.id)};
-  var colns = req.params.db + '/' + req.params.collection;
   var process = function(err, collection) {
-    if(!app.colcache.hasOwnProperty(colns)){
-      app.colcache[colns] = collection;
+    if(!app.colcache.hasOwnProperty(req.params.db + '/' + req.params.collection)){
+      app.colcache[req.params.db+'/'+req.params.collection] = collection;
     }
     collection.update(spec, req.body, true, function(err, docs) {
       res.header('Content-Type', 'application/json');
@@ -124,8 +122,8 @@ app.put('/:db/:collection/:id', function(req, res) {
       }
    });
   };
-  if(enableCache && app.colcache.hasOwnProperty(colns)){
-    process(null, app.colcache[colns])
+  if(enableCache && app.colcache.hasOwnProperty(req.params.db + '/' + req.params.collection)){
+    process(null, app.colcache[req.params.db + '/' + req.params.collection])
   }else{
     var db = new mongo.Db(req.params.db, new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true}));
     db.open(function(err, db) {
@@ -139,10 +137,10 @@ app.put('/:db/:collection/:id', function(req, res) {
  */
 app.del('/:db/:collection/:id', function(req, res) {
   var spec = {'_id': new BSON.ObjectID(req.params.id)};
-  var colns = req.params.db + '/' + req.params.collection;
+
   var process = function(err, collection) {
-    if(!app.colcache.hasOwnProperty(colns)){
-      app.colcache[colns] = collection;
+    if(!app.colcache.hasOwnProperty(req.params.db + '/' + req.params.collection)){
+      app.colcache[req.params.db+'/'+req.params.collection] = collection;
     }
     collection.remove(spec, function(err, docs) {
       res.header('Content-Type', 'application/json');
@@ -152,8 +150,8 @@ app.del('/:db/:collection/:id', function(req, res) {
       }
     });
   };
-  if(enableCache && app.colcache.hasOwnProperty(colns)){
-    process(null, app.colcache[colns]);
+  if(enableCache && app.colcache.hasOwnProperty(req.params.db+'/'+req.params.collection)){
+    process(null, app.colcache[req.params.db+'/'+req.params.collection]);
   }else{
     var db = new mongo.Db(req.params.db, new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true}));
     db.open(function(err, db) {
