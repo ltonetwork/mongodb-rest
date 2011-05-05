@@ -24,6 +24,7 @@ var config = { "db": {
 };
 
 var app = module.exports.app = express.createServer();
+app.colcache = {};
 
 try {
   config = JSON.parse(fs.readFileSync(process.cwd()+"/config.json"));
