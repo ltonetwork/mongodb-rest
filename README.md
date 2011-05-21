@@ -7,8 +7,7 @@ Description
 -----------
 
 This is a REST server for MongoDB using Node, using the native node.js MongoDB driver.
-
-Major update, now using Express
+Using Express, it can now start in any folder and will happily server any files a public folder.
 
 Installation
 ------------
@@ -32,6 +31,7 @@ Supported REST requests:
 Flavors:
 
 * Setup "sproutcore" as flavor, it will then change _id as returned by MongoDB into guid, as used by SproutCore, this allows for simpler DataSources.
+* Setup "nounderscore" as flavor, it will then change _id into id.
 
 Content Type:
 

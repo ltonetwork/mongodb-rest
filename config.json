@@ -1,9 +1,9 @@
 {
 	"db": {
-		"port": 27097,
+		"port": 27101,
 		"host": "flame.mongohq.com",
-		"username":"dbname",
-		"password":"secret"
+		"username":"admin",
+		"password":"4dm1n"
 	},
 	"server": {
 		"port": 3000,
@@ -13,6 +13,6 @@
 		"allowOrigin": "*",
 		"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
 	},
-	"flavor": "sproutcore",
+	"flavor": "nounderscore",
 	"debug": true
 }

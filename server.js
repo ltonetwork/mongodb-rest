@@ -35,7 +35,7 @@ module.exports.config = config;
 
 app.configure(function(){
     app.use(express.bodyParser());
-    app.use(express.static(__dirname + '/public'));
+    app.use(express.static(process.cwd() + '/public'));
     app.use(express.logger());
     app.set('views', __dirname + '/views');
     app.set('view engine', 'jade');
