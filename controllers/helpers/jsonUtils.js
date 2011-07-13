@@ -3,7 +3,7 @@ var ObjectID = require("mongodb/lib/mongodb/bson/bson").ObjectID;
 var DBRef = require("mongodb/lib/mongodb/bson/bson").DBRef;
 var date = require("./date");
 
-var decodeIfNested = function(path, value, data) {
+var decodeIfNested = exports.decodeIfNested = function(path, value, data) {
 	if(path.length > 1) {
 		data = data[path[0]] = {};
 		path.shift();
@@ -12,7 +12,7 @@ var decodeIfNested = function(path, value, data) {
 		data[path[0]] = decodeField(value);
 };
 
-var decodeField = function(value) {
+var decodeField = exports.decodeField = function(value) {
   if(value == null)
     return null;
     
@@ -29,7 +29,7 @@ var decodeField = function(value) {
   return value;
 }
 
-var deepDecode = function(obj) {
+var deepDecode = exports.deepDecode = function(obj) {
     for(var i in obj)
        if(obj[i] == null) {
           // do nothing
@@ -45,10 +45,6 @@ var deepDecode = function(obj) {
        else
            obj[i] = decodeField(obj[i]);
 };
-
-exports.query = function(req, res, query, options) {
-    deepDecode(query);
-}
 
 exports.put = function(req, res, spec, data) {
 

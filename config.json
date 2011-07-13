@@ -1,12 +1,10 @@
 {
 	"db": {
 		"port": 27017,
-		"host": "localhost"
+		"host": "localhost",
+		"name": "test-db4"
 	},
-	"server": {
-		"port": 3000,
-		"address": "0.0.0.0"
-	},
-	"flavor": "regular",
-	"debug": true
+	"port": 3000,
+	"mode": "development",
+	"autoStart": true
 }

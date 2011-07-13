@@ -10,9 +10,9 @@ exports.open = function(dbname, config, callback) {
             servers.push(new mongo.Server(config.db[i].host, config.db[i].port));
         target = new mongo.ServerCluster(servers);
     } else {
-        target = new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true})
+        target = new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true});
     }
     
     var db = new mongo.Db(dbname, target);
     db.open(callback);
-}
+};

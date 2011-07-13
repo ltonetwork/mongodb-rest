@@ -2,3 +2,4 @@
 .*.swp
 .settings
 .project
+node_modules

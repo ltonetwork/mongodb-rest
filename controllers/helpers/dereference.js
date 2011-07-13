@@ -103,4 +103,4 @@ module.exports = function(db, data, callback) {
     
     if(fetchReferencesCount <= 0)
         callback(null);
-}
+};
