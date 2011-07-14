@@ -30,9 +30,16 @@ Supported REST requests:
 * `PUT /db/collection/id` - Update document with _id_ (updated document in PUT body)
   * when you need to update Object Reference send it as {namespace: "collection", oid: "123dsas2sdasd"}
   * when you send {"field.innerField":"..."} it will automaticly be converted to {field:{innerField:"..."}
-  * if you omit id then the update will get executed upon all documents in the collection
+* PUT /db/collection?query=%7B%22isDone%22%3A%20false%7D - update will get executed upon all documents in the collection
 * `DELETE /db/collection/id` - Delete document with _id_
 * `DELETE /db/collection?query=%7B%22isDone%22%3A%20false%7D` - Delete all documents matching given query
+
+Additions:
+* method overriding: 
+  * for PUT set header X-HTTP-Method-Override = PUT
+  * for DELETE set header X-HTTP-Method-Override = DELETE
+  * for POST set header X-HTTP-Method-Override = POST
+* mongodb cluster connectivity (by providing array of { post: , host: } objects in config.db
 
 REST responses:
 
