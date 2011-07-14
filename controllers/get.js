@@ -37,7 +37,7 @@ exports.register = function(app) {
 
 		dbconnection.open(req.params.db, app.set('options'), function(err,db) {
 			db.collection(req.params.collection, function(err, collection) {
-
+				
 				if(req.params.id) {
 	    		
 					// if there is requested object by ID -> query only One document

@@ -6,7 +6,7 @@ var jsonUtils = require("./helpers/jsonUtils");
 var sys = require("sys");
 
 exports.register = function(app){
-	app.del('/:db/:collection/:id?', function(req, res) {
+	app.del('/:db/:collection/:id?', function(req, res, next) {
 		
 		if(req.params.db != app.set('options').db.name) {
 			next();
@@ -27,7 +27,9 @@ exports.register = function(app){
 	
 		dbconnection.open(req.params.db, app.set('options'), function(err,db) {
 			db.collection(req.params.collection, function(err, collection) {
+				
 				collection.remove(spec, {safe: true}, function(err, docs) {
+					
 					app.renderResponse(res, err, docs);
 					db.close();
 				});

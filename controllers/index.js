@@ -1,5 +1,5 @@
 exports.register = function(app) {
-	app.get('/', function(req, res){
+	app.get('/', function(req, res, next){
 	  if(app.set("options").mode == "development") {
 	    res.render('index', {
 	      locals: {

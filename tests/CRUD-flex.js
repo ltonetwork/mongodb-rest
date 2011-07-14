@@ -3,9 +3,9 @@ var APIeasy = require('api-easy'),
 	sys = require("sys");
 
 var testContext = {};
-var initialDocument = {testField: 1, testField2: 'string'};
-var updateDocumentData = {testField: 2};
-var updatedDocument = {testField: 2, testField2: 'string'};
+var initialDocument =  {"prop1":"asdasdsad","prop3":"88.1","prop2":"88"};
+var updateDocumentData = {"prop1":"1111111"};
+var updatedDocument = {"prop1":"1111111","prop3":"88.1","prop2":"88"};
 var endpoint = "/test-db/test-collection";
 
 var suite = APIeasy.describe('mongodb-rest post test');
@@ -48,14 +48,29 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 					assert.equal(initialDocument[i], result.data[i]);
 			})
 		.next()
-		.put(endpoint, updateDocumentData)
+		.setHeader('x-http-method-override', 'PUT')
+		.post(endpoint, updateDocumentData)
 			.expect(200)
-			.expect('should respond with updated document', function(err, res, body){
+			.expect('should respond with success', function(err, res, body){
 				var result = JSON.parse(body);
 				assert.equal(result.data, true);
 			})
 		.next()
-		.del(endpoint)
+		.removeHeader('x-http-method-override')
+		.get(endpoint)
+			.expect(200)
+			.expect('should respond with updated document', function(err, res, body){
+				var result = JSON.parse(body);
+				
+				assert.isObject(result.data);
+				assert.isString(result.data._id);
+				assert.equal(result.data._id, testContext.id);
+				for(var i in updatedDocument)
+					assert.equal(updatedDocument[i], result.data[i]);
+			})
+		.next()
+		.setHeader('x-http-method-override', 'DELETE')
+		.post(endpoint)
 			.expect(200)
 			.expect('should respond with deleted document', function(err, res, body){
 				var result = JSON.parse(body);
@@ -63,6 +78,7 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				suite.unbefore('getID');
 			})
 		.next()
+		.removeHeader('x-http-method-override')
 		.get(endpoint)
 			.expect(200)
 			.expect('should respond empty collection after delete', function(err, res, body){

@@ -32,18 +32,18 @@ exports.register = function(app){
 	    }
 
 	    var setData = {$set: {}};
-		for(var i in req.body.data)
+		for(var i in req.body)
 			if(i != '_id'){ // protect _id
-			    if(typeof req.body.data[i] == "object" && 
-			        req.body.data[i] != null &&
-			        typeof req.body.data[i]['namespace'] == "undefined" && 
-	                typeof req.body.data[i]['oid'] == "undefined") {
+			    if(typeof req.body[i] == "object" && 
+			        req.body[i] != null &&
+			        typeof req.body[i]['namespace'] == "undefined" && 
+	                typeof req.body[i]['oid'] == "undefined") {
 	                
-			    	setData.$set[i] = req.body.data[i];
+			    	setData.$set[i] = req.body[i];
 			        jsonUtils.deepDecode(setData.$set[i]);
 			    }
 			    else
-			    	setData.$set[i] = jsonUtils.decodeField(req.body.data[i]);
+			    	setData.$set[i] = jsonUtils.decodeField(req.body[i]);
 			}
   
 		if(!req.params.id)
@@ -51,7 +51,9 @@ exports.register = function(app){
 
 		dbconnection.open(req.params.db, app.set('options'), function(err,db) {
 			db.collection(req.params.collection, function(err, collection) {
+				
 				collection.update(spec, setData, options, function(err, docs) {
+					
 					if(err != null)
 						app.renderResponse(res, err);
 					else

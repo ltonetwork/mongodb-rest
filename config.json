@@ -2,7 +2,7 @@
 	"db": {
 		"port": 27017,
 		"host": "localhost",
-		"name": "test-db4"
+		"name": "test-db"
 	},
 	"port": 3000,
 	"mode": "development",
