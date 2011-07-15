@@ -2,7 +2,7 @@
   "author": "Boris Filipov <obiwonn@gmail.com> (http://obi.wizartworx.com)",
   "name": "mongodb-rest2",
   "description": "mongodb rest interface",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "repository": {
     "type": "git",
     "url": "git://github.com/ActiveUnits/mongodb-rest.git"

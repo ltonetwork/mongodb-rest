@@ -1,6 +1,6 @@
 var sys = require("sys");
 
-exports.create = function(options) {
+exports.create = function(options, hooks) {
 	
 	// create express application
 	var express = require('express');
@@ -8,27 +8,32 @@ exports.create = function(options) {
 
 	// Configuration
 	app.configure(function(){
-	  app.set('views', __dirname + '/views');
-	  app.set('view engine', 'jade');
-	  app.set('options', options);
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.set('options', options);
+  
+  app.renderResponse = function(res, err, data, allCount) {
+	  	res.header('Content-Type', 'application/json');
+	  	if(err == null) {
+		  	if(typeof allCount != "undefined")
+			  	res.send({data: data, success: true});
+		  	else
+			  	res.send({allCount: allCount, data: data, success: true});
+  	  		} else {
+  	  			sys.log(sys.inspect(err));
+  	  			res.send({success: false, error:err.message});
+  	  		}
+  		};
+  
+  		app.use(express.bodyParser());
+  		app.use(express.methodOverride());
+		if(hooks['pre-router']) {
+			hooks['pre-router'](app);
+			sys.log("pre-router hook executed");
+		}
+		app.use(app.router);
+		app.use(express.static(__dirname + '/public'));
 	  
-	  app.renderResponse = function(res, err, data, allCount) {
-		  res.header('Content-Type', 'application/json');
-    	  if(err == null) {
-    		if(typeof allCount != "undefined")
-    			res.send({data: data, success: true});
-    		else
-    			res.send({allCount: allCount, data: data, success: true});
-      	  } else {
-  			sys.log(sys.inspect(err));
-  			res.send({success: false, error:err.message});
-      	  }
-      };
-	  
-	  app.use(express.bodyParser());
-	  app.use(express.methodOverride());
-	  app.use(app.router);
-	  app.use(express.static(__dirname + '/public'));
 	});
 	app.configure('development', function(){
 	  app.use(express.logger());
