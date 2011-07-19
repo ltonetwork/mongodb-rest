@@ -27,7 +27,7 @@ exports.create = function(options, hooks) {
   
   		app.use(express.bodyParser());
   		app.use(express.methodOverride());
-		if(hooks['pre-router']) {
+		if(typeof hooks != "undefined" && hooks['pre-router']) {
 			hooks['pre-router'](app);
 			sys.log("pre-router hook executed");
 		}
