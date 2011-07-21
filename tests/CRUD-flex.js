@@ -12,14 +12,6 @@ var suite = APIeasy.describe('mongodb-rest post test');
 suite.discuss('When using mongodb-rest API create/retrieve')
 		.use('localhost', 3000)
 		.setHeader('Content-Type', 'application/json')
-		.del(endpoint)
-			.expect(200)
-			.expect('should respond with deleted document', function(err, res, body){
-				var result = JSON.parse(body);
-				assert.equal(result.data, true);
-				suite.unbefore('getID');
-			})
-		.next()
 		.post(endpoint, initialDocument)
 			.expect(200)
 			.expect('should respond with created document containing ID', function(err, res, body){

@@ -8,12 +8,6 @@ var sys = require("sys");
 exports.register = function(app) {
 	
 	app.get('/:db/:collection/:id?', function(req, res, next) {
-		
-		if(req.params.db != app.set('options').db.name) {
-			next();
-			return;
-		}
-		
 		var query = req.query.query? JSON.parse(req.query.query) : {};
 		var options = req.query.options?JSON.parse(req.query.options) : {};
 

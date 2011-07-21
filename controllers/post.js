@@ -6,12 +6,6 @@ var jsonUtils = require("./helpers/jsonUtils");
 
 exports.register = function(app) {
 	app.post('/:db/:collection', function(req, res, next) {
-		
-		if(req.params.db != app.set('options').db.name) {
-			next();
-			return;
-		}
-		
 		if (req.body) {
 			dbconnection.open(req.params.db, app.set('options'), function(err, db) {
 				db.collection(req.params.collection, function(err, collection) {

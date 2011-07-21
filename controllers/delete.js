@@ -7,12 +7,6 @@ var sys = require("sys");
 
 exports.register = function(app){
 	app.del('/:db/:collection/:id?', function(req, res, next) {
-		
-		if(req.params.db != app.set('options').db.name) {
-			next();
-			return;
-		}
-		
 		var spec = {};
 		if(req.params.id) {
 			if(/^[0-9a-fA-F]{24}$/.test(req.params.id))
