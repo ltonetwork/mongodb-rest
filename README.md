@@ -106,7 +106,7 @@ Usage
 	}; 
 	var expressApp = server.create(options, {
 		"pre-router": function(expressApp) {
-			expressApp.use(secureEveryRequestMiddleware());
+			expressApp.use(secureEveryRequestMiddleware);
 		}
 	}).start();
 
