@@ -6,5 +6,6 @@
 	},
 	"port": 3000,
 	"mode": "development",
-	"autoStart": true
+	"autoStart": true,
+	"alwaysCountQueryHits": true
 }

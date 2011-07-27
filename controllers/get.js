@@ -53,7 +53,8 @@ exports.register = function(app) {
 					collection.find(query, options, function(err, cursor) {
 						cursor.toArray(function(err, docs){
 							
-							if((req.query.countHits?req.query.countHits:false) == true) {
+							if((req.query.countHits?req.query.countHits:false) == true ||
+								app.set("alwaysCountQueryHits") == true) {
 								collection.count(query, function(err, allCount) {
 									app.renderResponse(res, err, docs, allCount);
 								});
