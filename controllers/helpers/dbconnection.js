@@ -13,6 +13,6 @@ exports.open = function(dbname, config, callback) {
         target = new mongo.Server(config.db.host, config.db.port, {'auto_reconnect':true});
     }
     
-    var db = new mongo.Db(dbname, target);
+    var db = new mongo.Db(dbname, target, {native_parser:true});
     db.open(callback);
 };

@@ -12,6 +12,8 @@ var suite = APIeasy.describe('mongodb-rest post test');
 suite.discuss('When using mongodb-rest API create/retrieve nested documents')
 		.use('localhost', 3000)
 		.setHeader('Content-Type', 'application/json')
+        .del("/%/test-db")
+            .expect(200)
 		.post(endpoint, initialDocument)
 			.expect(200)
 			.expect('should respond with created document containing ID', function(err, res, body){

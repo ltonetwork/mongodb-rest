@@ -51,6 +51,7 @@ exports.create = function(options, hooks) {
 	});
 	
 	// Routes
+    require("./controllers/admin").register(app);
 	require("./controllers/get").register(app);
 	require("./controllers/post").register(app);
 	require("./controllers/delete").register(app);
