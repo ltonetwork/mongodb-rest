@@ -11,13 +11,9 @@ exports.create = function(options, hooks) {
 		
 	    app.set('views', __dirname + '/views');
 	    app.set('view engine', 'jade');
-	    app.set('options', options);
+        app.set('options', options);
+	    app.set('dbconnection', options.dbconnection);
 	    
-	    if(options.alwaysCountQueryHits) {
-	    	app.set("alwaysCountQueryHits", true);
-	    	sys.log("Will always count query hits");
-	    }
-	  
 	    app.renderResponse = function(res, err, data, allCount) {
 		  	res.header('Content-Type', 'application/json');
 		  	if(err == null) {

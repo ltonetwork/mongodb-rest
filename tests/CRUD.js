@@ -12,9 +12,6 @@ var suite = APIeasy.describe('mongodb-rest post test');
 suite.discuss('When using mongodb-rest API create/retrieve')
 		.use('localhost', 3000)
 		.setHeader('Content-Type', 'application/json')
-        .del("/%/test-db")
-            .expect(200)
-        .next()
 		.post(endpoint, initialDocument)
 			.expect(200)
 			.expect('should respond with created document containing ID', function(err, res, body){
@@ -50,6 +47,18 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				assert.equal(result.data, true);
 			})
 		.next()
+        .get(endpoint)
+			.expect(200)
+			.expect('should respond with previously updated document', function(err, res, body){
+				var result = JSON.parse(body);
+				
+				assert.isObject(result.data);
+				assert.isString(result.data._id);
+				assert.equal(result.data._id, testContext.id);
+				for(var i in updatedDocument)
+					assert.equal(updatedDocument[i], result.data[i]);
+			})
+        .next()
 		.del(endpoint)
 			.expect(200)
 			.expect('should respond with deleted document', function(err, res, body){
@@ -65,4 +74,7 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				assert.isArray(result.data);
 				assert.equal(result.data.length, 0);
 			})
+        .next()
+        .del("/%/test-db")
+            .expect(200)
 .export(module);

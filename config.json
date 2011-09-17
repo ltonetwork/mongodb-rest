@@ -1,5 +1,5 @@
 {
-	"db": {
+	"dbconnection": {
 		"port": 27017,
 		"host": "localhost"
 	},

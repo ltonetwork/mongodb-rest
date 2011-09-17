@@ -6,14 +6,12 @@ var testContext = {};
 var initialDocument = {testField: 1, nested: { testField:'string' }};
 var updateDocumentData = { nested: {testField: 2} };
 var updatedDocument = {testField: 1, nested: { testField: 2 }};
-var endpoint = "/test-db/test-collection";
+var endpoint = "/test-db-crud-nested/test-collection";
 
 var suite = APIeasy.describe('mongodb-rest post test');
 suite.discuss('When using mongodb-rest API create/retrieve nested documents')
 		.use('localhost', 3000)
 		.setHeader('Content-Type', 'application/json')
-        .del("/%/test-db")
-            .expect(200)
 		.post(endpoint, initialDocument)
 			.expect(200)
 			.expect('should respond with created document containing ID', function(err, res, body){
@@ -64,4 +62,7 @@ suite.discuss('When using mongodb-rest API create/retrieve nested documents')
 				assert.isArray(result.data);
 				assert.equal(result.data.length, 0);
 			})
+        .next()
+        .del("/%/test-db-crud-nested")
+            .expect(200)
 .export(module);

@@ -4,9 +4,14 @@ var APIeasy = require('api-easy'),
 
 var testContext = {};
 var initialDocument = {testField: 1, testField2: 'string'};
+
 var updateDocumentData = {testField: 2, testField2: 'string2'};
 var updatedDocument = {testField: 2, testField2: 'string2'};
-var endpoint = "/test-db-case1/test-collection";
+
+var updateDocumentData2 = {$inc: {testField: 1}};
+var updatedDocument2 = {testField: 3, testField2: 'string2'};
+
+var endpoint = "/test-db-update-case1/test-collection";
 
 var suite = APIeasy.describe('mongodb-rest post test');
 suite.discuss('When using mongodb-rest API create/retrieve')
@@ -58,7 +63,26 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				assert.isString(result.data._id);
 				assert.equal(result.data._id, testContext.id);
 				for(var i in updatedDocument)
-					assert.equal(updatedDocument[i], result.data[i]);
+					assert.equal(result.data[i], updatedDocument[i]);
+			})
+        .next()
+        .put(endpoint, updateDocumentData2)
+			.expect(200)
+			.expect('should respond with updated document', function(err, res, body){
+				var result = JSON.parse(body);
+				assert.equal(result.data, true);
+			})
+		.next()
+        .get(endpoint)
+			.expect(200)
+			.expect('should respond with updated document', function(err, res, body){
+				var result = JSON.parse(body);
+				
+				assert.isObject(result.data);
+				assert.isString(result.data._id);
+				assert.equal(result.data._id, testContext.id);
+				for(var i in updatedDocument2)
+					assert.equal(result.data[i], updatedDocument2[i]);
 			})
         .next()
 		.del(endpoint)
@@ -77,6 +101,6 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				assert.equal(result.data.length, 0);
 			})
         .next()
-        .del("/%/test-db-case1")
+        .del("/%/test-db-update-case1")
             .expect(200)
 .export(module);

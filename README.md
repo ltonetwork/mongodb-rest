@@ -52,10 +52,9 @@ Usage
 ## config.json ##
 
 	{
-		"db": {
+		"dbconnection": {
 			"port": 27017,
-			"host": "localhost",
-			"name": "test-db"
+			"host": "localhost"
 		},
 		"port": 3000,
 		"mode": "development",
@@ -109,6 +108,21 @@ Usage
 			expressApp.use(secureEveryRequestMiddleware);
 		}
 	}).start();
+
+## using raw rest commands ##
+    var target = { db: "name", collection:"name, connection: {host: "localhost", port: 27017} };
+    
+    var createCommand = require("mongodb-rest2/commands/create");
+    createCommand(target, { field1: value1 }, function(err, doc) { });
+    
+    var updateCommand = require("mongodb-rest2/commands/update");
+    updateCommand(target, { _id: value }, { field1: value1 }, { multi: true, safe: true }, function(err, docs) { });
+
+    var listCommand = require("mongodb-rest2/commands/list");
+    listCommand(target, { field1: value1 }, { limit: 10, skip: 20 }, function(err, docs) { });
+
+    var deleteCommand = require("mongodb-rest2/commands/deleteCommand");
+    deleteCommand(target, { field: value }, { safe: true }, function(err, docs) { } ); 
 
 Testing
 -------

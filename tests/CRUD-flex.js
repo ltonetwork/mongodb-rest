@@ -6,14 +6,12 @@ var testContext = {};
 var initialDocument =  {"prop1":"asdasdsad","prop3":"88.1","prop2":"88"};
 var updateDocumentData = {"prop1":"1111111"};
 var updatedDocument = {"prop1":"1111111","prop3":"88.1","prop2":"88"};
-var endpoint = "/test-db/test-collection";
+var endpoint = "/test-db-crud-flex/test-collection";
 
 var suite = APIeasy.describe('mongodb-rest post test');
 suite.discuss('When using mongodb-rest API create/retrieve')
 		.use('localhost', 3000)
 		.setHeader('Content-Type', 'application/json')
-        .del("/%/test-db")
-            .expect(200)
 		.post(endpoint, initialDocument)
 			.expect(200)
 			.expect('should respond with created document containing ID', function(err, res, body){
@@ -80,4 +78,7 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				assert.isArray(result.data);
 				assert.equal(result.data.length, 0);
 			})
+        .next()
+        .del("/%/test-db-crud-flex")
+            .expect(200)
 .export(module);

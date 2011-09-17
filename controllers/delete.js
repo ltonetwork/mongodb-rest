@@ -1,32 +1,24 @@
-var mongo = require("mongodb");
-var ObjectID = require("mongodb/external-libs/bson").ObjectID;
-var dereference = require("./helpers/dereference");
-var dbconnection = require("./helpers/dbconnection");
-var jsonUtils = require("./helpers/jsonUtils");
+var deleteCommand = require("../commands/delete");
 var sys = require("sys");
 
 exports.register = function(app){
 	app.del('/:db/:collection/:id?', function(req, res, next) {
-		var spec = {};
-		if(req.params.id) {
-			if(/^[0-9a-fA-F]{24}$/.test(req.params.id))
-			    spec['_id'] = new ObjectID(req.params.id);
-			else
-			    spec['_id'] = req.params.id;
-		}
-		else {
-			spec = req.query.query? JSON.parse(req.query.query) : {};
-			jsonUtils.deepDecode(spec);
-		}
-	
-		dbconnection.open(req.params.db, app.set('options'), function(err,db) {
-			db.collection(req.params.collection, function(err, collection) {
-				
-				collection.remove(spec, {safe: true}, function(err, docs) {
-					app.renderResponse(res, err, docs);
-					db.close();
-				});
-			});
-		});
+        // JSON decode query or spec
+		var spec = req.query.query? JSON.parse(req.query.query) : {};
+            spec = req.query.spec? JSON.parse(req.query.spec) : spec;
+        
+        var options = req.query.options? JSON.parse(req.query.options) : {};
+        
+        deleteCommand(
+            {
+                connection: app.set("dbconnection"),
+                db: req.params.db,
+                collection: req.params.collection
+            },
+            spec,
+            options,
+            function(err, docs) {
+                app.renderResponse(res, err, docs);
+            });
 	});
 };
