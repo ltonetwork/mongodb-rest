@@ -13,6 +13,10 @@ exports.register = function(app) {
             options.countQueryHits = true;
         if(req.params.id)
             spec._id = req.params.id;
+        if(req.params.limit)
+            options.limit = parseInt(req.params.limit);
+        if(req.params.skip)
+            options.skip = parseInt(req.params.skip);
 
         listCommand(
             {

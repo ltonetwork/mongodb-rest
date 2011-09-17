@@ -13,6 +13,9 @@ var sys = require("sys");
 */
 module.exports = function(target, spec, options, next) {
 
+    if(typeof options.countQueryHits == "undefined")
+        options.countQueryHits = true;
+
     // deep decode spec
 	jsonUtils.deepDecode(spec);
 
