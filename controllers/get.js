@@ -17,6 +17,8 @@ exports.register = function(app) {
             options.limit = parseInt(req.params.limit);
         if(req.params.skip)
             options.skip = parseInt(req.params.skip);
+        if(req.params.deep)
+            options.dereference = true;
 
         listCommand(
             {

@@ -37,7 +37,7 @@ module.exports = function(target, spec, options, next) {
 					if(doc == null)
 						err = new Error("not found");
 
-					if(options.dereference == "true") {
+					if(options.dereference == true) {
 						dereference(db, doc, function(err) {
 							next(err, doc);
 						});
