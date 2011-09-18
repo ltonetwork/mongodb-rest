@@ -12,9 +12,12 @@ var sys = require("sys");
     next = function(err, docs || doc, hitsCount)
 */
 module.exports = function(target, spec, options, next) {
+    // get custom options values and delete them, leaving options lean for mongodb
+    var countQueryHits = options.countQueryHits;
+    delete options.countQueryHits;
 
-    if(typeof options.countQueryHits == "undefined")
-        options.countQueryHits = true;
+    var dereference = options.dereference;
+    delete options.dereference;
 
     // deep decode spec
 	jsonUtils.deepDecode(spec);
@@ -37,7 +40,7 @@ module.exports = function(target, spec, options, next) {
 					if(doc == null)
 						err = new Error("not found");
 
-					if(options.dereference == true) {
+					if(dereference == "true") {
 						dereference(db, doc, function(err) {
 							next(err, doc);
 						});
@@ -53,7 +56,7 @@ module.exports = function(target, spec, options, next) {
 				collection.find(spec, options, function(err, cursor) {
 					cursor.toArray(function(err, docs){
 						
-						if(options.countQueryHits) {
+						if(countQueryHits) {
 							collection.count(spec, function(err, allCount) {
 								next(err, docs, allCount);
 							});

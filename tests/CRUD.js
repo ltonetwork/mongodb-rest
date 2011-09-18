@@ -57,6 +57,26 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 				assert.equal(result.data._id, testContext.id);
 				for(var i in updatedDocument)
 					assert.equal(updatedDocument[i], result.data[i]);
+
+                suite.unbefore('getID');
+			})
+        .next()
+        .get(endpoint)
+			.expect(200)
+			.expect('should respond with previously updated document', function(err, res, body){
+				var result = JSON.parse(body);
+				
+				assert.isArray(result.data);
+                assert.equal(result.data.length, 1);
+				assert.isString(result.data[0]._id);
+				assert.equal(result.data[0]._id, testContext.id);
+				for(var i in updatedDocument)
+					assert.equal(updatedDocument[i], result.data[0][i]);
+
+                suite.before('getID', function(outgoing){
+					outgoing.uri += "/"+result.data._id;
+					return outgoing;
+				});
 			})
         .next()
 		.del(endpoint)

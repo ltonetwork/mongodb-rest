@@ -61,7 +61,10 @@ module.exports = function(target, spec, data, options, next) {
 			if(err) { next(err); return; }
 
             // update collection
-			collection.update(spec, options.set?{$set: updateData}:updateData, options, function(err, docs) {
+            var set = options.set;
+            delete options.set;
+
+			collection.update(spec, set?{$set: updateData}:updateData, options, function(err, docs) {
                 next(err, docs);
 				db.close();
 			});
