@@ -18,6 +18,9 @@ exports.register = function(app){
         else
             options.set = true;
 
+        if(app.set("augmentObject"))
+            options.augment = app.set("augmentObject")('update')
+
 		updateCommand(
             {
                 connection: app.set("dbconnection"),

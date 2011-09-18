@@ -3,8 +3,11 @@ var sys = require("sys");
 
 exports.register = function(app) {
 	app.post('/:db/:collection', function(req, res, next) {
+        var options = {};
+        if(app.set("augmentObject"))
+            options.augment = app.set("augmentObject")('create');
+
 		if (req.body) {
-			
             createCommand( 
                 {
                     connection: app.set("dbconnection"),
@@ -12,6 +15,7 @@ exports.register = function(app) {
                     collection: req.params.collection
                 },
                 req.body,
+                options,
                 function(err, docs) {
                     if(err != null)
 					    app.renderResponse(res, err, docs);

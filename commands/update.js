@@ -59,15 +59,30 @@ module.exports = function(target, spec, data, options, next) {
         // open collection
 		db.collection(target.collection, function(err, collection) {
 			if(err) { next(err); return; }
-
-            // update collection
+            
+            // clean options and save for later needed variables
             var set = options.set;
             delete options.set;
+            var augment = options.augment;
+            delete options.augment;
 
-			collection.update(spec, set?{$set: updateData}:updateData, options, function(err, docs) {
-                next(err, docs);
-				db.close();
-			});
+            var updateCollection = function() {
+                collection.update(spec, set?{$set: updateData}:updateData, options, function(err, docs) {
+                    next(err, docs);
+				    db.close();
+			    });
+            };
+            
+            // augment updateData only if it is set
+            if(augment && set)
+                augment(updateData, function() {
+                    updateCollection();
+                });
+            else
+                updateCollection();
+
+            // cleanup
+			updateCollection = null;
 		});
 	});
 }

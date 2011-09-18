@@ -13,6 +13,20 @@ exports.create = function(options, hooks) {
 	    app.set('view engine', 'jade');
         app.set('options', options);
 	    app.set('dbconnection', options.dbconnection);
+        if(options.augmentWithTimestamps)
+            app.set("augmentObject", function(command) {
+                if(command == "create")
+                    return function(data, next) {
+                        data.createdAt = new Date();
+                        data.updatedAt = new Date();
+                        next();
+                    };
+                if(command == "update")
+                    return function(data, next) {
+                        data.updatedAt = new Date();
+                        next();
+                    }
+            });
 	    
 	    app.renderResponse = function(res, err, data, allCount) {
 		  	res.header('Content-Type', 'application/json');
