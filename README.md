@@ -26,6 +26,7 @@ Supported REST requests:
 * `GET /db/collection/id` - Returns document with _id_
 * `POST /db/collection` - Insert new document in collection (document in POST body)
 * `PUT /db/collection/id` - Update document with _id_ (updated document in PUT body)
+* `PUT /db/collection/0/query` - Update documents which match the JSON string query (updated document in PUT body) (id is set to be 0 here) (http://localhost:3000/test/unicorns/0/%7B%22gender%22:%22m%22%7D)
 * `DELETE /db/collection/id` - Delete document with _id_
 
 Flavors:
