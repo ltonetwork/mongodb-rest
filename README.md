@@ -20,6 +20,7 @@ API
 
 Supported REST requests:
 
+* `GET /timestamp` - Returns server timestamp
 * `GET /db/collection` - Returns all documents
 * `GET /db/collection?query=urlencoded({isDone: false})` - Returns all documents satisfying query
 * `GET /db/collection?query=urlencoded({isDone: false})&limit=2&skip=2` - add options to query (limit, skip are supported atm)

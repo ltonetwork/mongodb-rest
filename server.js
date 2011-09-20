@@ -67,6 +67,7 @@ exports.create = function(options, hooks) {
 	require("./controllers/delete").register(app);
 	require("./controllers/put").register(app);
 	require("./controllers/index").register(app);
+	require("./controllers/timestamp").register(app);
 	
 	// set env value from the config
 	app.settings.env = app.set('options').mode;
