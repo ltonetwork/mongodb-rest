@@ -7,17 +7,20 @@ exports.register = function(app) {
 		var spec = req.query.query? JSON.parse(req.query.query) : {};
             spec = req.query.spec? JSON.parse(req.query.spec) : spec;
 
+        if(req.params.id)
+            spec._id = req.params.id;
+
         // JSON decode options
 	    var options = req.query.options?JSON.parse(req.query.options) : {};
         if(app.set('options').alwaysCountQueryHits)
             options.countQueryHits = true;
-        if(req.params.id)
-            spec._id = req.params.id;
-        if(req.params.limit)
-            options.limit = parseInt(req.params.limit);
-        if(req.params.skip)
-            options.skip = parseInt(req.params.skip);
-        if(req.params.deep)
+        if(req.query.limit)
+            options.limit = parseInt(req.query.limit);
+        if(req.query.skip)
+            options.skip = parseInt(req.query.skip);
+        if(req.query.offset)
+            options.skip = parseInt(req.query.offset);
+        if(req.query.deep)
             options.dereference = true;
 
         listCommand(
