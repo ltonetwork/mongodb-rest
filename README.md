@@ -1,3 +1,7 @@
+Credits
+-------
+https://github.com/ActiveUnits/mongodb-rest
+
 Name
 ----
 
