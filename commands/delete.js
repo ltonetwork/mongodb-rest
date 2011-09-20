@@ -27,7 +27,7 @@ module.exports = function(target,spec,options,next){
 
 	dbconnection.open(target.db, target.connection, function(err,db) {
 		db.collection(target.collection, function(err, collection) {
-			
+
 			collection.remove(spec, options, function(err, docs) {
 				next(err, docs);
 				db.close();

@@ -9,6 +9,9 @@ exports.register = function(app){
         
         var options = req.query.options? JSON.parse(req.query.options) : {};
 
+        if(req.params.id)
+            spec._id = req.params.id;        
+
         deleteCommand(
             {
                 connection: app.set("dbconnection"),
