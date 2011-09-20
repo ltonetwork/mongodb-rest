@@ -5,6 +5,7 @@ exports.create = function(options, hooks) {
 	// create express application
 	var express = require('express');
 	var app = express.createServer();
+	app.enable("jsonp callback");
 
 	// Configuration
 	app.configure(function(){
@@ -40,6 +41,17 @@ exports.create = function(options, hooks) {
 	  			res.send({success: false, error:err.message});
 		  	}
 		};
+
+
+		// Render JSONP response - SHOULD only be used from GET requests
+		// Automagicallu uses the callback mentioned in req object
+		app.renderJsonpResponse = function(res, err, data) {
+			if(err == null)
+				res.json({data : data, success : true});
+			else
+				res.json({success : false, error : err.message});
+		};
+
 
 		app.use(express.bodyParser());
 		app.use(express.methodOverride());

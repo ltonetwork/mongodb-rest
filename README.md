@@ -24,7 +24,6 @@ API
 
 Supported REST requests:
 
-* `GET /timestamp` - Returns server timestamp
 * `GET /db/collection` - Returns all documents
 * `GET /db/collection?query=urlencoded({isDone: false})` - Returns all documents satisfying query
 * `GET /db/collection?query=urlencoded({isDone: false})&limit=2&skip=2` - add options to query (limit, skip are supported atm)
@@ -46,6 +45,10 @@ Additions:
   * for DELETE set header X-HTTP-Method-Override = DELETE
   * for POST set header X-HTTP-Method-Override = POST
 * mongodb cluster connectivity (by providing array of `{ post: , host: }` objects in config.json
+
+Special : 
+
+* `GET /timestamp` - Returns server timestamp in jsonp (/timestamp?callback=foo)
 
 REST responses:
 

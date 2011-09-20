@@ -6,7 +6,7 @@ exports.register = function(app) {
   app.get('/timestamp', function(req, res, next) {
     var date = new Date();
     var response = {minutes : date.getMinutes(), hour : date.getHours(), day : date.getDate(), month : date.getMonth(), year : date.getFullYear(), sinceEpoch : date.getTime()};
-    app.renderResponse(res, null, response);      
+    app.renderJsonpResponse(res, null, response);
   });
       
 };
