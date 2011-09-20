@@ -17,9 +17,8 @@ module.exports = function(target,spec,options,next){
 	if(spec._id) {
 		if(/^[0-9a-fA-F]{24}$/.test(spec._id))
 		    spec._id = new ObjectID(spec._id);
-		else
-		    spec._id = req.params.id;
 	}
+
     if(!options)
         options = { safe: true };
     if(!options.safe)

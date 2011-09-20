@@ -82,8 +82,8 @@ suite.discuss('When using mongodb-rest API create/retrieve')
 		.del(endpoint)
 			.expect(200)
 			.expect('should respond with deleted document', function(err, res, body){
-				var result = JSON.parse(body);
-				assert.equal(result.data, true);
+                var result = JSON.parse(body);
+				assert.equal(result.data, 1);
 				suite.unbefore('getID');
 			})
 		.next()
