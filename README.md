@@ -54,6 +54,29 @@ REST responses:
 
 * all responses are containing `json({success: true or false, data: the data to be returned or which has been submitted})`
 
+
+Update Example
+--------------
+Update every male unicorn, increment hits by 1
+
+```javascript
+$j.ajax({  
+  url : "http://localhost:3000/test/unicorns?query=" + encodeURI(JSON.stringify({gender : "m"})),   
+  data : JSON.stringify({'$inc' : {hits: 1}}),   
+  type : "PUT",   
+  contentType : "application/json",   
+  success : function(d) {     
+    console.log("Success");     
+    console.log(d);   
+  },   
+  error : function(d) { 
+    console.log("error");     
+    console.log(d)   
+  } 
+});
+```
+
+
 Usage
 ------------
 
