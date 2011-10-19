@@ -33,7 +33,7 @@ Supported REST requests:
 
 * `GET /db/collection` - Returns all documents
 * `GET /db/collection?query=urlencoded({isDone: false})` - Returns all documents satisfying query
-* `GET /db/collection?query=urlencoded({isDone: false})&limit=2&skip=2` - add options to query (limit, skip are supported atm)
+* `GET /db/collection?query=urlencoded({isDone: false})&limit=2&skip=2&sort=urlencoded(sortQuery)` - add options to query (limit, skip & sort are supported atm)
 * `GET /db/collection/id` - Returns document with _id_
 * `GET /db/collection/id?deep=true` - Returns document with _id_ and fetches all its deep nested object references
 * `POST /db/collection` - Insert new document in collection (place insert json document in POST body)

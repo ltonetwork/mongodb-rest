@@ -22,6 +22,8 @@ exports.register = function(app) {
             options.skip = parseInt(req.query.offset);
         if(req.query.deep)
             options.dereference = true;
+        if(req.query.sort)
+            options.sort = JSON.parse(req.query.sort);
 
         listCommand(
             {
