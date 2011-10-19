@@ -19,6 +19,13 @@ Installation
 
 Installation is now via npm: `npm install http://github.com/ActiveUnits/mongodb-rest/tarball/master`.
 
+
+To Run
+------
+
+node ./bin/mongodb-rest2
+
+
 API
 -----
 

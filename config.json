@@ -3,7 +3,7 @@
 		"port": 27017,
 		"host": "localhost"
 	},
-	"port": 3000,
+	"port": 4000,
 	"mode": "development",
 	"autoStart": true,
 	"alwaysCountQueryHits": true,
