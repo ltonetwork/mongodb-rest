@@ -3,8 +3,8 @@
 		"port": 27017,
 		"host": "localhost"
 	},
-	"port": 4000,
-	"mode": "development",
+	"port": 80,
+	"mode": "production",
 	"autoStart": true,
 	"alwaysCountQueryHits": true,
     "augmentWithTimestamps": true
