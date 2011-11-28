@@ -15,6 +15,18 @@ Installation
 Installation is now via npm: `npm install mongodb-rest`.
 After that you can just issue `mongodb-rest` on the command line and the server should start.
 
+Try
+---
+
+After installation you can quickly try whether it works by issuing the following from the command line:
+> curl -d '{ "A1" : 201 }' -H "Content-Type: application/json" http://localhost:3000/test/example1
+
+This should add a document to the "test" db.example1 collection:
+{
+"A1": 201,
+"_id": ObjectId("4e90e196b0c7f4687000000e")
+}
+
 Notes
 -----
 
