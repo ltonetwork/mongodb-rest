@@ -8,7 +8,7 @@
 */ 
 
 var fs = require("fs"),
-		sys = require("sys"),
+		util = require('util'),
 		express = require('express');
 		
 var config = { "db": {
