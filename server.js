@@ -30,7 +30,8 @@ try {
 } catch(e) {
   // ignore
 }
-
+// Get the port configuration from the environment. Useful for PaaS solutions as Heroku.
+config.server.port = process.env.PORT || config.server.port;
 module.exports.config = config;
 
 app.configure(function(){
