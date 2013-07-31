@@ -29,9 +29,9 @@ var app = module.exports.app = express();
 
 try {
     if (process.argv[2] && fs.existsSync(process.argv[2])) {
-        config = require(process.argv[2]);
+        config = require(path.resolve(process.argv[2]));
     } else if (process.env.MONGODB_REST_CONFIG && fs.existsSync(process.env.MONGODB_REST_CONFIG)) {
-        config = require(process.env.MONGODB_REST_CONFIG);
+        config = require(path.resolve(process.env.MONGODB_REST_CONFIG));
     } else {
         config = require(path.join(process.cwd(), 'config.json'));
     }
