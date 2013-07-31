@@ -53,6 +53,33 @@ Dependencies:
 
 * Are all indicated in package.json. So far I indicate the lowest version with which I tested the code. Sadly this can result in non-working code when later versions are used.
 
+Custom Configuration:
+
+    $ mongodb-rest                                        # loads ./config.json
+    $ mongodb-rest /path/to/file.json                     # loads file.json
+    $ MONGODB_REST_CONFIG=/path/to/file.json mongodb-rest # loads file.json
+
+File Sample:
+
+    {
+        "db": {
+            "port": 27017,
+            "host": "localhost",
+            "username":"username",
+            "password":"password"
+        },
+        "server": {
+            "port": 3000,
+            "address": "0.0.0.0"
+        },
+        "accessControl": {
+            "allowOrigin": "*",
+            "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+        },
+        "flavor": "nounderscore",
+        "debug": true
+    }
+
 Testing
 -------
 
