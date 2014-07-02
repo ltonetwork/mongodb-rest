@@ -1,3 +1,11 @@
+This project is no longer abandoned!
+
+Thanks so much to Tom for starting this project that has been so useful. I'm planning on moving this project forward now and hopefully others are willing to help.
+
+As Tom has said this REST server has no security and is not fit for use in production. So be warned! Security issues may or may not be addressed in the future. 
+
+I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
+
 Name
 ----
 
