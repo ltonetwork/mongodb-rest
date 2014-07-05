@@ -6,6 +6,12 @@ As Tom has said this REST server has no security and is not fit for use in produ
 
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
+Recent updates:
+mongodb-rest now works with dependencies updated to latest versions.
+
+Roadmap:
+https://trello.com/b/OzRxPSjO/mongodb-rest-roadmap
+
 Name
 ----
 

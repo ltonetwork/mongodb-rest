@@ -1,18 +1,46 @@
 {
   "name": "mongodb-rest",
   "description": "REST API Server for MongoDB",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "author": "Ashley Davis <ashleydavis@insanefx.com>",
-  "contributors": [ 
-      { "name": "Ashley Davis", "email": "ashleydavis@insanefx.com" }
-    , { "name": "Tom de Grunt", "email": "tom@degrunt.nl" }
-    , { "name": "Benjamín Eidelman" }
-    , { "name": "Samyak Bhuta" }
+  "contributors": [
+    {
+      "name": "Ashley Davis",
+      "email": "ashleydavis@insanefx.com"
+    },
+    {
+      "name": "Tom de Grunt",
+      "email": "tom@degrunt.nl"
+    },
+    {
+      "name": "Benjamín Eidelman"
+    },
+    {
+      "name": "Samyak Bhuta"
+    }
   ],
-  "dependencies": { "express": "= 4.4.5", "mongodb": "= 1.4.7", "jade": "= 1.3.1" },
-  "keywords": ["mongodb", "mongo", "db", "web", "rest", "restful"],
+  "dependencies": {
+    "express": "= 4.4.5",
+    "mongodb": "= 1.4.7",
+    "jade": "= 1.3.1",
+    "body-parser": "^1.4.3"
+  },
+  "keywords": [
+    "mongodb",
+    "mongo",
+    "db",
+    "web",
+    "rest",
+    "restful"
+  ],
   "repository": "git://github.com/ashleydavis/mongodb-rest",
-  "directories": { "lib": "./lib" },
-  "bin": { "mongodb-rest": "./bin/mongodb-rest" },
-  "engines": { "node": ">= 0.4.4" }
+  "directories": {
+    "lib": "./lib"
+  },
+  "bin": {
+    "mongodb-rest": "./bin/mongodb-rest"
+  },
+  "engines": {
+    "node": ">= 0.4.4"
+  }
 }
