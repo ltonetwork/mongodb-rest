@@ -31,7 +31,7 @@ module.exports = {
                 async.each(data, 
                     // Single async operation.
                     function (item, callback) {
-                        collection.save(item, callback);
+                        collection.save(item, callback);                        
                     }, 
                     // Callback after all items saved.
                     function (err) {                    
@@ -40,6 +40,20 @@ module.exports = {
                     }
                 );
             });
+        });
+    },
+
+    //
+    // Request http document from the rest api.
+    //
+    request: function (url, done) {
+        request(url, function (err, response, body) {
+            if (err) {
+                done(err);
+                return;
+            }
+
+            done(null, body, response);
         });
     },
 
@@ -53,8 +67,7 @@ module.exports = {
                 return;
             }
 
-            var result = JSON.parse(body);
-            done(null, result);
+            done(null, JSON.parse(body), response);
         });
     },
 };
