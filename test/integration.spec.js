@@ -37,6 +37,7 @@ describe('mongodb-rest', function () {
         //todo: restServer = null;
     });
 
+/*
     it('should retreive empty array from empty db collection', function (done) {
 
         utils.loadFixture(testDbName, testCollectionName, [], function () {
@@ -197,8 +198,6 @@ describe('mongodb-rest', function () {
                 json: postData,
             }, function (err, response, body) {
 
-                console.log('done!');
-
                 if (err) {
                     done(err);
                     return;
@@ -271,5 +270,61 @@ describe('mongodb-rest', function () {
         });
 
     });
+*/
 
+    it('can delete single document in db collection', function (done) {
+
+        var itemID = ObjectID();
+
+        var testData = [
+            {
+                _id: ObjectID(),
+                item: 1,
+            },
+            {
+                _id: itemID,
+                item: 2,
+            },
+            {
+                _id: ObjectID(),
+                item: 3,
+            },
+        ];
+
+        utils.loadFixture(testDbName, testCollectionName, testData, function () {
+
+            var itemUrl = collectionUrl + "/" + itemID.toString();
+            request.del({
+                url: itemUrl, 
+            }, function (err, response, body) {
+
+                expect(response.statusCode).toBe(200);
+                expect(JSON.parse(body)).toEqual({ ok: 1 });
+
+                utils.requestJson(itemUrl, function (err, result) {
+
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+                    
+                    //todo: expect(response.statusCode).toBe(404);
+                    expect(result).toEqual({ ok: 0 });
+
+                    utils.requestJson(collectionUrl, function (err, result) {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+
+                        expect(result.length).toBe(2);
+                        done();
+                    });
+                });
+            });
+
+
+        });
+
+    });
 });
