@@ -37,7 +37,6 @@ describe('mongodb-rest', function () {
         //todo: restServer = null;
     });
 
-/*
     it('should retreive empty array from empty db collection', function (done) {
 
         utils.loadFixture(testDbName, testCollectionName, [], function () {
@@ -270,7 +269,6 @@ describe('mongodb-rest', function () {
         });
 
     });
-*/
 
     it('can delete single document in db collection', function (done) {
 
