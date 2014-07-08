@@ -221,4 +221,55 @@ describe('mongodb-rest', function () {
         });
     });
 
+    it('can update single document in db collection', function (done) {
+
+        var itemID = ObjectID();
+
+        var testData = [
+            {
+                _id: ObjectID(),
+                item: 1,
+            },
+            {
+                _id: itemID,
+                item: 2,
+            },
+            {
+                _id: ObjectID(),
+                item: 3,
+            },
+        ];
+
+        utils.loadFixture(testDbName, testCollectionName, testData, function () {
+
+            var newData = {
+                item: 50,
+            };
+
+            var itemUrl = collectionUrl + "/" + itemID.toString();
+            request.put({
+                url: itemUrl, 
+                json: newData,
+            }, function (err, response, body) {
+
+                expect(response.statusCode).toBe(200);
+                expect(body).toEqual({ ok: 1 });
+
+                utils.requestJson(itemUrl, function (err, result) {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(result._id).toEqual(itemID.toString());
+                    expect(result.item).toBe(50);
+                    done();
+                });
+            });
+
+
+        });
+
+    });
+
 });
