@@ -75,6 +75,7 @@ describe('mongodb-rest', function () {
                 }
                 
                 expect(result.length).toBe(3);
+                result.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
                 expect(result[0].item).toBe(1);
                 expect(result[1].item).toBe(2);
                 expect(result[2].item).toBe(3);
@@ -139,6 +140,7 @@ describe('mongodb-rest', function () {
         });
 
     });
+
     it('can retreive single document from db collection', function (done) {
 
         var itemID = ObjectID();
