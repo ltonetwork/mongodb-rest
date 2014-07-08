@@ -7,6 +7,25 @@ var async = require('async');
 var request = require('request');
 
 module.exports = {
+
+    //
+    // Drop the specified test database.
+    //
+    dropDatabase: function (testDbName, done) {
+        var db = mongojs(testDbName);
+
+        db.dropDatabase(function (err) {
+
+            if (err) {
+                db.close();
+                done(err);
+                return;
+            }
+
+            done();
+        });
+    },
+
     //
     // Load data into a db collection.
     // 

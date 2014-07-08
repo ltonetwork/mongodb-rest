@@ -15,6 +15,8 @@ var utils = require('./testutils');
 // Start the rest server.
 // Currently the server can't be restarted for each test.
 var restServer = require('../server');
+
+var request = require('request');
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 
@@ -177,5 +179,46 @@ describe('mongodb-rest', function () {
 
     });
 
+    it('can insert single document into collection', function (done) {
+
+        var postData = {
+            value: "hi there",
+        };
+
+        utils.dropDatabase(testDbName, function (err) {
+
+            if (err) {
+                done(err);
+                return;
+            }
+
+            request.post({
+                url: collectionUrl, 
+                json: postData,
+            }, function (err, response, body) {
+
+                console.log('done!');
+
+                if (err) {
+                    done(err);
+                    return;
+                }
+
+                expect(response.statusCode).toBe(201);
+                expect(body).toEqual({ ok: 1 });
+
+                utils.requestJson(collectionUrl, function (err, result) {
+                    if (err) {
+                        done(err);
+                        return;
+                    }
+
+                    expect(result.length).toBe(1);
+                    expect(result[0].value).toBe(postData.value);
+                    done();
+                });
+            });
+        });
+    });
 
 });
