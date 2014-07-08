@@ -20,6 +20,41 @@ var request = require('request');
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 
+var fixture = utils.loadFixture;
+
+//
+// Get a collection and run expectations on it.
+//
+var collection = function (url, done, expectations) {
+
+    utils.requestJson(collectionUrl, function (err, result) {
+        if (err) {
+            done(err);
+            return;
+        }
+
+
+        expectations(result);
+        done();
+    });
+};
+
+//
+// Get an item from the db and run expectations on it.
+//
+var item = function (url, itemID, done, expectations) {
+    var itemUrl = collectionUrl + "/" + itemID.toString();
+    utils.requestJson(itemUrl, function (err, result, response) {
+        if (err) {
+            done(err);
+            return;
+        }
+
+        expectations(result, response);
+        done();
+    });
+};
+
 describe('mongodb-rest', function () {
 
     //todo: var restServer;
@@ -39,16 +74,9 @@ describe('mongodb-rest', function () {
 
     it('should retreive empty array from empty db collection', function (done) {
 
-        utils.loadFixture(testDbName, testCollectionName, [], function () {
-
-            utils.requestJson(collectionUrl, function (err, result) {
-                if (err) {
-                    done(err);
-                    return;
-                }
-                
+        fixture(testDbName, testCollectionName, [], function () {
+            collection(collectionUrl, done, function (result) {
                 expect(result).toEqual([])
-                done();
             });
         });
 
@@ -68,40 +96,23 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        utils.loadFixture(testDbName, testCollectionName, testData, function () {
-
-            utils.requestJson(collectionUrl, function (err, result) {
-                if (err) {
-                    done(err);
-                    return;
-                }
-                
+        fixture(testDbName, testCollectionName, testData, function () {
+            collection(collectionUrl, done, function (result) {
                 expect(result.length).toBe(3);
                 result.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
                 expect(result[0].item).toBe(1);
                 expect(result[1].item).toBe(2);
                 expect(result[2].item).toBe(3);
-                done();
             });
         });
     });
 
     it('can handle retreiving document from empty db collection', function (done) {
 
-        var itemID = ObjectID();
-
-        utils.loadFixture(testDbName, testCollectionName, [], function () {
-
-            var itemUrl = collectionUrl + "/" + itemID.toString();
-            utils.request(itemUrl, function (err, result, response) {
-
-                if (err) {
-                    done(err);
-                    return;
-                }
-
+        fixture(testDbName, testCollectionName, [], function () {
+            var itemID = ObjectID();
+            item(collectionUrl, itemID, done, function (result, response) {
                 expect(response.statusCode).toBe(404);
-                done();
             });
         });
 
