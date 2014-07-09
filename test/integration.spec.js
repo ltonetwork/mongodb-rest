@@ -22,152 +22,16 @@ var ObjectID = mongodb.ObjectID;
 
 var fixture = utils.loadFixture;
 var dropDatabase = utils.dropDatabase;
+var requestHttp = utils.requestHttp;
+var requestJson = utils.requestJson;
+var collectionJson = utils.collectionJson;
+var itemJson = utils.itemJson;
+var itemHttp = utils.itemHttp;
+var post = utils.post;
+var put = utils.put;
+var del = utils.del;
+var Q = require('q');
 
-//
-// Get a collection and run expectations on it.
-//
-var collection = function (url, done, expectations) {
-
-    utils.requestJson(collectionUrl, function (err, result) {
-        if (err) {
-            done(err);
-            return;
-        }
-
-
-        expectations(result);
-        done();
-    });
-};
-
-//
-// Get an item from the db and run expectations on it.
-//
-var item = function (url, itemID, done, expectations) {
-    var itemUrl = collectionUrl + "/" + itemID.toString();
-    utils.requestJson(itemUrl, function (err, result, response) {
-        if (err) {
-            done(err);
-            return;
-        }
-
-        expectations(result, response);
-        done();
-    });
-};
-
-//
-// Get the response for a rest api.
-//
-var response = function (url, done, expectations) {
-    utils.request(url, function (err, result, response) {
-        if (err) {
-            done(err);
-            return;
-        }
-
-        expectations(result, response);
-        done();
-    });
-};
-
-//
-// Get the response for a db item.
-//
-var itemResponse = function (collectionUrl, itemID, done, expectations) {
-    var itemUrl = collectionUrl + "/" + itemID.toString();
-    response(itemUrl, done, expectations);
-};
-
-//
-// Post an item and then retreive it back from db.
-//
-var post = function (url, data, done, expectations) {
-    request.post(
-        {
-            url: url, 
-            json: data,
-        }, 
-        function (err, response, body) {
-            if (err) {
-                done(err);
-                return;
-            }
-
-            expect(response.statusCode).toBe(201);
-            expect(body).toEqual({ ok: 1 });
-
-            utils.requestJson(collectionUrl, function (err, result) {
-                if (err) {
-                    done(err);
-                    return;
-                }
-
-                expectations(result);
-                done();
-            });
-        }
-    );
-};
-
-//
-// Update a db item then retrieve it back.
-//
-var put = function (collectionUrl, itemID, data, done, expectations) {
-    var itemUrl = collectionUrl + "/" + itemID.toString();
-    request.put({
-        url: itemUrl, 
-        json: data,
-    }, function (err, response, body) {
-
-        expect(response.statusCode).toBe(200);
-        expect(body).toEqual({ ok: 1 });
-
-        utils.requestJson(itemUrl, function (err, result) {
-            if (err) {
-                done(err);
-                return;
-            }
-
-            expectations(result);
-            done();
-        });
-    });
-};
-
-//
-// Delete a db item then attempt to retrieve it back.
-//
-var del = function (collectionUrl, itemID, done, expectations) {
-    var itemUrl = collectionUrl + "/" + itemID.toString();
-    request.del({
-        url: itemUrl, 
-    }, function (err, response, body) {
-
-        expect(response.statusCode).toBe(200);
-        expect(JSON.parse(body)).toEqual({ ok: 1 });
-
-        utils.requestJson(itemUrl, function (err, result) {
-            if (err) {
-                done(err);
-                return;
-            }
-            
-            //todo: expect(response.statusCode).toBe(404);
-            expect(result).toEqual({ ok: 0 });
-
-            utils.requestJson(collectionUrl, function (err, result) {
-                if (err) {
-                    done(err);
-                    return;
-                }
-
-                expectations(result);
-                done();
-            });
-        });
-    });
-};
 
 describe('mongodb-rest', function () {
 
@@ -188,12 +52,17 @@ describe('mongodb-rest', function () {
 
     it('should retreive empty array from empty db collection', function (done) {
 
-        fixture(testDbName, testCollectionName, [], function () {
-            collection(collectionUrl, done, function (result) {
-                expect(result).toEqual([])
+        fixture(testDbName, testCollectionName, [])
+            .then(function () {
+                return collectionJson(collectionUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([])
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
-
     });
 
     it('can retreive array from db collection', function (done) {
@@ -210,26 +79,38 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData, function () {
-            collection(collectionUrl, done, function (result) {
-                expect(result.length).toBe(3);
-                result.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
-                expect(result[0].item).toBe(1);
-                expect(result[1].item).toBe(2);
-                expect(result[2].item).toBe(3);
+        fixture(testDbName, testCollectionName, testData)
+            .then(function () {
+                return collectionJson(collectionUrl);
+            })
+            .then(function (result) {
+                var data = result.data;
+                expect(data.length).toBe(3);
+                data.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
+                expect(data[0].item).toBe(1);
+                expect(data[1].item).toBe(2);
+                expect(data[2].item).toBe(3);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
     });
 
     it('can handle retreiving document from empty db collection', function (done) {
 
-        fixture(testDbName, testCollectionName, [], function () {
-            var itemID = ObjectID();
-            item(collectionUrl, itemID, done, function (result, response) {
-                expect(response.statusCode).toBe(404);
+        fixture(testDbName, testCollectionName, [])
+            .then(function () {
+                var itemID = ObjectID();
+                return itemJson(collectionUrl, itemID);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(404);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
-
     });
 
     it('can handle retreiving non-existent document from non-empty db collection', function (done) {
@@ -251,11 +132,17 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, [], function () {
-            itemResponse(collectionUrl, itemID, done, function (result, response) {
-                expect(response.statusCode).toBe(404);
+        fixture(testDbName, testCollectionName, [])
+            .then(function () {
+                return itemHttp(collectionUrl, itemID);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(404);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
     });
 
     it('can retreive single document from db collection', function (done) {
@@ -277,12 +164,18 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData, function () {
-            item(collectionUrl, itemID, done, function (result, response) {
-                expect(result._id).toEqual(itemID.toString());
-                expect(result.item).toBe(2);
+        fixture(testDbName, testCollectionName, testData)
+            .then(function () {
+                return itemJson(collectionUrl, itemID);
+            })
+            .then(function (result) {
+                expect(result.data._id).toEqual(itemID.toString());
+                expect(result.data.item).toBe(2);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
     });
 
     it('can insert single document into collection', function (done) {
@@ -291,17 +184,24 @@ describe('mongodb-rest', function () {
             value: "hi there",
         };
 
-        dropDatabase(testDbName, function (err) {
-            if (err) {
-                done(err);
-                return;
-            }
+        dropDatabase(testDbName)
+            .then(function () {
+                return post(collectionUrl, postData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(201);
+                expect(result.data).toEqual({ ok: 1 });
 
-            post(collectionUrl, postData, done, function (result) {
-                expect(result.length).toBe(1);
-                expect(result[0].value).toBe(postData.value);
+                return collectionJson(collectionUrl);
+            })
+            .then(function (result) {
+                expect(result.data.length).toBe(1);
+                expect(result.data[0].value).toBe(postData.value);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
     });
 
     it('can update single document in db collection', function (done) {
@@ -323,17 +223,29 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData, function () {
+        fixture(testDbName, testCollectionName, testData)
+            .then(function () {
 
-            var newData = {
-                item: 50,
-            };
+                var newData = {
+                    item: 50,
+                };
 
-            put(collectionUrl, itemID, newData, done, function (result) {
-                expect(result._id).toEqual(itemID.toString());
-                expect(result.item).toBe(50);
+                return put(collectionUrl, itemID, newData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(200);
+                expect(result.data).toEqual({ ok: 1 });
+
+                return itemJson(collectionUrl, itemID);
+            })
+            .then(function (result) {
+                expect(result.data._id).toEqual(itemID.toString());
+                expect(result.data.item).toBe(50);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
     });
 
     it('can delete single document in db collection', function (done) {
@@ -355,10 +267,28 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData, function () {
-            del(collectionUrl, itemID, done, function (result) {
-                expect(result.length).toBe(2);
+        fixture(testDbName, testCollectionName, testData)
+            .then(function () {
+                return del(collectionUrl, itemID);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(200);
+                expect(JSON.parse(result.data)).toEqual({ ok: 1 });
+
+                return itemJson(collectionUrl, itemID);
+            })
+            .then(function (result) {
+                //todo: expect(result.response.statusCode).toBe(404);
+                expect(result.data).toEqual({ ok: 0 });
+
+                return collectionJson(collectionUrl);
+            })
+            .then(function (result) {
+                expect(result.data.length).toBe(2);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
             });
-        });
     });
 });
