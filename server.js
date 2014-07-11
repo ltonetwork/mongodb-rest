@@ -47,7 +47,5 @@ require('./lib/main');
 require('./lib/command');
 require('./lib/rest');
 
-//todo: if(!process.argv[2] || !process.argv[2].indexOf("expresso")) {
-  console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
-  module.exports.server = app.listen(config.server.port, config.server.address);
-//}
+console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
+module.exports.server = app.listen(config.server.port, config.server.address);
