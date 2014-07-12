@@ -12,10 +12,6 @@ var collectionUrl = url + testDbName + '/' + testCollectionName;
 
 var utils = require('./testutils');
 
-// Start the rest server.
-// Currently the server can't be restarted for each test.
-var restServer = require('../server');
-
 var request = require('request');
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
@@ -35,19 +31,18 @@ var Q = require('q');
 
 describe('mongodb-rest', function () {
 
-    //todo: var restServer;
+    var restServer = require('../server');
 
     beforeEach(function () {
 
-        // Open the rest server for each test.
-        //todo: restServer = require('../server');
+        // Open the rest server for each test.        
+        restServer.startServer();
     });
 
     afterEach(function () {
 
         // Close the rest server after each test.
-        //todo: restServer.server.close();
-        //todo: restServer = null;
+        restServer.stopServer();
     });
 
     it('should retreive empty array from empty db collection', function (done) {

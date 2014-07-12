@@ -23,15 +23,13 @@ var config = { "db": {
   'debug': true
 };
 
-var app = module.exports.app = express();
+var app = express();
 
 try {
   config = JSON.parse(fs.readFileSync(process.cwd()+"/config.json"));
 } catch(e) {
   // ignore
 }
-
-module.exports.config = config;
 
 app.use(require('body-parser')());
 app.use(express.static(process.cwd() + '/public'));
@@ -43,9 +41,29 @@ if (config.accessControl){
 	app.use(accesscontrol.handle);
 }	
 
-require('./lib/main');
-require('./lib/command');
-require('./lib/rest');
+require('./lib/main')(app, config);
+require('./lib/command')(app, config);
+require('./lib/rest')(app, config);
 
-console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
-module.exports.server = app.listen(config.server.port, config.server.address);
+var server;
+
+module.exports = {
+
+  //
+  // Start the REST API server.
+  //
+  startServer: function () {
+    console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
+    server = app.listen(config.server.port, config.server.address);    
+  },
+
+  //
+  // Stop the REST API server.
+  //
+  stopServer: function () {
+    console.log("Stopping mongodb-rest server.");
+    server.close();
+  },
+
+};
+
