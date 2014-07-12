@@ -8,6 +8,7 @@ I have found this REST server to be invaluable for rapid prototyping web applica
 
 Recent updates:
 mongodb-rest now works with dependencies updated to latest versions.
+Added handling for mongodb errors.
 
 Roadmap:
 https://trello.com/b/OzRxPSjO/mongodb-rest-roadmap
