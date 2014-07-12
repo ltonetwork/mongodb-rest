@@ -67,3 +67,11 @@ module.exports = {
 
 };
 
+if (process.argv.length >= 2) {
+  if (process.argv[1].indexOf('server.js') != -1) {
+    //
+    // Auto start server when run as 'node server.js'
+    //
+    module.exports.startServer();
+  }
+}
