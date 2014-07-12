@@ -31,7 +31,8 @@
     "db",
     "web",
     "rest",
-    "restful"
+    "restful",
+    "api"
   ],
   "repository": "git://github.com/ashleydavis/mongodb-rest",
   "directories": {
@@ -41,7 +42,7 @@
     "mongodb-rest": "./bin/mongodb-rest"
   },
   "engines": {
-    "node": ">= 0.4.4"
+    "node": ">= 0.10.24"
   },
   "devDependencies": {
     "mongojs": "~0.13.0",
