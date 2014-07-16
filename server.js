@@ -33,8 +33,6 @@ try {
 
 app.use(require('body-parser')());
 app.use(express.static(process.cwd() + '/public'));
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
 
 if (config.accessControl){
 	var accesscontrol = require('./lib/accesscontrol');
