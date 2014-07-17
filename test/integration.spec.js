@@ -8,6 +8,7 @@ var testDbName = 'mongodb_rest_test'
 var testCollectionName = 'mongodb_test_collection'
 
 var url = 'http://localhost:3000/';
+var dbsUrl = url + 'dbs';
 var collectionUrl = url + testDbName + '/' + testCollectionName;
 
 var utils = require('./testutils');
@@ -44,6 +45,31 @@ describe('mongodb-rest', function () {
         // Close the rest server after each test.
         restServer.stopServer();
     });
+
+    it('can retrieve name of database', function (done) {
+
+        dropDatabase(testDbName)
+            .then(function () {
+                return requestJson(dbsUrl);
+            })
+            .then(function (result) {                
+                expect(result.data).not.toContain(testDbName);
+            })
+            .then(function () {
+                return fixture(testDbName, testCollectionName, []);
+            })
+            .then(function () {
+                return requestJson(dbsUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toContain(testDbName);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
+    });
+
 
     it('should retreive empty array from empty db collection', function (done) {
 
