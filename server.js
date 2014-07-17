@@ -32,15 +32,12 @@ try {
 }
 
 app.use(require('body-parser')());
-app.use(express.static(process.cwd() + '/public'));
 
 if (config.accessControl){
 	var accesscontrol = require('./lib/accesscontrol');
 	app.use(accesscontrol.handle);
 }	
 
-require('./lib/main')(app, config);
-require('./lib/command')(app, config);
 require('./lib/rest')(app, config);
 
 var server;
