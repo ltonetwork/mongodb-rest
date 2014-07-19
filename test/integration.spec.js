@@ -46,7 +46,7 @@ describe('mongodb-rest', function () {
         restServer.stopServer();
     });
 
-    it('can retrieve name of database', function (done) {
+    it('can retrieve names of databases', function (done) {
 
         dropDatabase(testDbName)
             .then(function () {
