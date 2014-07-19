@@ -1,7 +1,7 @@
 {
   "name": "mongodb-rest",
   "description": "REST API Server for MongoDB",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "author": "Ashley Davis <ashleydavis@insanefx.com>",
   "contributors": [
     {
