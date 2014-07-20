@@ -9,9 +9,8 @@ I have found this REST server to be invaluable for rapid prototyping web applica
 Recent updates:
 mongodb-rest now works with dependencies updated to latest versions.
 Added handling for mongodb errors.
-
-Roadmap:
-https://trello.com/b/OzRxPSjO/mongodb-rest-roadmap
+Removed Jade dependency.
+Can now get a list of database names.
 
 Name
 ----
@@ -21,19 +20,21 @@ mongodb-rest - REST server for MongoDB
 Description
 -----------
 
-This is a REST server for MongoDB using Node, using the native node.js MongoDB driver.
-Using Express, it can now start in any folder and will happily server any files a public folder.
+This is a REST server for MongoDB using Node, using Express and the native node.js MongoDB driver.
 
 Installation
 ------------
 
-Installation is now via npm: `npm install mongodb-rest`.
-After that you can just issue `mongodb-rest` on the command line and the server should start.
+Installation is via npm: `npm install mongodb-rest`.
+You can install globally using -g: `npm install -g mongodb-rest`.
+Now issue `mongodb-rest` on the command line and the server should start.
+
+NOTE: Make sure you are running a MongoDB database in addition to the `mongodb-rest` server.
 
 Try
 ---
 
-After installation you can quickly try whether it works by issuing the following from the command line:
+After installation you can quickly test it by issuing the following from the command line:
 > curl -d '{ "A1" : 201 }' -H "Content-Type: application/json" http://localhost:3000/test/example1
 
 This should add a document to the "test" db.example1 collection:
@@ -45,8 +46,9 @@ This should add a document to the "test" db.example1 collection:
 Notes
 -----
 
-Supported REST requests:
+Supported REST API requests:
 
+* `GET /dbs` - Returns the names of all databases.
 * `GET /db/collection` - Returns all documents
 * `GET /db/collection?query=%7B%22isDone%22%3A%20false%7D` - Returns all documents satisfying query
 * `GET /db/collection?query=%7B%22isDone%22%3A%20false%7D&limit=2&skip=2` - Ability to add options to query (limit, skip, etc)
@@ -62,24 +64,22 @@ Flavors:
 
 Content Type:
 
-* Please make sure `application/json` is used as Content-Type when using POST/PUT with request body's.
+* Please make sure `application/json` is used as Content-Type when using POST/PUT with request bodies.
 
 Dependencies:
 
-* Are all indicated in package.json. So far I indicate the lowest version with which I tested the code. Sadly this can result in non-working code when later versions are used.
+* Are indicated in package.json. 
 
 Testing
 -------
 
-Testing is now done using expresso. Just run the following in the main folder:
-`expresso -s test/create.test.js test/delete.test.js test/update.test.js`
-The SproutCore test needs to be run separately at the moment.
+Integration tests use jasmine-node. Run this command from the main folder: `jasmine-node .\ --verbose`.
 
 Future
 ------
 
-* REST - PUT /db/collection - Update whole collection with changes in PUT body
-* Other useful commands (quit, reconnect, addUser, removeUser, etc)
+Roadmap:
+https://trello.com/b/OzRxPSjO/mongodb-rest-roadmap
 
 Credits
 -------
@@ -87,3 +87,7 @@ Credits
 * [MongoDB Driver](http://github.com/christkv/node-mongodb-native)
 * [Express](http://expressjs.com/)
 * [npm](http://npmjs.org/)
+
+Testing:
+* [Jasmine-Node](https://github.com/mhevery/jasmine-node)
+* [Q (for async testing)](https://github.com/kriskowal/q)
