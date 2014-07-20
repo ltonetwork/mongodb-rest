@@ -37,43 +37,47 @@ var dropDatabase = function (testDbName) {
 var loadFixture = function (testDbName, testCollectionName, data) {    
     var deferred = Q.defer();
 
-    dropDatabase(testDbName)
-        .then(function () {
-            var db = mongojs(testDbName);
+    var db = mongojs(testDbName);
 
-            db.createCollection(testCollectionName, function (err, collection) {
-                if (err) {
-                    db.close();
-                    deferred.reject(err);
-                    return;
-                }
-
-                async.each(data, 
-                    // Single async operation.
-                    function (item, callback) {
-                        collection.save(item, callback);                        
-                    }, 
-                    // Callback after all items saved.
-                    function (err) {       
-                        db.close();
-                        if (err) {
-                            deferred.reject(err);
-                        }
-                        else {
-                            deferred.resolve();
-                        }
-                    }
-                );
-            });
-        })
-        .catch(function (err) {
+    db.createCollection(testCollectionName, function (err, collection) {
+        if (err) {
             db.close();
             deferred.reject(err);
-        })
+            return;
+        }
+
+        async.each(data, 
+            // Single async operation.
+            function (item, callback) {
+                collection.save(item, callback);                        
+            }, 
+            // Callback after all items saved.
+            function (err) {       
+                db.close();
+                if (err) {
+                    deferred.reject(err);
+                }
+                else {
+                    deferred.resolve();
+                }
+            }
+        );
+    });
 
     return deferred.promise;
 };
 
+//
+// Load data into a db collection.
+// 
+var dropDatabaseAndLoadFixture = function (testDbName, testCollectionName, data) {    
+    var deferred = Q.defer();
+
+    return dropDatabase(testDbName)
+        .then(function () {
+            return loadFixture(testDbName, testCollectionName, data);
+        });
+};
 //
 // Request http document from the rest api.
 //

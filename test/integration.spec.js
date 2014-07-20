@@ -9,7 +9,8 @@ var testCollectionName = 'mongodb_test_collection'
 
 var url = 'http://localhost:3000/';
 var dbsUrl = url + 'dbs';
-var collectionUrl = url + testDbName + '/' + testCollectionName;
+var collectionsUrl = url + testDbName;
+var collectionUrl = collectionsUrl + '/' + testCollectionName;
 
 var utils = require('./testutils');
 
@@ -17,7 +18,8 @@ var request = require('request');
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 
-var fixture = utils.loadFixture;
+var load = utils.loadFixture;
+var dropAndLoad = utils.dropDatabaseAndLoadFixture;
 var dropDatabase = utils.dropDatabase;
 var requestHttp = utils.requestHttp;
 var requestJson = utils.requestJson;
@@ -56,7 +58,7 @@ describe('mongodb-rest', function () {
                 expect(result.data).not.toContain(testDbName);
             })
             .then(function () {
-                return fixture(testDbName, testCollectionName, []);
+                return dropAndLoad(testDbName, testCollectionName, []);
             })
             .then(function () {
                 return requestJson(dbsUrl);
@@ -70,10 +72,42 @@ describe('mongodb-rest', function () {
             });
     });
 
+    it('can retrieve names of collections', function (done) {
+
+        var testcol1 = "testcol1";
+        var testcol2 = "testcol2";
+
+        dropDatabase(testDbName)
+            .then(function () {
+                return requestJson(collectionsUrl);
+            })
+            .then(function (result) {                
+                expect(result.data.length).toBe(0);
+            })
+            .then(function () {
+                return load(testDbName, testcol1, [ { blah: 1 } ]);
+            })
+            .then(function () {
+                return load(testDbName, testcol2, [ { blah: 2 } ]);
+            })
+            .then(function () {
+                return requestJson(collectionsUrl);
+            })
+            .then(function (result) {
+                var collectionNames = result.data;
+                expect(collectionNames.length).toBe(2);
+                expect(collectionNames).toContain(testcol1);
+                expect(collectionNames).toContain(testcol2);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
+    });
 
     it('should retreive empty array from empty db collection', function (done) {
 
-        fixture(testDbName, testCollectionName, [])
+        dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
                 return collectionJson(collectionUrl);
             })
@@ -100,7 +134,7 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData)
+        dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
                 return collectionJson(collectionUrl);
             })
@@ -120,7 +154,7 @@ describe('mongodb-rest', function () {
 
     it('can handle retreiving document from empty db collection', function (done) {
 
-        fixture(testDbName, testCollectionName, [])
+        dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
                 var itemID = ObjectID();
                 return itemJson(collectionUrl, itemID);
@@ -153,7 +187,7 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, [])
+        dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
                 return itemHttp(collectionUrl, itemID);
             })
@@ -185,7 +219,7 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData)
+        dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
                 return itemJson(collectionUrl, itemID);
             })
@@ -244,7 +278,7 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData)
+        dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
 
                 var newData = {
@@ -288,7 +322,7 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        fixture(testDbName, testCollectionName, testData)
+        dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
                 return del(collectionUrl, itemID);
             })
