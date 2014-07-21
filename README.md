@@ -34,7 +34,7 @@ You can install globally using -g:
 
 Now issue `mongodb-rest` on the command line and the server should start.
 
-NOTE: Make sure you are running a MongoDB database in addition to the `mongodb-rest` server.
+NOTE: Make sure you are running a MongoDB database in addition to the mongodb-rest server.
 
 Try
 ---
@@ -43,10 +43,10 @@ After installation you can quickly test it by issuing the following from the com
 > curl -d '{ "A1" : 201 }' -H "Content-Type: application/json" http://localhost:3000/test/example1
 
 This should add a document to the "test" db.example1 collection:
-{
-"A1": 201,
-"_id": ObjectId("4e90e196b0c7f4687000000e")
-}
+>{
+>"A1": 201,
+>"_id": ObjectId("4e90e196b0c7f4687000000e")
+>}
 
 Notes
 -----
@@ -79,12 +79,15 @@ Dependencies:
 Testing
 -------
 
-Integration tests use jasmine-node. Run this command from the main folder: `jasmine-node .\ --verbose`.
+Integration tests use jasmine-node. 
+
+Run this command from the main folder: 
+>jasmine-node .\ --verbose
 
 Future
 ------
 
-Roadmap:
+Roadmap:<br/>
 https://trello.com/b/OzRxPSjO/mongodb-rest-roadmap
 
 Credits
