@@ -6,12 +6,12 @@ As Tom has said this REST server has no security and is not fit for use in produ
 
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
-Recent updates:
-mongodb-rest now works with dependencies updated to latest versions.
-Added handling for mongodb errors.
-Removed Jade dependency.
-Can now get a list of database names.
-Can now get a list of collection names for a specified database.
+Recent updates:<br/>
+mongodb-rest now works with dependencies updated to latest versions.<br/>
+Added handling for mongodb errors.<br/>
+Removed Jade dependency.<br/>
+Can now get a list of database names.<br/>
+Can now get a list of collection names for a specified database.<br/>
 
 Name
 ----
@@ -26,8 +26,12 @@ This is a REST server for MongoDB using Node, using Express and the native node.
 Installation
 ------------
 
-Installation is via npm: `npm install mongodb-rest`.<br/>
-You can install globally using -g: `npm install -g mongodb-rest`.<br/>
+Installation is via npm: 
+> npm install mongodb-rest
+
+You can install globally using -g: 
+> npm install -g mongodb-rest
+
 Now issue `mongodb-rest` on the command line and the server should start.
 
 NOTE: Make sure you are running a MongoDB database in addition to the `mongodb-rest` server.
@@ -35,7 +39,7 @@ NOTE: Make sure you are running a MongoDB database in addition to the `mongodb-r
 Try
 ---
 
-After installation you can quickly test it by issuing the following from the command line:
+After installation you can quickly test it by issuing the following from the command line:<br/>
 > curl -d '{ "A1" : 201 }' -H "Content-Type: application/json" http://localhost:3000/test/example1
 
 This should add a document to the "test" db.example1 collection:
