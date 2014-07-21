@@ -26,8 +26,8 @@ This is a REST server for MongoDB using Node, using Express and the native node.
 Installation
 ------------
 
-Installation is via npm: `npm install mongodb-rest`.
-You can install globally using -g: `npm install -g mongodb-rest`.
+Installation is via npm: `npm install mongodb-rest`.<br/>
+You can install globally using -g: `npm install -g mongodb-rest`.<br/>
 Now issue `mongodb-rest` on the command line and the server should start.
 
 NOTE: Make sure you are running a MongoDB database in addition to the `mongodb-rest` server.
