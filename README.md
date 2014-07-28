@@ -54,12 +54,12 @@ Start Server Programmatically
 
 mongodb-rest can easily be started programmatically by 'requiring' the module and calling `startServer`.
 
->var mongodbRest = require('mongodb-rest');
->mongodbRest.startServer();
+	var mongodbRest = require('mongodb-rest');
+	mongodbRest.startServer();
 
 You can optionally pass in a configuration object:
 
->mongodbRest.startServer(config);
+	mongodbRest.startServer(config);
 
 Configuration
 -------------
