@@ -49,8 +49,8 @@ This should add a document to the "test" db.example1 collection:
 >"_id": ObjectId("4e90e196b0c7f4687000000e")
 >}
 
-Start Server Programatically
-----------------------------
+Start Server Programmatically
+-----------------------------
 
 mongodb-rest can easily be started programmatically by 'requiring' the module and calling `startServer`.
 
