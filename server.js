@@ -11,32 +11,27 @@ var fs = require("fs"),
 		util = require('util'),
 		express = require('express');
 		
-var config = { "db": {
-  'port': 27017,
-  'host': "localhost"
-  },
+var defaultConfig = { 
+  "db": {
+    'port': 27017,
+    'host': "localhost"
+    },
   'server': {
     'port': 3000,
     'address': "0.0.0.0"
   },
+  "accessControl": {
+    "allowOrigin": "*",
+    "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+  },  
   'flavor': "regular",
   'debug': true
 };
 
 var app = express();
 
-try {
-  config = JSON.parse(fs.readFileSync(process.cwd()+"/config.json"));
-} catch(e) {
-  // ignore
-}
 
 app.use(require('body-parser')());
-
-if (config.accessControl){
-	var accesscontrol = require('./lib/accesscontrol');
-	app.use(accesscontrol.handle);
-}	
 
 require('./lib/rest')(app, config);
 
@@ -47,7 +42,16 @@ module.exports = {
   //
   // Start the REST API server.
   //
-  startServer: function () {
+  startServer: function (config) {
+    if (!config) {
+      config = defaultConfig;
+    }
+
+    if (config.accessControl) {
+      var accesscontrol = require('./lib/accesscontrol');
+      app.use(accesscontrol.handle);
+    } 
+
     console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
     server = app.listen(config.server.port, config.server.address);    
   },
@@ -64,9 +68,21 @@ module.exports = {
 
 if (process.argv.length >= 2) {
   if (process.argv[1].indexOf('server.js') != -1) {
+
+    var config = defaultConfig;
+
+    // Load configuration from file.
+    try {
+      var configFilePath = process.cwd()+"/config.json";
+      config = JSON.parse(fs.readFileSync(configFilePath));
+      console.log("Loaded configuration from: " + configFilePath);
+    } catch(e) {
+      // ignore
+    }
+
     //
     // Auto start server when run as 'node server.js'
     //
-    module.exports.startServer();
+    module.exports.startServer(config);
   }
 }
