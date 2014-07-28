@@ -95,7 +95,7 @@ describe('mongodb-rest', function () {
             })
             .then(function (result) {
                 var collectionNames = result.data;
-                expect(collectionNames.length).toBe(2);
+                expect(collectionNames.length).toBeGreaterThan(1);
                 expect(collectionNames).toContain(testcol1);
                 expect(collectionNames).toContain(testcol2);
                 done();
