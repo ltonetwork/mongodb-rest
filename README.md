@@ -12,6 +12,7 @@ Added handling for mongodb errors.<br/>
 Removed Jade dependency.<br/>
 Can now get a list of database names.<br/>
 Can now get a list of collection names for a specified database.<br/>
+It is now easier to start and configure the server procedurally.<br/>
 
 Name
 ----
@@ -36,8 +37,8 @@ Now issue `mongodb-rest` on the command line and the server should start.
 
 NOTE: Make sure you are running a MongoDB database in addition to the mongodb-rest server.
 
-Try
----
+Test
+----
 
 After installation you can quickly test it by issuing the following from the command line:<br/>
 > curl -d '{ "A1" : 201 }' -H "Content-Type: application/json" http://localhost:3000/test/example1
@@ -48,8 +49,45 @@ This should add a document to the "test" db.example1 collection:
 >"_id": ObjectId("4e90e196b0c7f4687000000e")
 >}
 
-Notes
------
+Start Server Programatically
+----------------------------
+
+mongodb-rest can easily be started programmatically by 'requiring' the module and calling `startServer`.
+
+>var mongodbRest = require('mongodb-rest');
+>mongodbRest.startServer();
+
+You can optionally pass in a configuration object:
+
+>mongodbRest.startServer(config);
+
+Configuration
+-------------
+
+When starting from the command line you should have `config.json` in the current working directory.
+
+When starting the server programmatically you can pass in a Javascript object for mongodb-rest configuration.
+
+Here is an example JSON configuration object:
+
+>{ 
+>  "db": {
+>    "port": 27017,
+>    "host": "localhost"
+>    },
+>  "server": {
+>    "port": 3000,
+>    "address": "0.0.0.0"
+>  },
+>  "accessControl": {
+>    "allowOrigin": "*",
+>    "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+>  }
+>}
+
+
+Supported REST API
+------------------
 
 Supported REST API requests:
 
