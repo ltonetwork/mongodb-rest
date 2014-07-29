@@ -1,9 +1,7 @@
 {
 	"db": {
 		"port": 27101,
-		"host": "localhost",
-		//"username":"admin",
-		//"password":"4dm1n"
+		"host": "localhost"
 	},
 	"server": {
 		"port": 3000,
@@ -13,7 +11,7 @@
 		"allowOrigin": "*",
 		"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
 	},
-	"flavor": "nounderscore",
+	"flavor": "regular",
 	"debug": true,
 	"humanReadableOutput": true
 }

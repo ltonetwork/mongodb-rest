@@ -7,9 +7,10 @@
 		This file is part of mongodb-rest.
 */ 
 
-var fs = require("fs"),
-		util = require('util'),
-		express = require('express');
+var fs = require("fs");
+var path = require("path");
+var util = require('util');
+var express = require('express');
 		
 var defaultConfig = { 
   "db": {
@@ -38,7 +39,14 @@ module.exports = {
   //
   startServer: function (config) {
     if (!config) {
-      config = defaultConfig;
+      var configFilePath = path.join(process.cwd(), "config.json");
+      if (fs.existsSync(configFilePath)) {
+        console.log("Loading configuration from: " + configFilePath);
+        config = JSON.parse(fs.readFileSync(configFilePath));        
+      }
+      else {
+        console.log("Using default configuration.");
+      }
     }
 
     var app = express();
@@ -70,23 +78,12 @@ module.exports = {
 
 };
 
-if (process.argv.length >= 2) {
+if (process.argv.length >= 2) { 
   if (process.argv[1].indexOf('server.js') != -1) {
-
-    var config = defaultConfig;
-
-    // Load configuration from file.
-    try {
-      var configFilePath = process.cwd()+"/config.json";
-      config = JSON.parse(fs.readFileSync(configFilePath));
-      console.log("Loaded configuration from: " + configFilePath);
-    } catch(e) {
-      // ignore
-    }
 
     //
     // Auto start server when run as 'node server.js'
     //
-    module.exports.startServer(config);
+    module.exports.startServer();
   }
 }
