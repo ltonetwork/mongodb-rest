@@ -38,14 +38,19 @@ module.exports = {
   // Start the REST API server.
   //
   startServer: function (config) {
+    var curDir = process.cwd();
+    console.log("Current directory: " + curDir);
+    
     if (!config) {
-      var configFilePath = path.join(process.cwd(), "config.json");
+      var configFilePath = path.join(curDir, "config.json");
       if (fs.existsSync(configFilePath)) {
         console.log("Loading configuration from: " + configFilePath);
         config = JSON.parse(fs.readFileSync(configFilePath));        
       }
       else {
         console.log("Using default configuration.");
+        console.log("Please put config.json in current directory to customize configuration.");
+        config = defaultConfig;
       }
     }
 
