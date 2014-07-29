@@ -25,7 +25,8 @@ var defaultConfig = {
     "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
   },  
   'flavor': "regular",
-  'debug': true
+  'debug': true,
+  'humanReadableOutput': true
 };
 
 var server;
@@ -43,6 +44,10 @@ module.exports = {
     var app = express();
 
     app.use(require('body-parser')());
+
+    if (config.humanReadableOutput) {
+      app.set('json spaces', 4);
+    }
 
     if (config.accessControl) {
       var accesscontrol = require('./lib/accesscontrol');

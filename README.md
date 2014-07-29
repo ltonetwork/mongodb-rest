@@ -72,18 +72,19 @@ When starting the server programmatically you can pass in a Javascript object fo
 Here is an example JSON configuration object:
 
 	{ 
-	  "db": {
-	    "port": 27017,
-	    "host": "localhost"
-	    },
-	  "server": {
-	    "port": 3000,
-	    "address": "0.0.0.0"
-	  },
-	  "accessControl": {
-	    "allowOrigin": "*",
-	    "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
-	  }
+		"db": {
+			"port": 27017,
+			"host": "localhost"
+		},
+		"server": {
+			"port": 3000,
+			"address": "0.0.0.0"
+		},
+		"accessControl": {
+			"allowOrigin": "*",
+			"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+		}
+		"humanReadableOutput": true
 	}
 
 

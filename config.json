@@ -14,5 +14,6 @@
 		"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
 	},
 	"flavor": "nounderscore",
-	"debug": true
+	"debug": true,
+	"humanReadableOutput": true
 }
