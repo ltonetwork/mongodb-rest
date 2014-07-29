@@ -13,6 +13,7 @@ Removed Jade dependency.<br/>
 Can now get a list of database names.<br/>
 Can now get a list of collection names for a specified database.<br/>
 It is now easier to start and configure the server procedurally.<br/>
+REST API output is now human readable by default.<br/>
 
 Name
 ----
