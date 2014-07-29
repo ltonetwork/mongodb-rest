@@ -44,10 +44,11 @@ After installation you can quickly test it by issuing the following from the com
 > curl -d '{ "A1" : 201 }' -H "Content-Type: application/json" http://localhost:3000/test/example1
 
 This should add a document to the "test" db.example1 collection:
->{
->"A1": 201,
->"_id": ObjectId("4e90e196b0c7f4687000000e")
->}
+
+	{
+		"A1": 201,
+		"_id": ObjectId("4e90e196b0c7f4687000000e")
+	}
 
 Start Server Programmatically
 -----------------------------
