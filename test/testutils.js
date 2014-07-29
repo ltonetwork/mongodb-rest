@@ -219,6 +219,7 @@ var del = function (collectionUrl, itemID, done, expectations) {
 };
 
 module.exports = {
+    dropDatabaseAndLoadFixture: dropDatabaseAndLoadFixture,
     dropDatabase: dropDatabase,
     loadFixture: loadFixture,
     requestHttp: requestHttp,
