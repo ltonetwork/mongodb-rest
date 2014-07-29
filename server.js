@@ -28,13 +28,6 @@ var defaultConfig = {
   'debug': true
 };
 
-var app = express();
-
-
-app.use(require('body-parser')());
-
-require('./lib/rest')(app, config);
-
 var server;
 
 module.exports = {
@@ -47,13 +40,19 @@ module.exports = {
       config = defaultConfig;
     }
 
+    var app = express();
+
+    app.use(require('body-parser')());
+
     if (config.accessControl) {
       var accesscontrol = require('./lib/accesscontrol');
       app.use(accesscontrol.handle);
     } 
 
+    require('./lib/rest')(app, config);
+
     console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
-    server = app.listen(config.server.port, config.server.address);    
+    server = app.listen(config.server.port, config.server.address);
   },
 
   //
