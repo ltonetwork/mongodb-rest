@@ -13,21 +13,21 @@ var util = require('util');
 var express = require('express');
 		
 var defaultConfig = { 
-  "db": {
-    'port': 27017,
-    'host': "localhost"
+    "db": {
+        'port': 27017,
+        'host': "localhost"
     },
-  'server': {
-    'port': 3000,
-    'address': "0.0.0.0"
-  },
-  "accessControl": {
-    "allowOrigin": "*",
-    "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
-  },  
-  'flavor': "regular",
-  'debug': true,
-  'humanReadableOutput': true
+    'server': {
+        'port': 3000,
+        'address': "0.0.0.0"
+    },
+    "accessControl": {
+        "allowOrigin": "*",
+        "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+    },  
+    'flavor': "regular",
+    'debug': true,
+    'humanReadableOutput': true
 };
 
 var server;
