@@ -25,6 +25,13 @@ var defaultConfig = {
         "allowOrigin": "*",
         "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
     },  
+    "mongoOptions": {
+        "serverOptions": {
+        },
+        "dbOptions": {
+            "w": 1
+        }
+    },
     'flavor': "regular",
     'debug': true,
     'humanReadableOutput': true

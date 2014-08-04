@@ -14,6 +14,7 @@ Can now get a list of database names.<br/>
 Can now get a list of collection names for a specified database.<br/>
 It is now easier to start and configure the server procedurally.<br/>
 REST API output is now human readable by default.<br/>
+MongoBD server and database options can now be specified in the config file.<br/>
 
 Name
 ----
@@ -85,8 +86,31 @@ Here is an example JSON configuration object:
 			"allowOrigin": "*",
 			"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
 		}
+	    "mongoOptions": {
+	        "serverOptions": {
+	        },
+	        "dbOptions": {
+	            "w": 1
+	        }
+	    },
 		"humanReadableOutput": true
 	}
+
+`mongoOptions` specifies MongoDB server and database connection parameters. These are passed directly to the MongoDB API.
+
+Valid options under `serverOptions` are documented here: http://mongodb.github.io/node-mongodb-native/api-generated/server.html.
+
+`auto_reconnect` is automatically enabled, don't override this or mongodb-rest may not work as expected.
+
+Valid options under `dbOptions` are documented here: http://mongodb.github.io/node-mongodb-native/api-generated/db.html.
+
+`w` (write concern) is set to 1 so that acknowledgement of the write is recieved by mongodb-rest, currently this must be enabled for error checking.
+
+
+
+
+
+
 
 
 Supported REST API
