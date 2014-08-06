@@ -62,6 +62,7 @@ module.exports = {
     }
 
     var app = express();
+    require('express-csv');
 
     app.use(require('body-parser')());
 

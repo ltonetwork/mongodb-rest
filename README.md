@@ -106,6 +106,7 @@ Valid options under `dbOptions` are documented here: http://mongodb.github.io/no
 
 `w` (write concern) is set to 1 so that acknowledgement of the write is recieved by mongodb-rest, currently this must be enabled for error checking.
 
+Set `collectionResponseType` to `csv` to returns collections as csv data rather than json.
 
 
 
