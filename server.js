@@ -75,6 +75,10 @@ module.exports = {
       app.use(accesscontrol.handle);
     } 
 
+    app.get('/favicon.ico', function (req, res) {
+      res.status(404);
+    });
+
     require('./lib/rest')(app, config);
 
     console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
