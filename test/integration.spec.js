@@ -36,11 +36,11 @@ describe('mongodb-rest', function () {
 
     var restServer = require('../server');
 
-    beforeEach(function () {
+    var init = function (config) {
 
         // Open the rest server for each test.        
-        restServer.startServer();
-    });
+        restServer.startServer(config);
+    };
 
     afterEach(function () {
 
@@ -49,6 +49,8 @@ describe('mongodb-rest', function () {
     });
 
     it('can retrieve names of databases', function (done) {
+
+        init();
 
         dropDatabase(testDbName)
             .then(function () {
@@ -73,6 +75,8 @@ describe('mongodb-rest', function () {
     });
 
     it('can retrieve names of collections', function (done) {
+
+        init();
 
         var testcol1 = "testcol1";
         var testcol2 = "testcol2";
@@ -107,6 +111,8 @@ describe('mongodb-rest', function () {
 
     it('should retreive empty array from empty db collection', function (done) {
 
+        init();
+
         dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
                 return collectionJson(collectionUrl);
@@ -121,6 +127,8 @@ describe('mongodb-rest', function () {
     });
 
     it('can retreive array from db collection', function (done) {
+
+        init();
 
         var testData = [
             {
@@ -154,6 +162,8 @@ describe('mongodb-rest', function () {
 
     it('can handle retreiving document from empty db collection', function (done) {
 
+        init();
+
         dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
                 var itemID = ObjectID();
@@ -169,6 +179,8 @@ describe('mongodb-rest', function () {
     });
 
     it('can handle retreiving non-existent document from non-empty db collection', function (done) {
+
+        init();
 
         var itemID = ObjectID();
 
@@ -200,7 +212,84 @@ describe('mongodb-rest', function () {
             });
     });
 
+    it('can retreive csv format data from db collection', function (done) {
+
+        init({
+            db: {
+                port: 27017,
+                host: "localhost"
+            },
+            server: {
+                port: 3000,
+                address: "0.0.0.0"
+            },
+            "accessControl": {
+                "allowOrigin": "*",
+                "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+            },
+            "mongoOptions": {
+                "serverOptions": {
+                },
+                "dbOptions": {
+                    "w": 1
+                }
+            },
+            "flavor": "regular",
+            "debug": true,
+            "humanReadableOutput": true,
+            collectionResponseType: 'csv',
+        });
+
+        var testData = [
+            {
+                item: 1,
+            },
+            {
+                item: 2,
+            },
+            {
+                item: 3,
+            },
+        ];
+
+        dropAndLoad(testDbName, testCollectionName, testData)
+            .then(function () {
+                return requestHttp(collectionUrl);
+            })
+            .then(function (result) {
+
+
+
+                var lines = result.data.trim().split('\r\n');
+                expect(lines.length).toBe(4);
+
+                var headerRow = lines[0].split(',');
+                expect(headerRow[0]).toEqual("\"item\"");
+                expect(headerRow[1]).toEqual("\"_id\"");
+
+                lines.shift(); // Remove header line.
+                var items = lines.map(function (line) {
+                    var columns = line.split(',');
+                    return {
+                        item: parseInt(columns[0].substring(1,columns[0].length-1)),
+                    };
+                });
+
+                items.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
+
+                expect(items[0].item).toBe(1);
+                expect(items[1].item).toBe(2);
+                expect(items[2].item).toBe(3);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
+    });
+
     it('can retreive single document from db collection', function (done) {
+
+        init();
 
         var itemID = ObjectID();
 
@@ -235,6 +324,8 @@ describe('mongodb-rest', function () {
 
     it('can insert single document into collection', function (done) {
 
+        init();
+
         var postData = {
             value: "hi there",
         };
@@ -260,6 +351,8 @@ describe('mongodb-rest', function () {
     });
 
     it('can update single document in db collection', function (done) {
+
+        init();
 
         var itemID = ObjectID();
 
@@ -304,6 +397,8 @@ describe('mongodb-rest', function () {
     });
 
     it('can delete single document in db collection', function (done) {
+
+        init();
 
         var itemID = ObjectID();
 
