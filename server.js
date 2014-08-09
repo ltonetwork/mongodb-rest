@@ -2,6 +2,7 @@
     server.js
     mongodb-rest
 
+    Maintained by Ashley Davis 2014-07-02
     Created by Tom de Grunt on 2010-10-03.
     Copyright (c) 2010 Tom de Grunt.
 		This file is part of mongodb-rest.

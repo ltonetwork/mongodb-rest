@@ -108,10 +108,7 @@ Valid options under `dbOptions` are documented here: http://mongodb.github.io/no
 
 Set `collectionResponseType` to `csv` to returns collections as csv data rather than json.
 
-
-
-
-
+If you are configuring the server procedurally you can assign a Javascript function to `transformCollection` which will transform each collection before returning it via HTTP.
 
 
 Supported REST API
