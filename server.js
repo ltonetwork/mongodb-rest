@@ -36,7 +36,7 @@ var defaultConfig = {
     'flavor': "regular",
     'debug': true,
     'humanReadableOutput': true,
-    collectionResponseType: "json"
+    collectionOutputType: "json"
 };
 
 var server;
