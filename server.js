@@ -35,7 +35,8 @@ var defaultConfig = {
     },
     'flavor': "regular",
     'debug': true,
-    'humanReadableOutput': true
+    'humanReadableOutput': true,
+    collectionResponseType: "json"
 };
 
 var server;
@@ -48,7 +49,7 @@ module.exports = {
   startServer: function (config) {
     var curDir = process.cwd();
     console.log("Current directory: " + curDir);
-    
+
     if (!config) {
       var configFilePath = path.join(curDir, "config.json");
       if (fs.existsSync(configFilePath)) {

@@ -20,5 +20,6 @@
     },
 	"flavor": "regular",
 	"debug": true,
-	"humanReadableOutput": true
+	"humanReadableOutput": true,
+	"collectionResponseType": "json"
 }
