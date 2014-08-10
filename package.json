@@ -46,10 +46,11 @@
     "node": ">= 0.10.24"
   },
   "devDependencies": {
-    "mongojs": "~0.13.0",
     "async": "~0.9.0",
-    "request": "^2.36.0",
-    "q": "^1.0.1"
+    "jasmine-node": "^1.14.5",
+    "mongojs": "~0.13.0",
+    "q": "^1.0.1",
+    "request": "^2.36.0"
   },
   "scripts": {
     "test": "jasmine-node .\\ --verbose"
