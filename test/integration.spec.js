@@ -237,7 +237,7 @@ describe('mongodb-rest', function () {
             "flavor": "regular",
             "debug": true,
             "humanReadableOutput": true,
-            collectionResponseType: 'csv',
+            collectionOutputType: 'csv',
         });
 
         var testData = [
