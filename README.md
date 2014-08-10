@@ -147,6 +147,12 @@ Integration tests use jasmine-node.
 Run this command from the main folder: 
 >jasmine-node .\ --verbose
 
+
+Travis-CI
+---------
+
+https://travis-ci.org/ashleydavis/mongodb-rest
+
 Future
 ------
 
