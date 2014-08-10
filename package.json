@@ -53,6 +53,6 @@
     "request": "^2.36.0"
   },
   "scripts": {
-    "test": "jasmine-node .\\ --verbose"
+    "test": "jasmine-node . --verbose"
   }
 }
