@@ -62,6 +62,8 @@ module.exports = {
         config = defaultConfig;
       }
     }
+    
+    module.exports.config = config;
 
     var app = express();
     require('express-csv');
