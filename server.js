@@ -63,8 +63,6 @@ module.exports = {
       }
     }
     
-    module.exports.config = config;
-
     var app = express();
     require('express-csv');
 
@@ -75,7 +73,7 @@ module.exports = {
     }
 
     if (config.accessControl) {
-      var accesscontrol = require('./lib/accesscontrol');
+      var accesscontrol = require('./lib/accesscontrol')(config);
       app.use(accesscontrol.handle);
     } 
 
