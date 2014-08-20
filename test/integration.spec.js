@@ -30,9 +30,35 @@ var post = utils.post;
 var put = utils.put;
 var del = utils.del;
 var Q = require('q');
-
+var extend = require("extend");
 
 describe('mongodb-rest', function () {
+
+    // Default configuration to use for some tests.
+    var defaultConfiguration = {
+        db: {
+            port: 27017,
+            host: "localhost"
+        },
+        server: {
+            port: 3000,
+            address: "0.0.0.0"
+        },
+        accessControl: {
+            allowOrigin: "*",
+            allowMethods: "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+        },
+        mongoOptions: {
+            serverOptions: {
+            },
+            dbOptions: {
+                w: 1
+            }
+        },
+        debug: true,
+        humanReadableOutput: true,
+        collectionOutputType: 'json',
+    };
 
     var restServer = require('../server');
 
@@ -222,31 +248,10 @@ describe('mongodb-rest', function () {
 
     it('can retreive csv format data from db collection', function (done) {
 
-        init({
-            db: {
-                port: 27017,
-                host: "localhost"
-            },
-            server: {
-                port: 3000,
-                address: "0.0.0.0"
-            },
-            "accessControl": {
-                "allowOrigin": "*",
-                "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
-            },
-            "mongoOptions": {
-                "serverOptions": {
-                },
-                "dbOptions": {
-                    "w": 1
-                }
-            },
-            "flavor": "regular",
-            "debug": true,
-            "humanReadableOutput": true,
-            collectionOutputType: 'csv',
-        });
+        var csvConfiguration = extend({}, defaultConfiguration);
+        csvConfiguration.collectionOutputType = 'csv';
+
+        init(csvConfiguration);
 
         var testData = [
             {
