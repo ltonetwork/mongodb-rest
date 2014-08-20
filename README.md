@@ -7,6 +7,7 @@ As Tom has said this REST server has no security and is not fit for use in produ
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
 Recent updates:<br/>
+I have removed the _flavor_ option of mongodb-rest. Sorry if you were using this, I think this kind of transformation is best done in the client.
 mongodb-rest now works with dependencies updated to latest versions.<br/>
 Added handling for mongodb errors.<br/>
 Removed Jade dependency.<br/>
