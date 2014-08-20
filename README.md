@@ -9,7 +9,7 @@ I have found this REST server to be invaluable for rapid prototyping web applica
 Recent updates:<br/>
 I have removed the _flavor_ option of mongodb-rest. Sorry if you were using this, I think this kind of transformation is best done in the client.<br/>
 mongodb-rest now works with dependencies updated to latest versions.<br/>
-Added better error checking for mongodb-rest configuration..<br/>
+Added better error checking for mongodb-rest configuration. Also some logical defaults when configuration is incomplete.<br/>
 Added handling for mongodb errors.<br/>
 Removed Jade dependency.<br/>
 Can now get a list of database names.<br/>
@@ -97,6 +97,8 @@ Here is an example JSON configuration object:
 	    },
 		"humanReadableOutput": true
 	}
+
+The `db` and `server` options both default if not specified.	
 
 `mongoOptions` specifies MongoDB server and database connection parameters. These are passed directly to the MongoDB API.
 

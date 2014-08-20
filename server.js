@@ -45,7 +45,7 @@ module.exports = {
   //
   // Start the REST API server.
   //
-  startServer: function (config) {
+  startServer: function (config, started) {
     var curDir = process.cwd();
     console.log("Current directory: " + curDir);
 
@@ -82,16 +82,25 @@ module.exports = {
 
     require('./lib/rest')(app, config);
 
-    console.log('Starting mongodb-rest server: ' + config.server.address + ":" + config.server.port); 
-    server = app.listen(config.server.port, config.server.address);
+    var host = config.server.address || "0.0.0.0";
+    var port = config.server.port || 3000;
+
+    
+    server = app.listen(port, host, function () {
+      console.log('Started mongodb-rest server: ' + host + ":" + port); 
+
+      if (started) {
+        started();
+      }
+    });
   },
 
   //
   // Stop the REST API server.
   //
   stopServer: function () {
-    console.log("Stopping mongodb-rest server.");
     if (server) {
+      console.log("Stopping mongodb-rest server.");
       server.close();
       server = null;
     }

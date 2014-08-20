@@ -62,10 +62,10 @@ describe('mongodb-rest', function () {
 
     var restServer = require('../server');
 
-    var init = function (config) {
+    var init = function (config, started) {
 
         // Open the rest server for each test.        
-        restServer.startServer(config);
+        restServer.startServer(config, started);
     };
 
     afterEach(function () {
@@ -80,6 +80,17 @@ describe('mongodb-rest', function () {
             init({});
         }).toThrow();
 
+    });
+
+    it('can start server without server options', function (done) {
+
+        var configurationNoHostOrPort = extend(true, {}, defaultConfiguration);
+        delete configurationNoHostOrPort.server.address;
+        delete configurationNoHostOrPort.server.port;
+
+        expect(function () {
+            init(configurationNoHostOrPort, done);
+        }).not.toThrow();
     });
 
     it('can retrieve names of databases', function (done) {
@@ -248,7 +259,7 @@ describe('mongodb-rest', function () {
 
     it('can retreive csv format data from db collection', function (done) {
 
-        var csvConfiguration = extend({}, defaultConfiguration);
+        var csvConfiguration = extend(true, {}, defaultConfiguration);
         csvConfiguration.collectionOutputType = 'csv';
 
         init(csvConfiguration);
