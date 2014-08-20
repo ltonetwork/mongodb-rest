@@ -84,12 +84,22 @@ describe('mongodb-rest', function () {
 
     it('can start server without server options', function (done) {
 
-        var configurationNoHostOrPort = extend(true, {}, defaultConfiguration);
-        delete configurationNoHostOrPort.server.address;
-        delete configurationNoHostOrPort.server.port;
+        var configurationNoServer = extend(true, {}, defaultConfiguration);
+        delete configurationNoServer.server;
 
         expect(function () {
-            init(configurationNoHostOrPort, done);
+            init(configurationNoServer, done);
+        }).not.toThrow();
+    });
+
+    it('can start server without server host or port', function (done) {
+
+        var configurationNoServer = extend(true, {}, defaultConfiguration);
+        delete configurationNoServer.server.address;
+        delete configurationNoServer.server.port;
+
+        expect(function () {
+            init(configurationNoServer, done);
         }).not.toThrow();
     });
 

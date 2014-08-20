@@ -82,12 +82,14 @@ module.exports = {
 
     require('./lib/rest')(app, config);
 
-    var host = config.server.address || "0.0.0.0";
-    var port = config.server.port || 3000;
+    var host = (config.server && config.server.address) || "0.0.0.0";
+    var port = (config.server && config.server.port) || 3000;
 
-    
+    console.log('Startint mongodb-rest server: ' + host + ":" + port); 
+    console.log('Connecting to db ' + config.db.host + ":" + config.db.port);
+
     server = app.listen(port, host, function () {
-      console.log('Started mongodb-rest server: ' + host + ":" + port); 
+      console.log('Listening on: ' + host + ":" + port); 
 
       if (started) {
         started();
