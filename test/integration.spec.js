@@ -48,6 +48,14 @@ describe('mongodb-rest', function () {
         restServer.stopServer();
     });
 
+    it('bad configuration throws', function () {
+
+        expect(function () {
+            init({});
+        }).toThrow();
+
+    });
+
     it('can retrieve names of databases', function (done) {
 
         init();

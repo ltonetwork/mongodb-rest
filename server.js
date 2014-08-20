@@ -91,7 +91,10 @@ module.exports = {
   //
   stopServer: function () {
     console.log("Stopping mongodb-rest server.");
-    server.close();
+    if (server) {
+      server.close();
+      server = null;
+    }
   },
 
 };
