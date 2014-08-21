@@ -82,6 +82,7 @@ describe('mongodb-rest', function () {
 
     });
 
+
     it('can start server without server options', function (done) {
 
         var configurationNoServer = extend(true, {}, defaultConfiguration);
@@ -101,6 +102,27 @@ describe('mongodb-rest', function () {
         expect(function () {
             init(configurationNoServer, done);
         }).not.toThrow();
+    });
+
+    it('can hit server without db options', function (done) {
+
+        var configurationNoDb = extend(true, {}, defaultConfiguration);
+        delete configurationNoDb.db.host;
+        delete configurationNoDb.db.port;
+
+        init(configurationNoDb, done);
+
+        dropAndLoad(testDbName, testCollectionName, [])
+            .then(function () {
+                return collectionJson(collectionUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([])
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
     });
 
     it('can retrieve names of databases', function (done) {

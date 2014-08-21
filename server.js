@@ -11,6 +11,7 @@
 var fs = require("fs");
 var path = require("path");
 var express = require('express');
+var extend = require("extend");
 		
 var defaultConfig = { 
     "db": {
@@ -82,10 +83,37 @@ module.exports = {
 
     require('./lib/rest')(app, config);
 
-    var host = (config.server && config.server.address) || "0.0.0.0";
-    var port = (config.server && config.server.port) || 3000;
+    console.log('Input Configuration:');
+    console.log(config);  
 
-    console.log('Startint mongodb-rest server: ' + host + ":" + port); 
+    // Make a copy of the config so that defaults can be applied.
+    config = extend(true, {}, config);
+    if (!config.server) {
+      config.server = {};
+    }
+    if (!config.server.address) {
+      config.server.address = "0.0.0.0";
+    }
+    if (!config.server.port) {
+      config.server.port = 3000;
+    }
+    if (!config.db) {
+      config.db = {};
+    }
+    if (!config.db.port) {
+      config.db.port = 27017;
+    }
+    if (!config.db.host) {
+      config.db.host = "localhost";
+    }
+
+    console.log('Configuration with defaults applied:');
+    console.log(config);  
+
+    var host = config.server.address;
+    var port = config.server.port;
+
+    console.log('Starting mongodb-rest server: ' + host + ":" + port); 
     console.log('Connecting to db ' + config.db.host + ":" + config.db.port);
 
     server = app.listen(port, host, function () {
