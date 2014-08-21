@@ -74,15 +74,6 @@ describe('mongodb-rest', function () {
         restServer.stopServer();
     });
 
-    it('bad configuration throws', function () {
-
-        expect(function () {
-            init({});
-        }).toThrow();
-
-    });
-
-
     it('can start server without server options', function (done) {
 
         var configurationNoServer = extend(true, {}, defaultConfiguration);
