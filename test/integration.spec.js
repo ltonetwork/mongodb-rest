@@ -5,12 +5,20 @@
 //
 
 var testDbName = 'mongodb_rest_test'
-var testCollectionName = 'mongodb_test_collection'
+
+var nextCollectionNumber = 1;
+
+function genTestCollectionName() {
+    return 'mongodb_test_collection' + nextCollectionNumber++;
+};
 
 var url = 'http://localhost:3000/';
 var dbsUrl = url + 'dbs';
 var collectionsUrl = url + testDbName;
-var collectionUrl = collectionsUrl + '/' + testCollectionName;
+
+function genCollectionUrl(collectionName) {
+    return collectionsUrl + '/' + collectionName;
+}
 
 var utils = require('./testutils');
 
@@ -103,9 +111,9 @@ describe('mongodb-rest', function () {
 
         init(configurationNoDb, done);
 
-        dropAndLoad(testDbName, testCollectionName, [])
+        dropAndLoad(testDbName, genTestCollectionName(), [])
             .then(function () {
-                return collectionJson(collectionUrl);
+                return collectionJson(genCollectionUrl(testCollectionName));
             })
             .then(function (result) {
                 expect(result.data).toEqual([])
@@ -128,7 +136,7 @@ describe('mongodb-rest', function () {
                 expect(result.data).not.toContain(testDbName);
             })
             .then(function () {
-                return dropAndLoad(testDbName, testCollectionName, []);
+                return dropAndLoad(testDbName, genTestCollectionName(), []);
             })
             .then(function () {
                 return requestJson(dbsUrl);
@@ -181,9 +189,11 @@ describe('mongodb-rest', function () {
 
         init();
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
-                return collectionJson(collectionUrl);
+                return collectionJson(genCollectionUrl(testCollectionName));
             })
             .then(function (result) {
                 expect(result.data).toEqual([])
@@ -210,9 +220,11 @@ describe('mongodb-rest', function () {
             },
         ];
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
-                return collectionJson(collectionUrl);
+                return collectionJson(genCollectionUrl(testCollectionName));
             })
             .then(function (result) {
                 var data = result.data;
@@ -232,10 +244,12 @@ describe('mongodb-rest', function () {
 
         init();
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
                 var itemID = ObjectID();
-                return itemJson(collectionUrl, itemID);
+                return itemJson(genCollectionUrl(testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(404);
@@ -267,9 +281,11 @@ describe('mongodb-rest', function () {
             },
         ];
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, [])
             .then(function () {
-                return itemHttp(collectionUrl, itemID);
+                return itemHttp(genCollectionUrl(testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(404);
@@ -299,9 +315,11 @@ describe('mongodb-rest', function () {
             },
         ];
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
-                return requestHttp(collectionUrl);
+                return requestHttp(genCollectionUrl(testCollectionName));
             })
             .then(function (result) {
 
@@ -355,9 +373,11 @@ describe('mongodb-rest', function () {
             },
         ];
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
-                return itemJson(collectionUrl, itemID);
+                return itemJson(genCollectionUrl(testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.data._id).toEqual(itemID.toString());
@@ -377,15 +397,17 @@ describe('mongodb-rest', function () {
             value: "hi there",
         };
 
+        var testCollectionName = genTestCollectionName();
+
         dropDatabase(testDbName)
             .then(function () {
-                return post(collectionUrl, postData);
+                return post(genCollectionUrl(testCollectionName), postData);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(201);
                 expect(result.data).toEqual({ ok: 1 });
 
-                return collectionJson(collectionUrl);
+                return collectionJson(genCollectionUrl(testCollectionName));
             })
             .then(function (result) {
                 expect(result.data.length).toBe(1);
@@ -418,6 +440,8 @@ describe('mongodb-rest', function () {
             },
         ];
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
 
@@ -425,13 +449,13 @@ describe('mongodb-rest', function () {
                     item: 50,
                 };
 
-                return put(collectionUrl, itemID, newData);
+                return put(genCollectionUrl(testCollectionName), itemID, newData);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(200);
                 expect(result.data).toEqual({ ok: 1 });
 
-                return itemJson(collectionUrl, itemID);
+                return itemJson(genCollectionUrl(testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.data._id).toEqual(itemID.toString());
@@ -464,21 +488,23 @@ describe('mongodb-rest', function () {
             },
         ];
 
+        var testCollectionName = genTestCollectionName();
+
         dropAndLoad(testDbName, testCollectionName, testData)
             .then(function () {
-                return del(collectionUrl, itemID);
+                return del(genCollectionUrl(testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(200);
                 expect(JSON.parse(result.data)).toEqual({ ok: 1 });
 
-                return itemJson(collectionUrl, itemID);
+                return itemJson(genCollectionUrl(testCollectionName), itemID);
             })
             .then(function (result) {
                 //todo: expect(result.response.statusCode).toBe(404);
                 expect(result.data).toEqual({ ok: 0 });
 
-                return collectionJson(collectionUrl);
+                return collectionJson(genCollectionUrl(testCollectionName));
             })
             .then(function (result) {
                 expect(result.data.length).toBe(2);
