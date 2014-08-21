@@ -349,14 +349,21 @@ describe('mongodb-rest', function () {
                 expect(lines.length).toBe(4);
 
                 var headerRow = lines[0].split(',');
-                expect(headerRow[0]).toEqual("\"item\"");
-                expect(headerRow[1]).toEqual("\"_id\"");
+                var idIndex = 0;
+                var itemIndex = 1;
+                if (headerRow[0] !== "\"_id\"") {
+                    idIndex = 1;
+                    itemIndex = 0;
+                } 
+
+                expect(headerRow[itemIndex]).toEqual("\"item\"");
+                expect(headerRow[idIndex]).toEqual("\"_id\"");
 
                 lines.shift(); // Remove header line.
                 var items = lines.map(function (line) {
                     var columns = line.split(',');
                     return {
-                        item: parseInt(columns[0].substring(1,columns[0].length-1)),
+                        item: parseInt(columns[itemIndex].substring(1,columns[itemIndex].length-1)),
                     };
                 });
 
