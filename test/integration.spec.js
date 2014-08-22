@@ -379,6 +379,68 @@ describe('mongodb-rest', function () {
             });
     });
 
+    it('can retreive csv format data via query param', function (done) {
+
+        var csvConfiguration = extend(true, {}, defaultConfiguration);
+        csvConfiguration.collectionOutputType = 'csv';
+
+        init();
+
+        var testData = [
+            {
+                item: 1,
+            },
+            {
+                item: 2,
+            },
+            {
+                item: 3,
+            },
+        ];
+
+        var testDbName = genTestDbName();
+        var testCollectionName = genTestCollectionName();
+
+        dropAndLoad(testDbName, testCollectionName, testData)
+            .then(function () {
+                return requestHttp(genCollectionUrl(testDbName, testCollectionName) + "?output=csv");
+            })
+            .then(function (result) {
+
+                var lines = result.data.trim().split('\r\n');
+                expect(lines.length).toBe(4);
+
+                var headerRow = lines[0].split(',');
+                var idIndex = 0;
+                var itemIndex = 1;
+                if (headerRow[0] !== "\"_id\"") {
+                    idIndex = 1;
+                    itemIndex = 0;
+                } 
+
+                expect(headerRow[itemIndex]).toEqual("\"item\"");
+                expect(headerRow[idIndex]).toEqual("\"_id\"");
+
+                lines.shift(); // Remove header line.
+                var items = lines.map(function (line) {
+                    var columns = line.split(',');
+                    return {
+                        item: parseInt(columns[itemIndex].substring(1,columns[itemIndex].length-1)),
+                    };
+                });
+
+                items.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
+
+                expect(items[0].item).toBe(1);
+                expect(items[1].item).toBe(2);
+                expect(items[2].item).toBe(3);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            });
+    });
+
     it('can retreive single document from db collection', function (done) {
 
         init();

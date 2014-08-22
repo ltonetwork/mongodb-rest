@@ -123,8 +123,10 @@ Supported REST API requests:
 * `GET /dbs` - Returns the names of all databases.
 * `GET /<db>/` - Returns names of all collections in the specified database.
 * `GET /<db>/<collection>` - Returns all documents in the specified collection.
+* `GET /<db>/<collection>?output=csv` - Returns all documents in collection in csv format.
 * `GET /<db>/<collection>?query=%7B%22isDone%22%3A%20false%7D` - Returns all documents satisfying query.
-* `GET /<db>/<collection>?query=%7B%22isDone%22%3A%20false%7D&limit=2&skip=2` - Ability to add options to query (limit, skip, etc)
+* `GET /<db>/<collection>?query=%7B%22isDone%22%3A%20false%7D&limit=2&skip=2` - Ability to add options to query (limit, skip, 
+etc)
 * `GET /<db>/<collection>/id` - Returns document with _id_
 * `POST /<db>/<collection>` - Insert new document in collection (document in POST body)
 * `PUT /<db>/<collection>/id` - Update document with _id_ (updated document in PUT body)
