@@ -7,6 +7,7 @@ As Tom has said this REST server has no security and is not fit for use in produ
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
 Recent updates:<br/>
+Added support for Access-Control-Allow-Credentials in the configuration.<br/>
 I have removed the _flavor_ option of mongodb-rest. Sorry if you were using this, I think this kind of transformation is best done in the client.<br/>
 mongodb-rest now works with dependencies updated to latest versions.<br/>
 Added better error checking for mongodb-rest configuration. Also some logical defaults when configuration is incomplete.<br/>
@@ -86,8 +87,9 @@ Here is an example JSON configuration object:
 		},
 		"accessControl": {
 			"allowOrigin": "*",
-			"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
-		}
+			"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
+			"allowCredentials": false
+		},
 	    "mongoOptions": {
 	        "serverOptions": {
 	        },
@@ -113,6 +115,14 @@ Valid options under `dbOptions` are documented here: http://mongodb.github.io/no
 Set `collectionOutputType` to `csv` to returns collections as csv data rather than json.
 
 If you are configuring the server procedurally you can assign a Javascript function to `transformCollection` which will transform each collection before returning it via HTTP.
+
+The `accessControl` options allow you to set the following headers on the HTTP response:
+- Access-Control-Allow-Origin
+- Access-Control-Allow-Methods
+- Access-Control-Allow-Credentials
+
+Help for these headers can be found here:
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 
 
 Supported REST API

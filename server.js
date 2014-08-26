@@ -24,7 +24,8 @@ var defaultConfig = {
     },
     "accessControl": {
         "allowOrigin": "*",
-        "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS"
+        "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
+        "allowCredentials": false
     },  
     "mongoOptions": {
         "serverOptions": {
