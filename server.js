@@ -12,6 +12,27 @@ var fs = require("fs");
 var path = require("path");
 var express = require('express');
 var extend = require("extend");
+
+//
+// Default logger to use, if none is passed in.
+//
+var defaultLogger = {
+  verbose: function (msg) {
+    console.log(msg);
+  },
+
+  info: function (msg) {
+    console.log(msg);
+  },
+
+  warn: function (msg) {
+    console.log(msg);
+  },
+
+  error: function (msg) {
+    console.log(msg);
+  },
+};
 		
 var defaultConfig = { 
     "db": {
@@ -39,6 +60,7 @@ var defaultConfig = {
     humanReadableOutput: true,
     collectionOutputType: "json",
     urlPrefix: "",
+    logger: defaultLogger,
 };
 
 var server;
@@ -49,22 +71,31 @@ module.exports = {
   // Start the REST API server.
   //
   startServer: function (config, started) {
+
+    var logger = (config && config.logger) || defaultLogger;
     var curDir = process.cwd();
-    console.log("Current directory: " + curDir);
+
+    logger.verbose("Current directory: " + curDir);
 
     if (!config) {
       var configFilePath = path.join(curDir, "config.json");
       if (fs.existsSync(configFilePath)) {
-        console.log("Loading configuration from: " + configFilePath);
+        logger.info("Loading configuration from: " + configFilePath);
         config = JSON.parse(fs.readFileSync(configFilePath));        
+        config.logger = defaultLogger;
       }
       else {
-        console.log("Using default configuration.");
-        console.log("Please put config.json in current directory to customize configuration.");
+        logger.info("Using default configuration.");
+        logger.info("Please put config.json in current directory to customize configuration.");
         config = defaultConfig;
       }
     }
-    
+    else {
+      if (!config.logger) {
+        config.logger = defaultLogger;
+      }
+    }
+
     var app = express();
     require('express-csv');
 
@@ -85,8 +116,8 @@ module.exports = {
 
     require('./lib/rest')(app, config);
 
-    console.log('Input Configuration:');
-    console.log(config);  
+    logger.verbose('Input Configuration:');
+    logger.verbose(config);  
 
     // Make a copy of the config so that defaults can be applied.
     config = extend(true, {}, config);
@@ -109,17 +140,17 @@ module.exports = {
       config.db.host = "localhost";
     }
 
-    console.log('Configuration with defaults applied:');
-    console.log(config);  
+    logger.verbose('Configuration with defaults applied:');
+    logger.verbose(config);  
 
     var host = config.server.address;
     var port = config.server.port;
 
-    console.log('Starting mongodb-rest server: ' + host + ":" + port); 
-    console.log('Connecting to db ' + config.db.host + ":" + config.db.port);
+    logger.info('Starting mongodb-rest server: ' + host + ":" + port); 
+    logger.info('Connecting to db ' + config.db.host + ":" + config.db.port);
 
     server = app.listen(port, host, function () {
-      console.log('Listening on: ' + host + ":" + port); 
+      logger.info('Now listening on: ' + host + ":" + port); 
 
       if (started) {
         started();
@@ -132,7 +163,6 @@ module.exports = {
   //
   stopServer: function () {
     if (server) {
-      console.log("Stopping mongodb-rest server.");
       server.close();
       server = null;
     }

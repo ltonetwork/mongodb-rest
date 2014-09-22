@@ -72,7 +72,7 @@ describe('mongodb-rest', function () {
         },
         debug: true,
         humanReadableOutput: true,
-        collectionOutputType: 'json',
+        collectionOutputType: 'json'
     };
 
     var restServer = require('../server');
@@ -607,4 +607,5 @@ describe('mongodb-rest', function () {
                 done(err);
             });
     });
+
 });

@@ -7,6 +7,7 @@ As Tom has said this REST server has no security and is not fit for use in produ
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
 Recent updates:<br/>
+Now supports winston logging.<br/>
 The REST API now supports configuration of an optional URL prefix. This allows the REST API to live within an existing REST API if necessary.<br/>
 Added support for Access-Control-Allow-Credentials in the configuration.<br/>
 I have removed the _flavor_ option of mongodb-rest. Sorry if you were using this, I think this kind of transformation is best done in the client.<br/>
@@ -135,6 +136,14 @@ Setting a URL prefix of `/blah` will change the example REST API URL to:
  /blah/database/collection
 
 The URL prefix should allow the REST API to co-exist with another REST API and can also be used a very primitive form of security (by setting the prefix to a _secret key_).
+
+
+Logging
+-------
+
+Winston logging is now supported if you configure the REST API programmatically. When you call `startServer` and pass in configuration options set the `logger` option to your Winston logger. Mongodb-rest uses the following functions: verbose, info, warn and error.
+
+Please see the Winston documentation for more setup details: https://github.com/flatiron/winston
 
 
 Supported REST API
