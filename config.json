@@ -22,5 +22,6 @@
 	"flavor": "regular",
 	"debug": true,
 	"humanReadableOutput": true,
-	"collectionOutputType": "json"
+	"collectionOutputType": "json",
+	"urlPrefix": ""
 }

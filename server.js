@@ -36,8 +36,9 @@ var defaultConfig = {
     },
     'flavor': "regular",
     'debug': true,
-    'humanReadableOutput': true,
-    collectionOutputType: "json"
+    humanReadableOutput: true,
+    collectionOutputType: "json",
+    urlPrefix: "",
 };
 
 var server;
