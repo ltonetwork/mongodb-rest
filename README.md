@@ -155,6 +155,22 @@ Dependencies:
 
 * Are indicated in package.json. 
 
+Auth
+----
+
+mongodb-rest is setup with a basic token-based auth system, where users will POST to /login with the username and password, the server will verify the password using a secret database, and will hand the user an access token with which they can make api requests. This looks something like this:
+```
+GET /db/collection?query={"name":"Mike"}&token=234d43fdg-34324d-dd-dsdf-f435d
+```
+If you want to have authorized api calls, setup the "auth" block inside of config.json. It requires at least two fields
+
+tokenDbMongoUri - mongodb uri where we'll store tokens
+usersDbMongoUri - mongodb uri where we'll find a "users" collection to check usernames and passwords
+
+On top of that, there are a few optional parameters
+
+universalAuthToken - A
+
 Testing
 -------
 
