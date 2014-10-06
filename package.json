@@ -35,7 +35,7 @@
     "restful",
     "api"
   ],
-  "repository": "git://github.com/codecapers/mongodb-rest",
+  "repository": "https://github.com/codecapers/mongodb-rest.git",
   "directories": {
     "lib": "./lib"
   },
@@ -58,5 +58,5 @@
   "bugs": {
     "url": "https://github.com/codecapers/mongodb-rest/issues"
   },
-  "homepage": "https://github.com/codecapers/mongodb-rest",
+  "homepage": "https://github.com/codecapers/mongodb-rest"
 }
