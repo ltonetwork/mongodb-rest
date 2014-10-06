@@ -14,7 +14,6 @@ A REST API server for MongoDB using Node, using Express and the native node.js M
 Recent Updates
 --------------
 
-Recent updates:<br/>
 Now supports winston logging.<br/>
 The REST API now supports configuration of an optional URL prefix. This allows the REST API to live within an existing REST API if necessary.<br/>
 Added support for Access-Control-Allow-Credentials in the configuration.<br/>
