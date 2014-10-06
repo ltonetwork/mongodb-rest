@@ -35,7 +35,7 @@
     "restful",
     "api"
   ],
-  "repository": "git://github.com/ashleydavis/mongodb-rest",
+  "repository": "git://github.com/codecapers/mongodb-rest",
   "directories": {
     "lib": "./lib"
   },
@@ -54,5 +54,9 @@
   },
   "scripts": {
     "test": "jasmine-node . --verbose"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/codecapers/mongodb-rest/issues"
+  },
+  "homepage": "https://github.com/codecapers/mongodb-rest",
 }
