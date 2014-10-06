@@ -6,6 +6,14 @@ As Tom has said this REST server has no security and is not fit for use in produ
 
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
+mongodb-rest [![Build Status](https://travis-ci.org/codecapers/mongodb-rest.png)](https://travis-ci.org/codecapers/mongodb-rest)
+============
+
+A REST API server for MongoDB using Node, using Express and the native node.js MongoDB driver.
+
+Recent Updates
+--------------
+
 Recent updates:<br/>
 Now supports winston logging.<br/>
 The REST API now supports configuration of an optional URL prefix. This allows the REST API to live within an existing REST API if necessary.<br/>
@@ -20,13 +28,6 @@ Can now get a list of collection names for a specified database.<br/>
 It is now easier to start and configure the server procedurally.<br/>
 REST API output is now human readable by default.<br/>
 MongoBD server and database options can now be specified in the config file.<br/>
-
-mongodb-rest
-============
-
-[![Build Status](https://travis-ci.org/codecapers/mongodb-rest.png)](https://travis-ci.org/codecapers/mongodb-rest)
-
-A REST API server for MongoDB using Node, using Express and the native node.js MongoDB driver.
 
 Installation
 ------------
