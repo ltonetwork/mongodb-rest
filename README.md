@@ -21,15 +21,12 @@ It is now easier to start and configure the server procedurally.<br/>
 REST API output is now human readable by default.<br/>
 MongoBD server and database options can now be specified in the config file.<br/>
 
-Name
-----
+mongodb-rest
+============
 
-mongodb-rest - REST server for MongoDB
+[![Build Status](https://travis-ci.org/codecapers/mongodb-rest.png)](https://travis-ci.org/codecapers/mongodb-rest)
 
-Description
------------
-
-This is a REST server for MongoDB using Node, using Express and the native node.js MongoDB driver.
+A REST API server for MongoDB using Node, using Express and the native node.js MongoDB driver.
 
 Installation
 ------------
