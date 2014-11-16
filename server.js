@@ -35,28 +35,28 @@ var defaultLogger = {
 };
 		
 var defaultConfig = { 
-    "db": {
-        'port': 27017,
-        'host': "localhost"
+    db: {
+        port: 27017,
+        host: "localhost"
     },
-    'server': {
-        'port': 3000,
-        'address': "0.0.0.0"
+    server: {
+        port: 3000,
+        address: "0.0.0.0"
     },
-    "accessControl": {
-        "allowOrigin": "*",
-        "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
-        "allowCredentials": false
+    accessControl: {
+        allowOrigin: "*",
+        allowMethods: "GET,POST,PUT,DELETE,HEAD,OPTIONS",
+        allowCredentials: false
     },  
-    "mongoOptions": {
-        "serverOptions": {
+    mongoOptions: {
+        serverOptions: {
         },
-        "dbOptions": {
-            "w": 1
+        dbOptions: {
+            w: 1
         }
     },
-    'flavor': "regular",
-    'debug': true,
+    flavor: "regular",
+    debug: true,
     humanReadableOutput: true,
     collectionOutputType: "json",
     urlPrefix: "",
