@@ -20,8 +20,8 @@
         }
     },
     "auth": {
-        "tokenDbMongoUri": "mongodb://user:pass@url:port/db",
-        "usersDbMongoUri": "mongodb://user:pass@url:port/db",
+        "usersDBConnection": "mongodb://localhost/auth",
+        "tokenDBConnection": "mongodb://localhost/auth",
         "universalAuthToken": "awesomesauce",
         "tokenExpirationTimeHours": 8
     },
