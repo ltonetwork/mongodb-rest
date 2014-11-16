@@ -126,11 +126,11 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
 
 The `urlPrefix` option allows specification of a prefix for the REST API URLs. This defaults to an empty string, meaning no prefix which was the original behavior. For example, given the following REST API URL:
 
- /database/collection
+	/database/collection
 
 Setting a URL prefix of `/blah` will change the example REST API URL to:
 
- /blah/database/collection
+	/blah/database/collection
 
 The URL prefix should allow the REST API to co-exist with another REST API and can also be used a very primitive form of security (by setting the prefix to a _secret key_).
 
