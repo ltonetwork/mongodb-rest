@@ -19,12 +19,6 @@
             "w": 1
         }
     },
-    "auth": {
-        "usersDBConnection": "mongodb://localhost/auth",
-        "tokenDBConnection": "mongodb://localhost/auth",
-        "universalAuthToken": "awesomesauce",
-        "tokenExpirationTimeHours": 8
-    },
 	"flavor": "regular",
 	"debug": true,
 	"humanReadableOutput": true,
