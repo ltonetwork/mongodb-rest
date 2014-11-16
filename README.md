@@ -4,6 +4,8 @@ Thanks so much to Tom for starting this project that has been so useful. I'm pla
 
 As Tom has said this REST server has no security and is not fit for use in production. So be warned! Security issues may or may not be addressed in the future. 
 
+**NOTE: Work on authentication and security is now in progress. If you have any thoughts on this please let us know!**
+
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
 mongodb-rest [![Build Status](https://travis-ci.org/codecapers/mongodb-rest.png)](https://travis-ci.org/codecapers/mongodb-rest)
@@ -14,6 +16,7 @@ A REST API server for MongoDB using Node, using Express and the native node.js M
 Recent Updates
 --------------
 
+Work has started on authentication, please see the Auth section for details.<br/>
 Now supports winston logging.<br/>
 The REST API now supports configuration of an optional URL prefix. This allows the REST API to live within an existing REST API if necessary.<br/>
 Added support for Access-Control-Allow-Credentials in the configuration.<br/>
@@ -176,13 +179,17 @@ Dependencies:
 Auth
 ----
 
-**This feature is currently under development**.
+**Authentication is currently under development**.
 
-mongodb-rest is setup with a basic token-based auth system, where users will POST to /login with the username and password, the server will verify the password using a secret database, and will hand the user an access token with which they can make api requests. This looks something like this:
+mongodb-rest is setup with a basic token-based auth system, where users will POST to /login with the username and password, the server will verify the password using a secret database, and will hand the user an access token they can use to make API requests. 
+
+An authorization token is specified via query parameter as follows:
+
 ```
-GET /db/collection?query={"name":"Mike"}&token=234d43fdg-34324d-dd-dsdf-f435d
+GET /db/collection?token=234d43fdg-34324d-dd-dsdf-f435d
 ```
-If you want to have authorized api calls, setup the `auth` block inside of config.json. It requires at least two fields:
+
+To enable add `auth` to config.json. It is an object that requires at least two fields:
 
 * usersDBConnection - mongodb uri where we'll store tokens.
 * tokenDBConnection - mongodb uri where we'll find a `users` collection to check usernames and passwords.
