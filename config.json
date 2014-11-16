@@ -19,6 +19,12 @@
             "w": 1
         }
     },
+    "auth": {
+        "tokenDbMongoUri": "mongodb://user:pass@url:port/db",
+        "usersDbMongoUri": "mongodb://user:pass@url:port/db",
+        "universalAuthToken": "awesomesauce",
+        "tokenExpirationTimeHours": 8
+    },
 	"flavor": "regular",
 	"debug": true,
 	"humanReadableOutput": true,
