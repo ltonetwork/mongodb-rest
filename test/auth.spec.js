@@ -49,7 +49,13 @@ describe('mongodb-rest', function () {
         },
         debug: true,
         humanReadableOutput: true,
-        collectionOutputType: 'json'
+        collectionOutputType: 'json',
+        auth: {
+            usersDBConnection: "mongodb://localhost:3000/mongodb_rest_test_auth",
+            tokenDBConnection: "mongodb://localhost:3000/mongodb_rest_test_auth",
+            universalAuthToken: "universal-token",
+
+        },
     };
 
     var restServer = require('../server');
@@ -91,22 +97,38 @@ describe('mongodb-rest', function () {
 
     describe("get collection", function ()
     {
-        it("can't get when not logged in", function () {
+        it("can't get with no token", function () {
 
         });
 
-        it("can get when logged in", function () {
+        it("can't get with invalid token", function () {
+
+        });
+
+        it("can get with valid token", function () {
+
+        });
+
+        it("can get with universal auth token", function () {
 
         });
     });
 
     describe("post", function ()
     {
-        it("can't post when not logged in", function () {
+        it("can't post with no token", function () {
 
         });
 
-        it("can post new item when logged in", function () {
+        it("can't post with invalid token", function () {
+
+        });
+
+        it("can post with valid token", function () {
+
+        });
+
+        it("can post with universal auth token", function () {
 
         });
     });
