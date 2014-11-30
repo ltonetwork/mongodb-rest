@@ -218,6 +218,11 @@ var del = function (collectionUrl, itemID, done, expectations) {
     return deferred.promise;
 };
 
+var nextCollectionNumber = 1;
+var nextDbNumber = 1;
+var url = 'http://localhost:3000/';
+var dbsUrl = url + 'dbs';
+
 module.exports = {
     dropDatabaseAndLoadFixture: dropDatabaseAndLoadFixture,
     dropDatabase: dropDatabase,
@@ -230,4 +235,25 @@ module.exports = {
     post: post,
     put: put,
     del: del,
+
+    genDbsUrl: function () {
+        return dbsUrl;
+    },
+
+    genTestDbName: function () {
+        return 'mongodb_rest_test' + nextDbNumber++;
+    },
+
+    genTestCollectionName: function () {
+        return 'mongodb_test_collection' + nextCollectionNumber++;
+    },
+
+    genCollectionsUrl: function (dbName) { 
+        return url + dbName;
+    },
+
+    genCollectionUrl: function (dbName, collectionName) {
+        return this.genCollectionsUrl(dbName) + '/' + collectionName;
+    },
+
 };
