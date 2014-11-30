@@ -63,7 +63,7 @@ describe('mongodb-rest', function () {
     var init = function (config, started) {
 
         // Open the rest server for each test.        
-        restServer.startServer(config, started);
+        restServer.startServer(config || defaultConfiguration, started);
     };
 
     afterEach(function () {
@@ -74,73 +74,75 @@ describe('mongodb-rest', function () {
 
     describe('login', function () {
 
-        it("when the user doesn't exist", function () {
-
+        it("when the user doesn't exist", function (done) {
+            done();
         });
 
-        it("when password isn't correct", function () {
-
-        });
-        
-        it("when there is no existing token", function () {
-
-        });
-
-        it("when there is an existing token", function () {
-
+        it("when password isn't correct", function (done) {
+            done();
         });
         
-        it("when there is an expired token", function () {
+        it("when there is no existing token", function (done) {
+            //init();
 
+            done();
+        });
+
+        it("when there is an existing token", function (done) {
+            done();
+        });
+        
+        it("when there is an expired token", function (done) {
+            done();
         });
     });
 
     describe("get collection", function ()
     {
-        it("can't get with no token", function () {
-
+        it("can't get with no token", function (done) {
+            done();
         });
 
-        it("can't get with invalid token", function () {
-
+        it("can't get with invalid token", function (done) {
+            done();
         });
 
-        it("can get with valid token", function () {
-
+        it("can get with valid token", function (done) {
+            done();
         });
 
-        it("can get with universal auth token", function () {
-
+        it("can get with universal auth token", function (done) {
+            done();
         });
     });
 
     describe("post", function ()
     {
-        it("can't post with no token", function () {
-
+        it("can't post with no token", function (done) {
+            done();
         });
 
-        it("can't post with invalid token", function () {
-
+        it("can't post with invalid token", function (done) {
+            done();
         });
 
-        it("can post with valid token", function () {
-
+        it("can post with valid token", function (done) {
+            done();
         });
 
-        it("can post with universal auth token", function () {
-
+        it("can post with universal auth token", function (done) {
+            done();
         });
     });
 
     describe("logout", function ()
     {
-        it("when logged in", function () {
-
+        it("when logged in", function (done) {
+            done();
         });
 
-        it("when not logged in", function () {
-
+        it("when not logged in", function (done) {
+            done();
         });
     });
 });
