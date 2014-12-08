@@ -29,6 +29,7 @@
     "express-csv": "^0.6.0",
     "extend": "^1.3.0",
     "mongodb": "= 1.4.7",
+    "mongojs": "^0.17.0",
     "node-uuid": "^1.4.1",
     "promised-mongo": "^0.11.1"
   },

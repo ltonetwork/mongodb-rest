@@ -4,7 +4,7 @@
 // Utils for testing.
 //
 
-var mongojs = require('mongojs');
+var mongo = require('mongojs');
 var async = require('async');
 var request = require('request');
 var Q = require('q');
@@ -14,7 +14,7 @@ var Q = require('q');
 //
 var dropDatabase = function (testDbName) {
     var deferred = Q.defer();
-    var db = mongojs(testDbName);
+    var db = mongo(testDbName);
 
     db.dropDatabase(function (err) {
 
@@ -37,7 +37,7 @@ var dropDatabase = function (testDbName) {
 var loadFixture = function (testDbName, testCollectionName, data) {    
     var deferred = Q.defer();
 
-    var db = mongojs(testDbName);
+    var db = mongo(testDbName);
 
     db.createCollection(testCollectionName, function (err, collection) {
         if (err) {
@@ -257,3 +257,4 @@ module.exports = {
     },
 
 };
+    
