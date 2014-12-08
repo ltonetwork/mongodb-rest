@@ -4,7 +4,7 @@
 // Utils for testing.
 //
 
-var mongo = require('mongojs');
+var mongo = require('promised-mongo');
 var async = require('async');
 var request = require('request');
 var Q = require('q');
