@@ -54,7 +54,7 @@
   "devDependencies": {
     "jasmine-node": "^1.14.5",
     "q": "^1.0.1",
-    "request-promise": "^0.3.2"
+    "request": "^2.49.0"
   },
   "scripts": {
     "test": "jasmine-node . --verbose"

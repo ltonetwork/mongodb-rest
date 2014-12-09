@@ -5,7 +5,7 @@
 //
 
 var mongo = require('promised-mongo');
-var request = require('request-promise');
+var request = require('request');
 var Q = require('q');
 
 //
