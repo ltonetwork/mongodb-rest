@@ -80,13 +80,13 @@ module.exports = {
     if (!config) {
       var configFilePath = path.join(curDir, "config.json");
       if (fs.existsSync(configFilePath)) {
-        logger.info("Loading configuration from: " + configFilePath);
+        logger.verbose("Loading configuration from: " + configFilePath);
         config = JSON.parse(fs.readFileSync(configFilePath));        
         config.logger = defaultLogger;
       }
       else {
-        logger.info("Using default configuration.");
-        logger.info("Please put config.json in current directory to customize configuration.");
+        logger.verbose("Using default configuration.");
+        logger.verbose("Please put config.json in current directory to customize configuration.");
         config = defaultConfig;
       }
     }
@@ -146,11 +146,11 @@ module.exports = {
     var host = config.server.address;
     var port = config.server.port;
 
-    logger.info('Starting mongodb-rest server: ' + host + ":" + port); 
-    logger.info('Connecting to db ' + config.db.host + ":" + config.db.port);
+    logger.verbose('Starting mongodb-rest server: ' + host + ":" + port); 
+    logger.verbose('Connecting to db ' + config.db.host + ":" + config.db.port);
 
     server = app.listen(port, host, function () {
-      logger.info('Now listening on: ' + host + ":" + port); 
+      logger.verbose('Now listening on: ' + host + ":" + port); 
 
       if (started) {
         started();
