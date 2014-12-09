@@ -5,7 +5,6 @@
 //
 
 var mongo = require('promised-mongo');
-var async = require('async');
 var request = require('request');
 var Q = require('q');
 
@@ -13,21 +12,27 @@ var Q = require('q');
 // Drop the specified test database.
 //
 var dropDatabase = function (testDbName) {
-    var deferred = Q.defer();
     var db = mongo(testDbName);
+    return db.dropDatabase()
+        .finally(function () {
+            db.close(); 
+        });
+};
 
-    db.dropDatabase(function (err) {
-
-        db.close();
-
+//
+// Save a document and return a promise.
+// This is a workaround, can't seem to do achieve this using the save fn in promised-mongo.
+var saveDocument = function (collection, document) {
+    var deferred = Q.defer();
+    collection.save(document, function (err, doc) {
         if (err) {
             deferred.reject(err);
         }
         else {
-            deferred.resolve();
+            deferred.resolve(doc);
         }
     });
-
+        
     return deferred.promise;
 };
 
@@ -35,49 +40,29 @@ var dropDatabase = function (testDbName) {
 // Load data into a db collection.
 // 
 var loadFixture = function (testDbName, testCollectionName, data) {    
-    var deferred = Q.defer();
 
     var db = mongo(testDbName);
-
-    db.createCollection(testCollectionName, function (err, collection) {
-        if (err) {
+    return db.createCollection(testCollectionName)
+        .then(function (collection) {
+            return Q.all(data.map(function (dataItem) {
+                return saveDocument(collection, dataItem);
+            }));
+        })
+        .finally(function () {
             db.close();
-            deferred.reject(err);
-            return;
-        }
-
-        async.each(data, 
-            // Single async operation.
-            function (item, callback) {
-                collection.save(item, callback);                        
-            }, 
-            // Callback after all items saved.
-            function (err) {       
-                db.close();
-                if (err) {
-                    deferred.reject(err);
-                }
-                else {
-                    deferred.resolve();
-                }
-            }
-        );
-    });
-
-    return deferred.promise;
+        });
 };
 
 //
 // Load data into a db collection.
 // 
 var dropDatabaseAndLoadFixture = function (testDbName, testCollectionName, data) {    
-    var deferred = Q.defer();
-
     return dropDatabase(testDbName)
         .then(function () {
             return loadFixture(testDbName, testCollectionName, data);
         });
 };
+
 //
 // Request http document from the rest api.
 //

@@ -6,7 +6,6 @@
 
 var utils = require('./testutils');
 
-var request = require('request');
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 
@@ -101,12 +100,12 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
             })
-            .then(function (result) {
-                expect(result.data).toEqual([])
-                done();
-            })
             .catch(function (err) {
                 done(err);
+            })
+            .done(function (result) {
+                expect(result.data).toEqual([])
+                done();
             });
     });
 
@@ -129,12 +128,12 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return requestJson(utils.genDbsUrl());
             })
-            .then(function (result) {
-                expect(result.data).toContain(testDbName);
-                done();
-            })
             .catch(function (err) {
                 done(err);
+            })
+            .done(function (result) {
+                expect(result.data).toContain(testDbName);
+                done();
             });
     });
 
@@ -164,16 +163,17 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return requestJson(collectionsUrl);
             })
-            .then(function (result) {
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
                 var collectionNames = result.data;
                 expect(collectionNames.length).toBeGreaterThan(1);
                 expect(collectionNames).toContain(testcol1);
                 expect(collectionNames).toContain(testcol2);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
+
     });
 
     it('should retreive empty array from empty db collection', function (done) {
@@ -187,12 +187,12 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
             })
-            .then(function (result) {
-                expect(result.data).toEqual([])
-                done();
-            })
             .catch(function (err) {
                 done(err);
+            })
+            .done(function (result) {
+                expect(result.data).toEqual([])
+                done();
             });
     });
 
@@ -219,7 +219,10 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
             })
-            .then(function (result) {
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
                 var data = result.data;
                 expect(data.length).toBe(3);
                 data.sort(function (a, b) { return a.item-b.item; }); // Sort results, can't guarantee order otherwise.
@@ -227,9 +230,6 @@ describe('mongodb-rest', function () {
                 expect(data[1].item).toBe(2);
                 expect(data[2].item).toBe(3);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
     });
 
@@ -245,12 +245,12 @@ describe('mongodb-rest', function () {
                 var itemID = ObjectID();
                 return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
-            .then(function (result) {
-                expect(result.response.statusCode).toBe(404);
-                done();
-            })
             .catch(function (err) {
                 done(err);
+            })
+            .done(function (result) {
+                expect(result.response.statusCode).toBe(404);
+                done();
             });
     });
 
@@ -282,16 +282,16 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return itemHttp(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
-            .then(function (result) {
-                expect(result.response.statusCode).toBe(404);
-                done();
-            })
             .catch(function (err) {
                 done(err);
+            })
+            .done(function (result) {
+                expect(result.response.statusCode).toBe(404);
+                done();
             });
     });
 
-    it('can retreive csv format data from db collection', function (done) {
+   it('can retreive csv format data from db collection', function (done) {
 
         var csvConfiguration = extend(true, {}, defaultConfiguration);
         csvConfiguration.collectionOutputType = 'csv';
@@ -317,10 +317,10 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return requestHttp(utils.genCollectionUrl(testDbName, testCollectionName));
             })
-            .then(function (result) {
-
-
-
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
                 var lines = result.data.trim().split('\r\n');
                 expect(lines.length).toBe(4);
 
@@ -349,9 +349,6 @@ describe('mongodb-rest', function () {
                 expect(items[1].item).toBe(2);
                 expect(items[2].item).toBe(3);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
     });
 
@@ -381,7 +378,10 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return requestHttp(utils.genCollectionUrl(testDbName, testCollectionName) + "?output=csv");
             })
-            .then(function (result) {
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
 
                 var lines = result.data.trim().split('\r\n');
                 expect(lines.length).toBe(4);
@@ -411,9 +411,6 @@ describe('mongodb-rest', function () {
                 expect(items[1].item).toBe(2);
                 expect(items[2].item).toBe(3);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
     });
 
@@ -445,13 +442,13 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
-            .then(function (result) {
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
                 expect(result.data._id).toEqual(itemID.toString());
                 expect(result.data.item).toBe(2);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
     });
 
@@ -476,13 +473,13 @@ describe('mongodb-rest', function () {
 
                 return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
             })
-            .then(function (result) {
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
                 expect(result.data.length).toBe(1);
                 expect(result.data[0].value).toBe(postData.value);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
     });
 
@@ -525,13 +522,13 @@ describe('mongodb-rest', function () {
 
                 return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
-            .then(function (result) {
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function (result) {
                 expect(result.data._id).toEqual(itemID.toString());
                 expect(result.data.item).toBe(50);
                 done();
-            })
-            .catch(function (err) {
-                done(err);
             });
     });
 
@@ -575,12 +572,12 @@ describe('mongodb-rest', function () {
 
                 return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
             })
-            .then(function (result) {
-                expect(result.data.length).toBe(2);
-                done();
-            })
             .catch(function (err) {
                 done(err);
+            })
+            .done(function (result) {
+                expect(result.data.length).toBe(2);
+                done();
             });
     });
 
