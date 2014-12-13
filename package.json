@@ -53,6 +53,7 @@
   },
   "devDependencies": {
     "jasmine-node": "^1.14.5",
+    "promised-mongo": "^0.11.1",
     "q": "^1.0.1",
     "request": "^2.49.0"
   },

@@ -1,30 +1,16 @@
 'use strict';
-
 //
 // Integration tests for authentication.
 //
 
-var utils = require('./testutils');
-
-var request = require('request');
-var mongodb = require('mongodb');
-var ObjectID = mongodb.ObjectID;
-
-var load = utils.loadFixture;
-var dropAndLoad = utils.dropDatabaseAndLoadFixture;
-var dropDatabase = utils.dropDatabase;
-var requestHttp = utils.requestHttp;
-var requestJson = utils.requestJson;
-var collectionJson = utils.collectionJson;
-var itemJson = utils.itemJson;
-var itemHttp = utils.itemHttp;
-var post = utils.post;
-var put = utils.put;
-var del = utils.del;
-var Q = require('q');
-var extend = require("extend");
+var test = require('./testutils');
 
 describe('mongodb-rest', function () {
+
+    var authDbName = 'mongodb_rest_test_auth';
+    var authDbConnectionString = "mongodb://localhost/" + authDbName;
+    var usersCollectionName = "users";
+    var baseUrl = 'http://localhost:3000/';
 
     // Default configuration to use for some tests.
     var defaultConfiguration = {
@@ -51,54 +37,158 @@ describe('mongodb-rest', function () {
         humanReadableOutput: true,
         collectionOutputType: 'json',
         auth: {
-            usersDBConnection: "mongodb://localhost:3000/mongodb_rest_test_auth",
-            tokenDBConnection: "mongodb://localhost:3000/mongodb_rest_test_auth",
+            usersDBConnection: authDbConnectionString,
+            tokenDBConnection: authDbConnectionString,
             universalAuthToken: "universal-token",
 
         },
     };
 
-    var restServer = require('../server');
-
-    var init = function (config, started) {
-
-        // Open the rest server for each test.        
-        restServer.startServer(config || defaultConfiguration, started);
-    };
-
-    afterEach(function () {
-
-        // Close the rest server after each test.
-        restServer.stopServer();
-    });
-
     describe('login', function () {
 
-        it("when the user doesn't exist", function (done) {
-            done();
+        var loginUrl = baseUrl + "login";
+
+        it('error when user not specified', function (done) {
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    // Login request.
+                    return test.post(baseUrl + 'login', {
+                        password: 'password-that-doesnt-matter',
+                    });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(400);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
-        it("when password isn't correct", function (done) {
-            done();
+        it('error when password not specified', function (done) {
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    // Login request.
+                    return test.post(baseUrl + 'login', {
+                        email: 'email-that-doesnt-matter',
+                    });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(400);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
-        
-        it("when there is no existing token", function (done) {
-            //init();
 
-            done();
+        it("fails when the user doesn't exist", function (done) {
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    // Login request.
+                    return test.post(baseUrl + 'login', {
+                        email: 'user-that-doesnt-exist',
+                        password: 'password-that-doesnt-matter',
+                    });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(404);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
-        it("when there is an existing token", function (done) {
-            done();
+        it("fails when password isn't correct", function (done) {
+            var userName = 'some-user';
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    // Load user into auth db.
+                    return test.dropDatabaseAndLoadFixture(authDbName, usersCollectionName, [
+                            {
+                                email: userName,
+                                password: 'the-correct-password',
+                            }
+                    ]);
+                })
+                .then(function () {
+                    // Login request.
+                    return test.post(baseUrl + 'login', {
+                        email: userName,
+                        password: 'the-incorrect-password',
+                    });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(401);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
-        
-        it("when there is an expired token", function (done) {
-            done();
+
+        it("can login when there is no existing token", function (done) {
+
+            var userName = 'some-user';
+            var password = 'some-password';
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    // Load user into auth db.
+                    return test.dropDatabaseAndLoadFixture(authDbName, usersCollectionName, [
+                            {
+                                email: userName,
+                                password: password,
+                            }
+                    ]);
+                })
+                .then(function () {
+                    // Login request.
+                    return test.post(baseUrl + 'login', {
+                        email: userName,
+                        password: password,
+                    });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
+
         });
     });
 
-    describe("get collection", function ()
-    {
+/*
+    describe("get collection", function () {
         it("can't get with no token", function (done) {
             done();
         });
@@ -116,8 +206,7 @@ describe('mongodb-rest', function () {
         });
     });
 
-    describe("post", function ()
-    {
+    describe("post", function () {
         it("can't post with no token", function (done) {
             done();
         });
@@ -135,8 +224,7 @@ describe('mongodb-rest', function () {
         });
     });
 
-    describe("logout", function ()
-    {
+    describe("logout", function () {
         it("when logged in", function (done) {
             done();
         });
@@ -145,4 +233,5 @@ describe('mongodb-rest', function () {
             done();
         });
     });
+*/
 });

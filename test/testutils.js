@@ -14,7 +14,7 @@ var Q = require('q');
 var dropDatabase = function (testDbName) {
     var db = mongo(testDbName);
     return db.dropDatabase()
-        .finally(function () {
+        .then(function () {
             db.close(); 
         });
 };
@@ -48,7 +48,7 @@ var loadFixture = function (testDbName, testCollectionName, data) {
                 return saveDocument(collection, dataItem);
             }));
         })
-        .finally(function () {
+        .then(function () {
             db.close();
         });
 };
@@ -130,18 +130,19 @@ var itemHttp = function (collectionUrl, itemID) {
 };
 
 //
-// Post an item and then retreive it back from db.
+// Invoke a HTTP PUT.
 //
-var post = function (url, data, done, expectations) {
+var post = function (url, data) {
     var deferred = Q.defer();
 
-    request.post(
-        {
+    request.post({
             url: url, 
-            json: data,
-        }, 
+            json: true,
+            body: data,
+        },
         function (err, response, body) {
             if (err) {
+                console.log('failing pormise');
                 deferred.reject(err);
                 return;
             }
@@ -157,9 +158,9 @@ var post = function (url, data, done, expectations) {
 };
 
 //
-// Update a db item then retrieve it back.
+// Invoke a HTTP PUT.
 //
-var put = function (collectionUrl, itemID, data, done, expectations) {
+var put = function (collectionUrl, itemID, data) {
     var deferred = Q.defer();
     var itemUrl = collectionUrl + "/" + itemID.toString();
     request.put({
@@ -181,9 +182,9 @@ var put = function (collectionUrl, itemID, data, done, expectations) {
 };
 
 //
-// Delete a db item then attempt to retrieve it back.
+// Inovke a HTTP DELETE.
 //
-var del = function (collectionUrl, itemID, done, expectations) {
+var del = function (collectionUrl, itemID) {
     var deferred = Q.defer();
     var itemUrl = collectionUrl + "/" + itemID.toString();
     request.del({
@@ -208,6 +209,8 @@ var nextDbNumber = 1;
 var url = 'http://localhost:3000/';
 var dbsUrl = url + 'dbs';
 
+var restServer = require('../server');
+
 module.exports = {
     dropDatabaseAndLoadFixture: dropDatabaseAndLoadFixture,
     dropDatabase: dropDatabase,
@@ -220,6 +223,33 @@ module.exports = {
     post: post,
     put: put,
     del: del,
+
+    // Start the rest server.
+    startServer: function (config) {
+        var deferred = Q.defer();
+
+        // Open the rest server for each test.        
+        restServer.startServer(config || defaultConfiguration, function (err) {
+            if (err) {
+                deferred.reject(err);
+            }
+            else {
+                deferred.resolve();
+            }
+        });
+
+        return deferred
+            .promise;
+            /* why???
+            .finally(function () {
+                console.log('shutting down server!!'); //fio:
+                restServer.stopServer();
+            });*/
+    },
+
+    stopServer: function () {
+        restServer.stopServer();
+    },
 
     genDbsUrl: function () {
         return dbsUrl;
