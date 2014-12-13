@@ -10,6 +10,7 @@ describe('mongodb-rest', function () {
     var authDbName = 'mongodb_rest_test_auth';
     var authDbConnectionString = "mongodb://localhost/" + authDbName;
     var usersCollectionName = "users";
+    var tokensCollectionName = "tokens"
     var baseUrl = 'http://localhost:3000/';
 
     // Default configuration to use for some tests.
@@ -175,6 +176,49 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(200);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
+        });
+
+        it("can login when there is an existing token reuses that token", function (done) {
+
+            var userName = 'some-user';
+            var password = 'some-password';
+            var userId = 'user-id';
+            var existingToken = 'token-id';
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    // Load user into auth db.
+                    return test.dropDatabaseAndLoadFixture(authDbName, usersCollectionName, [{
+                        _id: userId,
+                        email: userName,
+                        password: password,
+                    }]);
+                })
+                .then(function () {
+                    return test.loadFixture(authDbName, tokensCollectionName, [{
+                        token: existingToken,
+                        userId: userId,
+                        created: new Date(),
+                    }]);
+                })
+                .then(function () {
+                    // Login request.
+                    return test.post(baseUrl + 'login', {
+                        email: userName,
+                        password: password,
+                    });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data.token).toBe(existingToken);
                     done();                    
                 })
                 .catch(function (err) {
