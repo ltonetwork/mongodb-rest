@@ -437,6 +437,7 @@ describe('mongodb-rest', function () {
                     expect(result.response.statusCode).toBe(200); 
                     expect(result.data.length).toBe(1);
                     expect(result.data[0].some).toBe('data'); 
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
@@ -472,6 +473,7 @@ describe('mongodb-rest', function () {
                     expect(result.response.statusCode).toBe(200); 
                     expect(result.data.length).toBe(1);
                     expect(result.data[0].some).toBe('data'); 
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
