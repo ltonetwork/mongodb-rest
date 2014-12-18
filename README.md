@@ -1,35 +1,16 @@
-This project is no longer abandoned!
-
-Thanks so much to Tom for starting this project that has been so useful. I'm planning on moving this project forward now and hopefully others are willing to help.
-
-As Tom has said this REST server has no security and is not fit for use in production. So be warned! Security issues may or may not be addressed in the future. 
-
-**NOTE: Work on authentication and security is now in progress. If you have any thoughts on this please let us know!**
-
-I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
-
 mongodb-rest [![Build Status](https://travis-ci.org/codecapers/mongodb-rest.png)](https://travis-ci.org/codecapers/mongodb-rest)
 ============
 
-A REST API server for MongoDB using Node, using Express and the native node.js MongoDB driver.
+A simple but incredibly useful REST API server for MongoDB using Node, using Express and the native node.js MongoDB driver.
+
+As Tom has said this REST server has no security and is not fit for use in production. So be warned! Work is currently being done to improve the security of mongodb-rest, but this is still a work-in-progress.
+
+I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
 Recent Updates
 --------------
 
-Work has started on authentication, please see the Auth section for details.<br/>
-Now supports winston logging.<br/>
-The REST API now supports configuration of an optional URL prefix. This allows the REST API to live within an existing REST API if necessary.<br/>
-Added support for Access-Control-Allow-Credentials in the configuration.<br/>
-I have removed the _flavor_ option of mongodb-rest. Sorry if you were using this, I think this kind of transformation is best done in the client.<br/>
-mongodb-rest now works with dependencies updated to latest versions.<br/>
-Added better error checking for mongodb-rest configuration. Also some logical defaults when configuration is incomplete.<br/>
-Added handling for mongodb errors.<br/>
-Removed Jade dependency.<br/>
-Can now get a list of database names.<br/>
-Can now get a list of collection names for a specified database.<br/>
-It is now easier to start and configure the server procedurally.<br/>
-REST API output is now human readable by default.<br/>
-MongoBD server and database options can now be specified in the config file.<br/>
+A simple token-based authentication has been added to mongodb-rest (thanks to @ZECTBynmo). This is a prototype feature only and may change in the future. I am considering making authentication plugin-based so you can roll your own if necessary. If you have any thoughts on how this should work please let us know.
 
 Installation
 ------------
@@ -72,7 +53,7 @@ You can optionally pass in a configuration object:
 Configuration
 -------------
 
-When starting from the command line you should have `config.json` in the current working directory.
+When starting from the command line you should have `config.json` in the current working directory. The project includes an example configuration file.
 
 When starting the server programmatically you can pass in a Javascript object for mongodb-rest configuration.
 
@@ -137,14 +118,12 @@ Setting a URL prefix of `/blah` will change the example REST API URL to:
 
 The URL prefix should allow the REST API to co-exist with another REST API and can also be used a very primitive form of security (by setting the prefix to a _secret key_).
 
-
 Logging
 -------
 
-Winston logging is now supported if you configure the REST API programmatically. When you call `startServer` and pass in configuration options set the `logger` option to your Winston logger. Mongodb-rest uses the following functions: verbose, info, warn and error.
+Winston logging is supported if you configure the REST API programmatically. When you call `startServer` and pass in configuration options set the `logger` option to your Winston logger. Mongodb-rest uses the following functions: verbose, info, warn and error.
 
 Please see the Winston documentation for more setup details: https://github.com/flatiron/winston
-
 
 Supported REST API
 ------------------
@@ -163,25 +142,21 @@ etc)
 * `PUT /<db>/<collection>/id` - Update document with _id_ (updated document in PUT body)
 * `DELETE /<db>/<collection>/id` - Delete document with _id_
 
-Flavors:
-
-* Setup "sproutcore" as flavor, it will then change _id as returned by MongoDB into guid, as used by SproutCore, this allows for simpler DataSources.
-* Setup "nounderscore" as flavor, it will then change _id into id.
-
 Content Type:
 
 * Please make sure `application/json` is used as Content-Type when using POST/PUT with request bodies.
 
-Dependencies:
+Dependencies
+------------
 
 * Are indicated in package.json. 
 
 Auth
 ----
 
-**Authentication is currently under development**.
+**WARNING: This is a prototype feature and may change in the future**.
 
-mongodb-rest is setup with a basic token-based auth system, where users will POST to /login with the username and password, the server will verify the password using a secret database, and will hand the user an access token they can use to make API requests. 
+mongodb-rest supports a simple token-based auth system, where users will POST to /login with the username and password, the server will verify the password using a secret database, and will hand the user an access token they can use to make API requests. 
 
 An authorization token is specified via query parameter as follows:
 
@@ -189,7 +164,7 @@ An authorization token is specified via query parameter as follows:
 GET /db/collection?token=234d43fdg-34324d-dd-dsdf-f435d
 ```
 
-To enable add `auth` to config.json. It is an object that requires at least two fields:
+To enable authentication add `auth` to config.json. It is an object that requires at least two fields:
 
 * usersDBConnection - mongodb uri where we'll store tokens.
 * tokenDBConnection - mongodb uri where we'll find a `users` collection to check usernames and passwords.
@@ -199,14 +174,21 @@ Optional parameters:
 * universalAuthToken - Specifies a token that can be used for universal authorization.
 * tokenExpirationTimeHours - Specifies the timeout in hours before tokens must be renewed by 'login'.
 
+Getting the Code
+----------------
+
+You can get the code by forking/cloning the repo at:
+
+ https://github.com/codecapers/mongodb-rest.git
+
 Testing
 -------
 
 Integration tests use jasmine-node. 
 
-Run this command from the main folder: 
->jasmine-node .\ --verbose
+Run 'jasmine-node' from the main folder: 
 
+>jasmine-node .\ --verbose
 
 Travis-CI
 ---------
