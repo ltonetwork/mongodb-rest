@@ -12,6 +12,7 @@ describe('mongodb-rest', function () {
     var usersCollectionName = "users";
     var tokensCollectionName = "tokens"
     var baseUrl = 'http://localhost:3000/';
+    var universalAuthToken = "universal-token";
 
     // Default configuration to use for some tests.
     var defaultConfiguration = {
@@ -40,7 +41,7 @@ describe('mongodb-rest', function () {
         auth: {
             usersDBConnection: authDbConnectionString,
             tokenDBConnection: authDbConnectionString,
-            universalAuthToken: "universal-token",
+            universalAuthToken: universalAuthToken,
 
         },
     };
@@ -227,29 +228,131 @@ describe('mongodb-rest', function () {
                 .done(function() {
                     test.stopServer();    
                 });
-
         });
     });
 
-/*
     describe("get collection", function () {
         it("can't get with no token", function (done) {
-            done();
+
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName);
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabaseAndLoadFixture(dbName, collectionName, [{
+                        some: 'data',
+                    }]);
+                })
+                .then(function () {
+                    return test.collectionJson(collectionUrl);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(401);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
         it("can't get with invalid token", function (done) {
-            done();
+
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=1234';
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabaseAndLoadFixture(dbName, collectionName, [{
+                        some: 'data',
+                    }]);
+                })
+                .then(function () {
+                    return test.collectionJson(collectionUrl);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(401);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
         it("can get with valid token", function (done) {
-            done();
+
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=1234';
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabaseAndLoadFixture(authDbName, tokensCollectionName, [{
+                        token: '1234',
+                    }]);
+                })
+                .then(function () {
+                    return test.dropDatabaseAndLoadFixture(dbName, collectionName, [{
+                        some: 'data',
+                    }]);
+                })
+                .then(function () {
+                    return test.collectionJson(collectionUrl);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data.length).toBe(1);
+                    expect(result.data[0].some).toBe('data');
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
         it("can get with universal auth token", function (done) {
-            done();
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=' + universalAuthToken
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    return test.dropDatabaseAndLoadFixture(dbName, collectionName, [{
+                        some: 'data',
+                    }]);
+                })
+                .then(function () {
+                    return test.collectionJson(collectionUrl);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data.length).toBe(1);
+                    expect(result.data[0].some).toBe('data');
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
     });
 
+    /*
     describe("post", function () {
         it("can't post with no token", function (done) {
             done();
