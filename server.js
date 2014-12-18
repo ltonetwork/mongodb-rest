@@ -55,7 +55,6 @@ var defaultConfig = {
             w: 1
         }
     },
-    flavor: "regular",
     debug: true,
     humanReadableOutput: true,
     collectionOutputType: "json",
