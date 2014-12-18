@@ -1,0 +1,31 @@
+{
+	"db": {
+		"port": 27017,
+		"host": "localhost"
+	},
+	"server": {
+		"port": 3000,
+		"address": "0.0.0.0"
+	},
+	"accessControl": {
+		"allowOrigin": "*",
+		"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
+        "allowCredentials": false
+	},
+    "mongoOptions": {
+        "serverOptions": {
+        },
+        "dbOptions": {
+            "w": 1
+        }
+    },
+	"flavor": "regular",
+	"debug": true,
+	"humanReadableOutput": true,
+	"collectionOutputType": "json",
+	"urlPrefix": "",
+	"auth": {
+		"usersDBConnection": "mongodb://localhost/auth",
+		"tokenDBConnection": "mongodb://localhost/auth"
+	}
+}
