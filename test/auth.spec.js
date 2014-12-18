@@ -263,7 +263,7 @@ describe('mongodb-rest', function () {
 
             var dbName = test.genTestDbName();
             var collectionName = test.genTestCollectionName();
-            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=1234';
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=invalid';
 
             test.startServer(defaultConfiguration)
                 .then(function () {
@@ -352,33 +352,134 @@ describe('mongodb-rest', function () {
         });
     });
 
-    /*
     describe("post", function () {
         it("can't post with no token", function (done) {
-            done();
-        });
+   
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName);
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    return test.dropDatabase(dbName);
+                })
+                .then(function () {
+                    return test.post(collectionUrl, { some: 'data' });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(401);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
+      });
 
         it("can't post with invalid token", function (done) {
-            done();
+
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=invalid';
+
+            test.startServer(defaultConfiguration)
+                .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    return test.dropDatabase(dbName);
+                })
+                .then(function () {
+                    return test.post(collectionUrl, { some: 'data' });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(401);
+                    done();                    
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
         it("can post with valid token", function (done) {
-            done();
+
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=1234';
+
+            test.startServer(defaultConfiguration)
+               .then(function () {
+                    return test.dropDatabaseAndLoadFixture(authDbName, tokensCollectionName, [{
+                        token: '1234',
+                    }]);
+                })
+                .then(function () {
+                    return test.dropDatabase(dbName);
+                })
+                .then(function () {
+                    return test.post(collectionUrl, { some: 'data' });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(201);
+                })
+                .then(function () {
+                    return test.collectionJson(collectionUrl);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200); 
+                    expect(result.data.length).toBe(1);
+                    expect(result.data[0].some).toBe('data'); 
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
 
         it("can post with universal auth token", function (done) {
-            done();
+
+            var dbName = test.genTestDbName();
+            var collectionName = test.genTestCollectionName();
+            var collectionUrl = test.genCollectionUrl(dbName, collectionName) + '?token=' + universalAuthToken;
+
+            test.startServer(defaultConfiguration)
+               .then(function () {
+                    return test.dropDatabase(authDbName);
+                })
+                .then(function () {
+                    return test.dropDatabase(dbName);
+                })
+                .then(function () {
+                    return test.post(collectionUrl, { some: 'data' });
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(201);
+                })
+                .then(function () {
+                    return test.collectionJson(collectionUrl);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200); 
+                    expect(result.data.length).toBe(1);
+                    expect(result.data[0].some).toBe('data'); 
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function() {
+                    test.stopServer();    
+                });
         });
     });
 
-    describe("logout", function () {
-        it("when logged in", function (done) {
-            done();
-        });
-
-        it("when not logged in", function (done) {
-            done();
-        });
-    });
-*/
 });
