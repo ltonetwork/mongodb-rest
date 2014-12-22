@@ -25,6 +25,10 @@
 	"urlPrefix": "",
 	"auth": {
 		"usersDBConnection": "mongodb://localhost/auth",
-		"tokenDBConnection": "mongodb://localhost/auth"
+		"usersCollection": "users",
+		"tokenDBConnection": "mongodb://localhost/auth",
+		"tokensCollectionName": "tokens",
+		"universalAuthToken": "this-token-grants-universal-access-so-please-change-it",
+		"tokenExpirationTimeHours": 8
 	}
 }
