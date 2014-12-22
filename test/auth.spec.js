@@ -81,7 +81,7 @@ describe('mongodb-rest', function () {
                 .then(function () {
                     // Login request.
                     return test.post(baseUrl + 'login', {
-                        email: 'email-that-doesnt-matter',
+                        username: 'username-that-doesnt-matter',
                     });
                 })
                 .then(function (result) {
@@ -105,7 +105,7 @@ describe('mongodb-rest', function () {
                 .then(function () {
                     // Login request.
                     return test.post(baseUrl + 'login', {
-                        email: 'user-that-doesnt-exist',
+                        username: 'user-that-doesnt-exist',
                         password: 'password-that-doesnt-matter',
                     });
                 })
@@ -129,7 +129,7 @@ describe('mongodb-rest', function () {
                     // Load user into auth db.
                     return test.dropDatabaseAndLoadFixture(authDbName, usersCollectionName, [
                             {
-                                email: userName,
+                                username: userName,
                                 password: 'the-correct-password',
                             }
                     ]);
@@ -137,7 +137,7 @@ describe('mongodb-rest', function () {
                 .then(function () {
                     // Login request.
                     return test.post(baseUrl + 'login', {
-                        email: userName,
+                        username: userName,
                         password: 'the-incorrect-password',
                     });
                 })
@@ -163,7 +163,7 @@ describe('mongodb-rest', function () {
                     // Load user into auth db.
                     return test.dropDatabaseAndLoadFixture(authDbName, usersCollectionName, [
                             {
-                                email: userName,
+                                username: userName,
                                 password: password,
                             }
                     ]);
@@ -171,7 +171,7 @@ describe('mongodb-rest', function () {
                 .then(function () {
                     // Login request.
                     return test.post(baseUrl + 'login', {
-                        email: userName,
+                        username: userName,
                         password: password,
                     });
                 })
@@ -199,7 +199,7 @@ describe('mongodb-rest', function () {
                     // Load user into auth db.
                     return test.dropDatabaseAndLoadFixture(authDbName, usersCollectionName, [{
                         _id: userId,
-                        email: userName,
+                        username: userName,
                         password: password,
                     }]);
                 })
@@ -213,7 +213,7 @@ describe('mongodb-rest', function () {
                 .then(function () {
                     // Login request.
                     return test.post(baseUrl + 'login', {
-                        email: userName,
+                        username: userName,
                         password: password,
                     });
                 })
