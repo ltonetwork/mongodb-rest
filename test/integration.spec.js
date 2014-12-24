@@ -4,22 +4,20 @@
 // Integration tests for mongodb-rest.
 //
 
-var utils = require('./testutils');
+var test = require('./testutils');
 
 var mongodb = require('mongodb');
 var ObjectID = mongodb.ObjectID;
 
-var load = utils.loadFixture;
-var dropAndLoad = utils.dropDatabaseAndLoadFixture;
-var dropDatabase = utils.dropDatabase;
-var requestHttp = utils.requestHttp;
-var requestJson = utils.requestJson;
-var collectionJson = utils.collectionJson;
-var itemJson = utils.itemJson;
-var itemHttp = utils.itemHttp;
-var post = utils.post;
-var put = utils.put;
-var del = utils.del;
+var load = test.loadFixture;
+var dropAndLoad = test.dropDatabaseAndLoadFixture;
+var requestHttp = test.requestHttp;
+var collectionJson = test.collectionJson;
+var itemJson = test.itemJson;
+var itemHttp = test.itemHttp;
+var post = test.post;
+var put = test.put;
+var del = test.del;
 var Q = require('q');
 var extend = require("extend");
 
@@ -27,10 +25,7 @@ describe('mongodb-rest', function () {
 
     // Default configuration to use for some tests.
     var defaultConfiguration = {
-        db: {
-            port: 27017,
-            host: "localhost"
-        },
+        db: "mongodb://localhost:27017",
         server: {
             port: 3000,
             address: "0.0.0.0"
@@ -51,29 +46,27 @@ describe('mongodb-rest', function () {
         collectionOutputType: 'json'
     };
 
-    var restServer = require('../server');
-
-    var init = function (config, started) {
-
-        // Open the rest server for each test.        
-        restServer.startServer(config, started);
-    };
-
-    afterEach(function () {
-
-        // Close the rest server after each test.
-        restServer.stopServer();
-    });
-
     it('can start server without server options', function (done) {
 
         var configurationNoServer = extend(true, {}, defaultConfiguration);
         delete configurationNoServer.server;
 
         expect(function () {
-            init(configurationNoServer, done);
+            test
+                .startServer(configurationNoServer)
+                .then(function () {
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();    
+                });
+
         }).not.toThrow();
     });
+
     it('can start server without server host or port', function (done) {
 
         var configurationNoServer = extend(true, {}, defaultConfiguration);
@@ -81,24 +74,35 @@ describe('mongodb-rest', function () {
         delete configurationNoServer.server.port;
 
         expect(function () {
-            init(configurationNoServer, done);
+            test
+                .startServer(configurationNoServer)
+                .then(function () {
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();    
+                });
         }).not.toThrow();
     });
 
     it('can hit server without db options', function (done) {
 
         var configurationNoDb = extend(true, {}, defaultConfiguration);
-        delete configurationNoDb.db.host;
-        delete configurationNoDb.db.port;
+        delete configurationNoDb.db;
 
-        init(configurationNoDb, done);
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
-
-        dropAndLoad(testDbName, testCollectionName, [])
+        test
+            .startServer(configurationNoDb)
             .then(function () {
-                return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
+                return dropAndLoad(testDbName, testCollectionName, []);
+            })
+            .then(function () {
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
                 expect(result.data).toEqual([])
@@ -107,27 +111,62 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
+    });
+
+    it('can hit server with old-style db option', function (done) {
+
+        var oldStyleConfig = extend(true, {}, defaultConfiguration);
+        oldStyleConfig.db = {
+            port: 27017,
+            host: "localhost",
+        };
+
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
+
+        test
+            .startServer(oldStyleConfig)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, []);    
+            })
+            .then(function () {
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([])
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can retrieve names of databases', function (done) {
 
-        init();
+        var testDbName = test.genTestDbName();
 
-        var testDbName = utils.genTestDbName();
-
-        dropDatabase(testDbName)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return requestJson(utils.genDbsUrl());
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return test.requestJson(test.genDbsUrl());
             })
             .then(function (result) {                
                 expect(result.data).not.toContain(testDbName);
             })
             .then(function () {
-                return dropAndLoad(testDbName, utils.genTestCollectionName(), []);
+                return dropAndLoad(testDbName, test.genTestCollectionName(), []);
             })
             .then(function () {
-                return requestJson(utils.genDbsUrl());
+                return test.requestJson(test.genDbsUrl());
             })
             .then(function (result) {
                 expect(result.data).toContain(testDbName);
@@ -136,22 +175,26 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can retrieve names of collections', function (done) {
 
-        init();
-
         var testcol1 = "testcol1";
         var testcol2 = "testcol2";
 
-        var testDbName = utils.genTestDbName();
-        var collectionsUrl = utils.genCollectionsUrl(testDbName);
+        var testDbName = test.genTestDbName();
+        var collectionsUrl = test.genCollectionsUrl(testDbName);
 
-        dropDatabase(testDbName)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return requestJson(collectionsUrl);
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return test.requestJson(collectionsUrl);
             })
             .then(function (result) {                
                 expect(result.data.length).toBe(0);
@@ -163,7 +206,7 @@ describe('mongodb-rest', function () {
                 return load(testDbName, testcol2, [ { blah: 2 } ]);
             })
             .then(function () {
-                return requestJson(collectionsUrl);
+                return test.requestJson(collectionsUrl);
             })
             .then(function (result) {
                 var collectionNames = result.data;
@@ -175,20 +218,23 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
-
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('should retreive empty array from empty db collection', function (done) {
 
-        init();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
-
-        dropAndLoad(testDbName, testCollectionName, [])
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
+                return dropAndLoad(testDbName, testCollectionName, []);
+            })
+            .then(function () {
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
                 expect(result.data).toEqual([])
@@ -197,12 +243,12 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can retreive array from db collection', function (done) {
-
-        init();
 
         var testData = [
             {
@@ -216,12 +262,16 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, testData)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
                 var data = result.data;
@@ -235,20 +285,24 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can handle retreiving document from empty db collection', function (done) {
 
-        init();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
-
-        dropAndLoad(testDbName, testCollectionName, [])
+        test
+            .startServer(defaultConfiguration)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, []);
+            })
             .then(function () {
                 var itemID = ObjectID();
-                return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
+                return itemJson(test.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(404);
@@ -257,12 +311,12 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can handle retreiving non-existent document from non-empty db collection', function (done) {
-
-        init();
 
         var itemID = ObjectID();
 
@@ -281,12 +335,16 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, [])
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return itemHttp(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
+                return dropAndLoad(testDbName, testCollectionName, []);
+            })
+            .then(function () {
+                return itemHttp(test.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(404);
@@ -295,7 +353,9 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
    it('can retreive csv format data from db collection', function (done) {
@@ -303,8 +363,6 @@ describe('mongodb-rest', function () {
         var csvConfiguration = extend(true, {}, defaultConfiguration);
         csvConfiguration.collectionOutputType = 'csv';
 
-        init(csvConfiguration);
-
         var testData = [
             {
                 item: 1,
@@ -317,12 +375,16 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, testData)
+        test
+            .startServer(csvConfiguration)
             .then(function () {
-                return requestHttp(utils.genCollectionUrl(testDbName, testCollectionName));
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return requestHttp(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
                 var lines = result.data.trim().split('\r\n');
@@ -357,16 +419,13 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can retreive csv format data via query param', function (done) {
 
-        var csvConfiguration = extend(true, {}, defaultConfiguration);
-        csvConfiguration.collectionOutputType = 'csv';
-
-        init();
-
         var testData = [
             {
                 item: 1,
@@ -379,12 +438,16 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, testData)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return requestHttp(utils.genCollectionUrl(testDbName, testCollectionName) + "?output=csv");
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return requestHttp(test.genCollectionUrl(testDbName, testCollectionName) + "?output=csv");
             })
             .then(function (result) {
 
@@ -420,12 +483,12 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can retreive single document from db collection', function (done) {
-
-        init();
 
         var itemID = ObjectID();
 
@@ -444,12 +507,16 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, testData)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return itemJson(test.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.data._id).toEqual(itemID.toString());
@@ -459,29 +526,33 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can insert single document into collection', function (done) {
-
-        init();
 
         var postData = {
             value: "hi there",
         };
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropDatabase(testDbName)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return post(utils.genCollectionUrl(testDbName, testCollectionName), postData);
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return post(test.genCollectionUrl(testDbName, testCollectionName), postData);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(201);
                 expect(result.data).toEqual({ ok: 1 });
 
-                return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
                 expect(result.data.length).toBe(1);
@@ -491,12 +562,12 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can update single document in db collection', function (done) {
-
-        init();
 
         var itemID = ObjectID();
 
@@ -515,23 +586,27 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, testData)
+        test
+            .startServer(defaultConfiguration)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
             .then(function () {
 
                 var newData = {
                     item: 50,
                 };
 
-                return put(utils.genCollectionUrl(testDbName, testCollectionName), itemID, newData);
+                return put(test.genCollectionUrl(testDbName, testCollectionName), itemID, newData);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(200);
                 expect(result.data).toEqual({ ok: 1 });
 
-                return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
+                return itemJson(test.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.data._id).toEqual(itemID.toString());
@@ -541,12 +616,12 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
     it('can delete single document in db collection', function (done) {
-
-        init();
 
         var itemID = ObjectID();
 
@@ -565,24 +640,28 @@ describe('mongodb-rest', function () {
             },
         ];
 
-        var testDbName = utils.genTestDbName();
-        var testCollectionName = utils.genTestCollectionName();
+        var testDbName = test.genTestDbName();
+        var testCollectionName = test.genTestCollectionName();
 
-        dropAndLoad(testDbName, testCollectionName, testData)
+        test
+            .startServer(defaultConfiguration)
             .then(function () {
-                return del(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
+                return dropAndLoad(testDbName, testCollectionName, testData); 
+            })
+            .then(function () {
+                return del(test.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(200);
                 expect(JSON.parse(result.data)).toEqual({ ok: 1 });
 
-                return itemJson(utils.genCollectionUrl(testDbName, testCollectionName), itemID);
+                return itemJson(test.genCollectionUrl(testDbName, testCollectionName), itemID);
             })
             .then(function (result) {
                 //todo: expect(result.response.statusCode).toBe(404);
                 expect(result.data).toEqual({ ok: 0 });
 
-                return collectionJson(utils.genCollectionUrl(testDbName, testCollectionName));
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
                 expect(result.data.length).toBe(2);
@@ -591,7 +670,9 @@ describe('mongodb-rest', function () {
             .catch(function (err) {
                 done(err);
             })
-            .done();
+            .done(function () {
+                test.stopServer();    
+            });
     });
 
 });

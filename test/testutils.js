@@ -97,7 +97,7 @@ var requestJson = function (url) {
             return;
         }
 
-        deferred.resolve({ 
+        deferred.resolve({             
             data: JSON.parse(body), 
             response: response,
         });
@@ -229,7 +229,7 @@ module.exports = {
         var deferred = Q.defer();
 
         // Open the rest server for each test.        
-        restServer.startServer(config || defaultConfiguration, function (err) {
+        restServer.startServer(config, function (err) {
             if (err) {
                 deferred.reject(err);
             }
@@ -238,13 +238,7 @@ module.exports = {
             }
         });
 
-        return deferred
-            .promise;
-            /* why???
-            .finally(function () {
-                console.log('shutting down server!!'); //fio:
-                restServer.stopServer();
-            });*/
+        return deferred.promise;
     },
 
     stopServer: function () {

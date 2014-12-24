@@ -60,10 +60,7 @@ When starting the server programmatically you can pass in a Javascript object fo
 Here is an example JSON configuration object:
 
 	{ 
-		"db": {
-			"port": 27017,
-			"host": "localhost"
-		},
+		"db": "mongodb://localhost:27017",
 		"server": {
 			"port": 3000,
 			"address": "0.0.0.0"
@@ -84,7 +81,18 @@ Here is an example JSON configuration object:
 		"urlPrefix": ""
 	}
 
-The `db` and `server` options both default if not specified.	
+`db` specifies the mongodb connection string for connection to the database. It defaults when not specified.
+
+For documentation on the mongodb connection string: http://docs.mongodb.org/manual/reference/connection-string/
+
+For backward compatibility `db` can also be set to an object that specified `host` and `port` as follows:
+
+	"db": {
+		"port": 27017,
+		"host": "localhost"
+	},
+
+`server` specifies the configuration for the REST API server, it also defaults if not specified.
 
 `mongoOptions` specifies MongoDB server and database connection parameters. These are passed directly to the MongoDB API.
 
@@ -156,7 +164,7 @@ Auth
 
 **WARNING: This is a prototype feature and may change in the future**.
 
-mongodb-rest supports a simple token-based auth system, where users will POST to /login with the username and password, the server will verify the password using a secret database, and will hand the user an access token they can use to make API requests. 
+mongodb-rest supports a simple token-based auth system, where users will POST to /login with `username` and `password`, the server will verify the password using a secret database, and returns an access token that is attached to API requests. 
 
 An authorization token is specified via query parameter as follows:
 
@@ -164,15 +172,35 @@ An authorization token is specified via query parameter as follows:
 GET /db/collection?token=234d43fdg-34324d-dd-dsdf-f435d
 ```
 
-To enable authentication add `auth` to config.json. It is an object that requires at least two fields:
+Authentication is enabled by adding `auth` to config.json as follows:
 
-* usersDBConnection - mongodb uri where we'll store tokens.
-* tokenDBConnection - mongodb uri where we'll find a `users` collection to check usernames and passwords.
+	"auth": {
+		"usersDBConnection": "mongodb://localhost/auth",
+		"usersCollection": "users",
+		"tokenDBConnection": "mongodb://localhost/auth",
+		"tokensCollectionName": "tokens",
+		"universalAuthToken": "this-token-grants-universal-access-so-please-change-it",
+		"tokenExpirationTimeHours": 8
+	}
 
-Optional parameters:
+`auth` requires at least:
 
+* usersDBConnection - mongodb connection string for the users database.
+* tokenDBConnection - mongodb connection string for the tokens database.
+
+Here are the docs for mongodb connection strings: http://docs.mongodb.org/manual/reference/connection-string/
+
+The following are optional:
+
+* usersCollection - The auth database collection where users are stored.
+* tokensCollectionName - The auth database collection where tokens are stored.
 * universalAuthToken - Specifies a token that can be used for universal authorization.
 * tokenExpirationTimeHours - Specifies the timeout in hours before tokens must be renewed by 'login'.
+
+An example configuration `example config with auth.json` is included with a working authentication setup.
+
+** Please note that mongodb exposes all databases in the server, including your secret authentication database. Move your auth database to a different server on the same machine or ensure MongoDB authentication is setup correctly. Work will be done in the future that allows particular databases to be whitelisted/blacklisted and not exposed. **
+
 
 Getting the Code
 ----------------

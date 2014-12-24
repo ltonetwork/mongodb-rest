@@ -18,7 +18,7 @@ var extend = require("extend");
 //
 var defaultLogger = {
   verbose: function (msg) {
-    console.log(msg);
+//    console.log(msg);
   },
 
   info: function (msg) {
@@ -35,10 +35,7 @@ var defaultLogger = {
 };
 		
 var defaultConfig = { 
-    db: {
-        port: 27017,
-        host: "localhost"
-    },
+    db: 'mongodb://localhost:27017',
     server: {
         port: 3000,
         address: "0.0.0.0"
@@ -113,6 +110,10 @@ module.exports = {
       res.status(404);
     });
 
+    if (!config.db) {
+      config.db = "mongodb://localhost:27017";
+    }
+
     require('./lib/rest')(app, config);
 
     logger.verbose('Input Configuration:');
@@ -123,20 +124,13 @@ module.exports = {
     if (!config.server) {
       config.server = {};
     }
+
     if (!config.server.address) {
       config.server.address = "0.0.0.0";
     }
+    
     if (!config.server.port) {
       config.server.port = 3000;
-    }
-    if (!config.db) {
-      config.db = {};
-    }
-    if (!config.db.port) {
-      config.db.port = 27017;
-    }
-    if (!config.db.host) {
-      config.db.host = "localhost";
     }
 
     logger.verbose('Configuration with defaults applied:');
@@ -146,7 +140,7 @@ module.exports = {
     var port = config.server.port;
 
     logger.verbose('Starting mongodb-rest server: ' + host + ":" + port); 
-    logger.verbose('Connecting to db ' + config.db.host + ":" + config.db.port);
+    logger.verbose('Connecting to db ' + JSON.stringify(config.db, null, 4));
 
     server = app.listen(port, host, function () {
       logger.verbose('Now listening on: ' + host + ":" + port); 
