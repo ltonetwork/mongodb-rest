@@ -58,7 +58,7 @@
     "request": "^2.49.0"
   },
   "scripts": {
-    "test": "jasmine-node . --verbose"
+    "test": "jasmine-node ./ --verbose --captureExceptions"
   },
   "bugs": {
     "url": "https://github.com/codecapers/mongodb-rest/issues"
