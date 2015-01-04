@@ -43,6 +43,12 @@ describe('mongodb-rest', function () {
             universalAuthToken: universalAuthToken,
 
         },
+        logger: {
+            info: function () {},
+            warning: function () {},
+            error: function () {},
+            verbose: function () {},
+        }
     };
 
     describe('login', function () {
@@ -109,7 +115,7 @@ describe('mongodb-rest', function () {
                     });
                 })
                 .then(function (result) {
-                    expect(result.response.statusCode).toBe(404);
+                    expect(result.response.statusCode).toBe(401);
                     done();                    
                 })
                 .catch(function (err) {
