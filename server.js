@@ -52,7 +52,6 @@ var defaultConfig = {
             w: 1
         }
     },
-    debug: true,
     humanReadableOutput: true,
     collectionOutputType: "json",
     urlPrefix: "",

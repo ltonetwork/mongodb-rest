@@ -35,7 +35,6 @@ describe('mongodb-rest', function () {
                 w: 1
             }
         },
-        debug: true,
         humanReadableOutput: true,
         collectionOutputType: 'json',
         auth: {
