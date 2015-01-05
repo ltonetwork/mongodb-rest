@@ -164,7 +164,7 @@ Auth
 
 **WARNING: This is a prototype feature and may change in the future**.
 
-mongodb-rest supports a simple token-based auth system, where users will POST to /login with `username` and `password`, the server will verify the password using a secret database, and returns an access token that is attached to API requests. 
+mongodb-rest supports a simple token-based auth system. Login is accomplilshed by a HTTP POST to `/login` with `username` and `password`, the server will verify the user's password against a secret database. Upon authentication an access token is returned that must be attached to each subsequent API requests.
 
 An authorization token is specified via query parameter as follows:
 
