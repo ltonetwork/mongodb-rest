@@ -7,6 +7,7 @@
 var mongo = require('promised-mongo');
 var request = require('request');
 var Q = require('q');
+var connection = require('../lib/connection');
 
 //
 // Drop the specified test database.
@@ -243,6 +244,7 @@ module.exports = {
 
     stopServer: function () {
         restServer.stopServer();
+        connection.closeAll();
     },
 
     genDbsUrl: function () {
