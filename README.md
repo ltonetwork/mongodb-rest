@@ -10,6 +10,8 @@ I have found this REST server to be invaluable for rapid prototyping web applica
 Recent Updates
 --------------
 
+Simple connection pooling has been added by @elabrc.
+
 A simple token-based authentication has been added to mongodb-rest (thanks to @ZECTBynmo). This is a prototype feature only and may change in the future. I am considering making authentication plugin-based so you can roll your own if necessary. If you have any thoughts on how this should work please let us know.
 
 Installation
