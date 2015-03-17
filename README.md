@@ -14,6 +14,29 @@ Simple connection pooling has been added by @elabrc.
 
 A simple token-based authentication has been added to mongodb-rest (thanks to @ZECTBynmo). This is a prototype feature only and may change in the future. I am considering making authentication plugin-based so you can roll your own if necessary. If you have any thoughts on how this should work please let us know.
 
+Contents
+--------
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Installation](#installation)
+- [Test](#test)
+- [Start Server Programmatically](#start-server-programmatically)
+- [Configuration](#configuration)
+- [Logging](#logging)
+- [Supported REST API](#supported-rest-api)
+- [Dependencies](#dependencies)
+- [Auth](#auth)
+- [Getting the Code](#getting-the-code)
+- [Testing](#testing)
+- [Travis-CI](#travis-ci)
+- [Future](#future)
+- [Credits](#credits)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 Installation
 ------------
 
