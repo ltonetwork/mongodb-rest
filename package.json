@@ -3,6 +3,7 @@
   "description": "REST API Server for MongoDB",
   "version": "0.10.12",
   "author": "Ashley Davis <ashley@codecapers.com.au>",
+  "main": "server.js",
   "contributors": [
     {
       "name": "Ashley Davis",
