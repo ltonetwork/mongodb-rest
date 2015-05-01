@@ -1,0 +1,27 @@
+{
+	"db": "mongodb://localhost:27017",
+	"server": {
+		"port": 3000,
+		"address": "0.0.0.0"
+	},
+	"accessControl": {
+		"allowOrigin": "*",
+		"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
+        "allowCredentials": false
+	},
+    "mongoOptions": {
+        "serverOptions": {
+        },
+        "dbOptions": {
+            "w": 1
+        }
+    },
+	"humanReadableOutput": true,
+	"collectionOutputType": "json",
+	"urlPrefix": "",
+	"ssl": {
+		"enabled": true,
+		"keyFile": "/path/to/server.key",
+		"certificate": "/path/to/server.crt"
+	}
+}
