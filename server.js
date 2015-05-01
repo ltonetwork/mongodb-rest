@@ -58,7 +58,8 @@ var defaultConfig = {
     urlPrefix: "",
     logger: defaultLogger,
     ssl: {
-	enabled: false
+	enabled: false,
+        options: {}
     }
 };
 
@@ -141,7 +142,7 @@ module.exports = {
 
     var host = config.server.address;
     var port = config.server.port;
-    var ssl = config.ssl || {enabled: false};
+    var ssl = config.ssl || {enabled: false, options: {}};
 
     logger.verbose('Starting mongodb-rest server: ' + host + ":" + port); 
     logger.verbose('Connecting to db ' + JSON.stringify(config.db, null, 4));
@@ -154,11 +155,13 @@ module.exports = {
     };
 
     if (ssl.enabled) {
-      var options = {
-        key: fs.readFileSync(ssl.keyFile),
-        cert: fs.readFileSync(ssl.certificate)
-      };
-      server = https.createServer(options, app).listen(port, host, start);
+      if (ssl.keyFile) {
+        ssl.options.key = fs.readFileSync(ssl.keyFile);
+      }
+      if (ssl.certificate) {
+        ssl.options.cert = fs.readFileSync(ssl.certificate);
+      }
+      server = https.createServer(ssl.options, app).listen(port, host, start);
     } else {
       server = app.listen(port, host, start);
     }
