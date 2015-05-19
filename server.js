@@ -11,6 +11,7 @@
 var fs = require("fs");
 var path = require("path");
 var express = require('express');
+var https = require('https');
 var extend = require("extend");
 
 //
@@ -56,6 +57,10 @@ var defaultConfig = {
     collectionOutputType: "json",
     urlPrefix: "",
     logger: defaultLogger,
+    ssl: {
+	enabled: false,
+        options: {}
+    }
 };
 
 var server;
@@ -137,17 +142,30 @@ module.exports = {
 
     var host = config.server.address;
     var port = config.server.port;
+    var ssl = config.ssl || {enabled: false, options: {}};
 
     logger.verbose('Starting mongodb-rest server: ' + host + ":" + port); 
     logger.verbose('Connecting to db ' + JSON.stringify(config.db, null, 4));
 
-    server = app.listen(port, host, function () {
-      logger.verbose('Now listening on: ' + host + ":" + port); 
+    var start = function() {
+        logger.verbose('Now listening on: ' + host + ":" + port + ' SSL:' + ssl.enabled);
+        if (started) {
+          started();
+        }
+    };
 
-      if (started) {
-        started();
+    if (ssl.enabled) {
+      if (ssl.keyFile) {
+        ssl.options.key = fs.readFileSync(ssl.keyFile);
       }
-    });
+      if (ssl.certificate) {
+        ssl.options.cert = fs.readFileSync(ssl.certificate);
+      }
+      server = https.createServer(ssl.options, app).listen(port, host, start);
+    } else {
+      server = app.listen(port, host, start);
+    }
+
   },
 
   //
