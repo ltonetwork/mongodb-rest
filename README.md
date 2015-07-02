@@ -161,19 +161,159 @@ Please see the Winston documentation for more setup details: https://github.com/
 Supported REST API
 ------------------
 
-Supported REST API requests:
+**Listing Databases:**
+_Format:_ `GET /dbs`
 
-* `GET /dbs` - Returns the names of all databases.
-* `GET /<db>/` - Returns names of all collections in the specified database.
-* `GET /<db>/<collection>` - Returns all documents in the specified collection.
-* `GET /<db>/<collection>?output=csv` - Returns all documents in collection in csv format.
-* `GET /<db>/<collection>?query=%7B%22isDone%22%3A%20false%7D` - Returns all documents satisfying query.
-* `GET /<db>/<collection>?query=%7B%22isDone%22%3A%20false%7D&limit=2&skip=2` - Ability to add options to query (limit, skip, 
-etc)
-* `GET /<db>/<collection>/id` - Returns document with _id_
-* `POST /<db>/<collection>` - Insert new document in collection (document in POST body)
-* `PUT /<db>/<collection>/id` - Update document with _id_ (updated document in PUT body)
-* `DELETE /<db>/<collection>/id` - Delete document with _id_
+    $ curl 'http://127.0.0.1:3000/dbs/' \
+    >   -D - \
+    >   -H 'Accept: application/json'
+    HTTP/1.1 200 OK
+    X-Powered-By: Express
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 27
+    ETag: W/"1b-134804454"
+    Date: Thu, 02 Jul 2015 08:02:26 GMT
+    Connection: keep-alive
+    
+    [
+        "local",
+        "test"
+    ]
+
+
+**Listing Collections:**
+_Format:_`GET /<db>/`
+
+
+    $ curl 'http://127.0.0.1:3000/test/' \
+    >   -D - \
+    >   -H 'Accept: application/json'
+    HTTP/1.1 200 OK
+    X-Powered-By: Express
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 27
+    ETag: W/"1b-134804454"
+    Date: Thu, 02 Jul 2015 08:02:26 GMT
+    Connection: keep-alive
+    
+    [
+       "new-collection",
+       "startup_log",
+       "system.indexes"
+    ]
+
+
+**List Documents in a Collection:**
+_Format:_ `GET /<db>/<collection>`
+
+    $ curl 'http://127.0.0.1:3000/test/new-collection' \
+    >   -D - \
+    >   -H 'Accept: application/json'
+    HTTP/1.1 200 OK
+    X-Powered-By: Express
+    Content-Type: application/json; charset=utf-8
+    Content-Length: 27
+    ETag: W/"1b-134804454"
+    Date: Thu, 02 Jul 2015 08:02:26 GMT
+    Connection: keep-alive
+
+    [
+        {
+            "_id": "5594bf2b019d364a083f2e03",
+            "attribute": "hello"
+        }
+    ]
+
+**Output a CSV collection:**
+_Format:_`GET /<db>/<collection>?output=csv`
+
+    $ curl http://127.0.0.1:3000/test/newcollection?output=csv > Sample.csv
+
+**List documents satisfying a query:**
+_Format:_`GET /<db>/<collection>?query={"key":"value"}`
+    
+    $ curl -X "GET" http://localhost:3000/test/newcollection \
+    -d 'query={"attribute":"value"}
+    [
+    {
+        "_id": "5594bf2b019d364a083f2e03",
+        "attribute": "value"
+    }
+    ]
+
+
+**List documents with nested queries:**
+_Format:_`GET /<db>/<collection>?query={"key":{"second_key":{"_id":"value"}}}`
+
+    $ curl -X "GET" http://localhost:3000/test/newcollection \
+        -d 'query={"attribute":{"other_attribute:{"_id":"5063114bd386d8fadbd6b004"}}}
+        [
+        {
+            "_id": "5594bf2b019d364a083f2e03",
+            "attribute": {
+                other_attribute: "5063114bd386d8fadbd6b004"
+            }
+        }
+        ]
+        
+**Return document by id:**
+_Format_ `GET /<db>/<collection>/id`
+    
+    $ curl -X "GET" http://localhost:3000/test/nested/5594bf2b019d364a083f2e03
+    {
+        "_id": "5594bf2b019d364a083f2e03",
+        "attribute": "hello"
+    }
+    
+**Inserting documents:**
+_Format:_ `POST /<db>/<collection>`
+
+    $ curl 'http://localhost:3000/test/newcollection' \
+    >   -D - \
+    >   -X POST \
+    >   -H 'Content-Type: application/json' \
+    >   -H 'Accept: application/json' \
+    >   --data '{"title": "Some title", "content": "document content"}'
+    
+    HTTP/1.1 201 CREATED
+    Date: Thu, 02 Jul 2015 12:50:34 GMT
+    Connection: keep-alive
+    Content-Type: application/json; charset=utf-8
+    X-Powered-By: Express
+    Location: /test/nested/5595339aa73107ad070e891a
+    Content-Length: 15
+    {
+        "ok": 1
+    }
+    
+**Updating a document:**
+_Format_: `PUT /<db>/<collection>/id`
+
+    $ curl -X "PUT" "http://localhost:3000/test/nested/5595339aa73107ad070e891a \
+    > --data {"title": "New title", "content": "New document content"}'
+    HTTP/1.1 200 OK
+    Connection: keep-alive
+    Content-Type: application/json; charset=utf-8
+    X-Powered-By: Express
+    Content-Length: 15
+    Date: Thu, 02 Jul 2015 12:53:00 GMT
+    {
+        "ok": 1
+    }
+    
+**Deleting a document by id:**
+_Format:_ `DELETE /<db>/<collection>/id`
+
+    $ curl -X "DELETE" "http://localhost:3000/test/nested/5595339aa73107ad070e891a
+    HTTP/1.1 200 OK
+    Connection: keep-alive
+    Content-Type: application/json; charset=utf-8
+    X-Powered-By: Express
+    Content-Length: 15
+    Date: Thu, 02 Jul 2015 12:53:00 GMT
+    {
+        "ok": 1
+    }
 
 Content Type:
 
