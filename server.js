@@ -78,7 +78,7 @@ module.exports = {
     logger.verbose("Current directory: " + curDir);
 
     if (!config) {
-      var configFilePath = path.join(curDir, "config.json");
+      var configFilePath = path.join(curDir, "config.js");
       if (fs.existsSync(configFilePath)) {
         logger.verbose("Loading configuration from: " + configFilePath);
         config = require(configFilePath);
@@ -86,7 +86,7 @@ module.exports = {
       }
       else {
         logger.verbose("Using default configuration.");
-        logger.verbose("Please put config.json in current directory to customize configuration.");
+        logger.verbose("Please put config.js in current directory to customize configuration.");
         config = defaultConfig;
       }
     }
