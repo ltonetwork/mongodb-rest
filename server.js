@@ -35,7 +35,7 @@ var defaultLogger = {
   },
 };
 		
-var defaultConfig = { 
+var defaultConfig = {
     db: 'mongodb://localhost:27017',
     server: {
         port: 3000,
@@ -81,7 +81,7 @@ module.exports = {
       var configFilePath = path.join(curDir, "config.json");
       if (fs.existsSync(configFilePath)) {
         logger.verbose("Loading configuration from: " + configFilePath);
-        config = require configFilePath     
+        config = require(configFilePath);
         config.logger = defaultLogger;
       }
       else {
