@@ -7,6 +7,8 @@ As Tom has said this REST server has no security and is not fit for use in produ
 
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
 
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 Recent Updates
 --------------
 
@@ -21,19 +23,32 @@ Contents
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Installation](#installation)
-- [Test](#test)
-- [Start Server Programmatically](#start-server-programmatically)
-- [Configuration](#configuration)
-- [Logging](#logging)
-- [Supported REST API](#supported-rest-api)
-- [Dependencies](#dependencies)
-- [Auth](#auth)
-- [Getting the Code](#getting-the-code)
-- [Testing](#testing)
-- [Travis-CI](#travis-ci)
-- [Future](#future)
-- [Credits](#credits)
+- [Installation
+](#installation)
+- [Test
+](#test)
+- [Start Server Programmatically
+](#start-server-programmatically)
+- [Configuration
+](#configuration)
+- [Logging
+](#logging)
+- [Supported REST API
+](#supported-rest-api)
+- [Dependencies
+](#dependencies)
+- [Auth
+](#auth)
+- [Getting the Code
+](#getting-the-code)
+- [Testing
+](#testing)
+- [Travis-CI
+](#travis-ci)
+- [Future
+](#future)
+- [Credits
+](#credits)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 

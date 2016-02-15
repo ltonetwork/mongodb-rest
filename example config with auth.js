@@ -1,5 +1,8 @@
-{
-	"db": "mongodb://localhost:27017",
+module.exports = {
+	"db": {
+		"port": 27017,
+		"host": "localhost"
+	},
 	"server": {
 		"port": 3000,
 		"address": "0.0.0.0"
@@ -19,12 +22,12 @@
 	"humanReadableOutput": true,
 	"collectionOutputType": "json",
 	"urlPrefix": "",
-	"ssl": {
-		"enabled": true,
-		"keyFile": "/path/to/server.key",
-		"certificate": "/path/to/server.crt",
-		"options": {
-			"ciphers": "ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!AESGCM:!SSLV3:!eNULL"
-		}
+	"auth": {
+		"usersDBConnection": "mongodb://localhost/auth",
+		"usersCollection": "users",
+		"tokenDBConnection": "mongodb://localhost/auth",
+		"tokensCollectionName": "tokens",
+		"universalAuthToken": "this-token-grants-universal-access-so-please-change-it",
+		"tokenExpirationTimeHours": 8
 	}
 }
