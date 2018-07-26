@@ -3,9 +3,11 @@
  * Module dependencies.
  */
 
-var sys = require('sys'),
-    fs = require('fs'),
-		mongodbrest = require('../server');
+var sys = require('sys');
+var fs = require('fs');
+var mongodbrest = require('../server');
+
+mongodbrest.startServer();        
 		
 
 
