@@ -1,191 +1,112 @@
-/* 
-    server.js
-    mongodb-rest
+/**
+ * server.js
+ * mongodb-rest
+ *
+ * Maintained by Ashley Davis 2014-07-02
+ * Created by Tom de Grunt on 2010-10-03.
+ * Copyright (c) 2010 Tom de Grunt.
+ * This file is part of mongodb-rest.
+ */
 
-    Maintained by Ashley Davis 2014-07-02
-    Created by Tom de Grunt on 2010-10-03.
-    Copyright (c) 2010 Tom de Grunt.
-		This file is part of mongodb-rest.
-*/ 
+const fs = require("fs");
+const path = require("path");
+const express = require('express');
+const nocache = require('nocache');
+const bodyParser = require('body-parser');
+const https = require('https');
+const extend = require("extend");
+const resolveConfig = require('./lib/resolve-config');
+require('express-csv');
 
-var fs = require("fs");
-var path = require("path");
-var express = require('express');
-var https = require('https');
-var extend = require("extend");
-
-//
-// Default logger to use, if none is passed in.
-//
-var defaultLogger = {
-  verbose: function (msg) {
-//    console.log(msg);
-  },
-
-  info: function (msg) {
-    console.log(msg);
-  },
-
-  warn: function (msg) {
-    console.log(msg);
-  },
-
-  error: function (msg) {
-    console.log(msg);
-  },
-};
-		
-var defaultConfig = {
-    db: 'mongodb://localhost:27017',
-    server: {
-        port: 3000,
-        address: "0.0.0.0"
-    },
-    accessControl: {
-        allowOrigin: "*",
-        allowMethods: "GET,POST,PUT,DELETE,HEAD,OPTIONS",
-        allowCredentials: false
-    },  
-    mongoOptions: {
-        serverOptions: {
-        },
-        dbOptions: {
-            w: 1
-        }
-    },
-    humanReadableOutput: true,
-    collectionOutputType: "json",
-    urlPrefix: "",
-    logger: defaultLogger,
-    ssl: {
-	enabled: false,
-        options: {}
-    }
-};
-
-var server;
+var server = null;
 
 module.exports = {
+    startServer,
+    stopServer
+}
 
-  //
-  // Start the REST API server.
-  //
-  startServer: function (config, started) {
+/**
+ * Start the REST API server.
+ */
+function startServer(customConfig, onStarted) {
+    const app = express();
+    const config = resolveConfig.with(customConfig);
 
-    var logger = (config && config.logger) || defaultLogger;
-    var curDir = process.cwd();
+    init(app, config);
+    run(app, config, onStarted);
+}
 
-    logger.verbose("Current directory: " + curDir);
+/**
+ * Stop the REST API server.
+ */
+function stopServer() {
+    if (!server) return;
 
-    if (!config) {
-      var configFilePath = path.join(curDir, "config.js");
-      if (fs.existsSync(configFilePath)) {
-        logger.verbose("Loading configuration from: " + configFilePath);
-        config = require(configFilePath);
-        config.logger = defaultLogger;
-      }
-      else {
-        logger.verbose("Using default configuration.");
-        logger.verbose("Please put config.js in current directory to customize configuration.");
-        config = defaultConfig;
-      }
-    }
-    else {
-      if (!config.logger) {
-        config.logger = defaultLogger;
-      }
-    }
+    server.close();
+    server = null;
+}
 
-    var app = express();
-    require('express-csv');
-
-    app.use(require('body-parser')());
+/**
+ * Init express application
+ * @param {object} app
+ */
+function init(app, config) {
+    app.use(nocache());
+    app.use(bodyParser());
 
     if (config.humanReadableOutput) {
-      app.set('json spaces', 4);
+        app.set('json spaces', 4);
     }
 
     if (config.accessControl) {
-      var accesscontrol = require('./lib/accesscontrol')(config);
-      app.use(accesscontrol.handle);
-    } 
+        const accesscontrol = require('./lib/accesscontrol')(config);
+        app.use(accesscontrol.handle);
+    }
 
-    app.get('/favicon.ico', function (req, res) {
-      res.status(404);
+    app.get('/favicon.ico', function(req, res) {
+        res.status(404);
     });
 
-    if (!config.db) {
-      config.db = "mongodb://localhost:27017";
-    }
-
     require('./lib/rest')(app, config);
+}
 
-    logger.verbose('Input Configuration:');
-    logger.verbose(config);  
+/**
+ * Perform server launch
+ * @param {object} config
+ * @param {callback} onStarted
+ */
+function run(app, config, onStarted) {
+    const logger = config.logger;
+    const host = config.server.address;
+    const port = config.server.port;
+    const ssl = config.ssl || {enabled: false, options: {}};
 
-    // Make a copy of the config so that defaults can be applied.
-    config = extend(true, {}, config);
-    if (!config.server) {
-      config.server = {};
-    }
-
-    if (!config.server.address) {
-      config.server.address = "0.0.0.0";
-    }
-    
-    if (!config.server.port) {
-      config.server.port = 3000;
-    }
-
-    logger.verbose('Configuration with defaults applied:');
-    logger.verbose(config);  
-
-    var host = config.server.address;
-    var port = config.server.port;
-    var ssl = config.ssl || {enabled: false, options: {}};
-
-    logger.verbose('Starting mongodb-rest server: ' + host + ":" + port); 
-    logger.verbose('Connecting to db ' + JSON.stringify(config.db, null, 4));
-
-    var start = function() {
+    const start = function() {
         logger.verbose('Now listening on: ' + host + ":" + port + ' SSL:' + ssl.enabled);
-        if (started) {
-          started();
-        }
+
+        if (onStarted) onStarted();
     };
 
+    logger.verbose('Starting mongodb-rest server: ' + host + ':' + port);
+    logger.verbose('Connecting to db: ' + JSON.stringify(config.db, null, 4));
+
     if (ssl.enabled) {
-      if (ssl.keyFile) {
-        ssl.options.key = fs.readFileSync(ssl.keyFile);
-      }
-      if (ssl.certificate) {
-        ssl.options.cert = fs.readFileSync(ssl.certificate);
-      }
-      server = https.createServer(ssl.options, app).listen(port, host, start);
+        if (ssl.keyFile) ssl.options.key = fs.readFileSync(ssl.keyFile);
+        if (ssl.certificate) ssl.options.cert = fs.readFileSync(ssl.certificate);
+
+        server = https.createServer(ssl.options, app).listen(port, host, start);
     } else {
-      server = app.listen(port, host, start);
+        server = app.listen(port, host, start);
     }
-
-  },
-
-  //
-  // Stop the REST API server.
-  //
-  stopServer: function () {
-    if (server) {
-      server.close();
-      server = null;
-    }
-  },
-
-};
-
-if (process.argv.length >= 2) { 
-  if (process.argv[1].indexOf('server.js') != -1) {
-
-    //
-    // Auto start server when run as 'node server.js'
-    //
-    module.exports.startServer();
-  }
 }
+
+/**
+ * Auto start server when run as 'node server.js'
+ */
++function() {
+    const autoStart =
+        process.argv.length >= 2 &&
+        process.argv[1].indexOf('server.js') != -1;
+
+    if (autoStart) module.exports.startServer();
+}();
