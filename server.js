@@ -16,7 +16,7 @@ const bodyParser = require('body-parser');
 const https = require('https');
 const extend = require("extend");
 const initRoutes = require('./lib/routes');
-const resolveConfig = require('./lib/resolve-config');
+const resolveConfig = require('./lib/config/resolve-config');
 require('express-csv');
 
 var server = null;
@@ -61,7 +61,7 @@ function init(app, config) {
     }
 
     if (config.accessControl) {
-        const accesscontrol = require('./lib/accesscontrol')(config);
+        const accesscontrol = require('./lib/auth/accesscontrol')(config);
         app.use(accesscontrol.handle);
     }
 
