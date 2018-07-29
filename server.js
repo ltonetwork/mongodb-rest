@@ -15,6 +15,7 @@ const nocache = require('nocache');
 const bodyParser = require('body-parser');
 const https = require('https');
 const extend = require("extend");
+const initRoutes = require('./lib/routes');
 const resolveConfig = require('./lib/resolve-config');
 require('express-csv');
 
@@ -49,6 +50,7 @@ function stopServer() {
 /**
  * Init express application
  * @param {object} app
+ * @param {object} config
  */
 function init(app, config) {
     app.use(nocache());
@@ -67,11 +69,12 @@ function init(app, config) {
         res.status(404);
     });
 
-    require('./lib/rest')(app, config);
+    initRoutes(app, config);
 }
 
 /**
  * Perform server launch
+ * @param {object} app
  * @param {object} config
  * @param {callback} onStarted
  */
