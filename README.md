@@ -55,10 +55,10 @@ Contents
 Installation
 ------------
 
-Installation is via npm: 
+Installation is via npm:
 > npm install mongodb-rest
 
-You can install globally using -g: 
+You can install globally using -g:
 > npm install -g mongodb-rest
 
 Now issue `mongodb-rest` on the command line and the server should start.
@@ -99,27 +99,28 @@ When starting the server programmatically you can pass in a Javascript object fo
 
 Here is an example JSON configuration object:
 
-	{ 
-		"db": "mongodb://localhost:27017",
-		"server": {
-			"port": 3000,
-			"address": "0.0.0.0"
-		},
-		"accessControl": {
-			"allowOrigin": "*",
-			"allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
-			"allowCredentials": false
-		},
-	    "mongoOptions": {
-	        "serverOptions": {
-	        },
-	        "dbOptions": {
-	            "w": 1
-	        }
-	    },
-		"humanReadableOutput": true,
-		"urlPrefix": ""
-	}
+    {
+        "db": "mongodb://localhost:27017",
+        "endpoint_root": "server",
+        "server": {
+            "port": 3000,
+            "address": "0.0.0.0"
+        },
+        "accessControl": {
+            "allowOrigin": "*",
+            "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
+            "allowCredentials": false
+        },
+        "mongoOptions": {
+            "serverOptions": {
+            },
+            "dbOptions": {
+                "w": 1
+            }
+        },
+        "humanReadableOutput": true,
+        "urlPrefix": ""
+    }
 
 `db` specifies the mongodb connection string for connection to the database. It defaults when not specified.
 
@@ -131,6 +132,8 @@ For backward compatibility `db` can also be set to an object that specified `hos
 		"port": 27017,
 		"host": "localhost"
 	},
+
+`endpoint_root` can have one of two values: `server`, `database`. If it is ommited, the `server` value is presumed. `server` means that we can select a database for each query, setting its name in an url, like `GET /test_db/test_collection/foo_id`. If instead `database` value is set, than connection is restricted to a single database, given in config connection options: `"db": "mongodb://localhost:27017/test_db"`. Then all the urls should ommit db parameter. So the previous query will look like `GET /test_collection/foo_id`.
 
 `server` specifies the configuration for the REST API server, it also defaults if not specified.
 
@@ -189,7 +192,7 @@ _Format:_ `GET /dbs`
     ETag: W/"1b-134804454"
     Date: Thu, 02 Jul 2015 08:02:26 GMT
     Connection: keep-alive
-    
+
     [
         "local",
         "test"
@@ -210,7 +213,7 @@ _Format:_`GET /<db>/`
     ETag: W/"1b-134804454"
     Date: Thu, 02 Jul 2015 08:02:26 GMT
     Connection: keep-alive
-    
+
     [
        "new-collection",
        "startup_log",
@@ -246,7 +249,7 @@ _Format:_`GET /<db>/<collection>?output=csv`
 
 **List documents satisfying a query:**
 _Format:_`GET /<db>/<collection>?query={"key":"value"}`
-    
+
     $ curl -X "GET" http://localhost:3000/test/newcollection \
     -d 'query={"attribute":"value"}
     [
@@ -270,16 +273,16 @@ _Format:_`GET /<db>/<collection>?query={"key":{"second_key":{"_id":"value"}}}`
             }
         }
         ]
-        
+
 **Return document by id:**
 _Format_ `GET /<db>/<collection>/id`
-    
+
     $ curl -X "GET" http://localhost:3000/test/nested/5594bf2b019d364a083f2e03
     {
         "_id": "5594bf2b019d364a083f2e03",
         "attribute": "hello"
     }
-    
+
 **Inserting documents:**
 _Format:_ `POST /<db>/<collection>`
 
@@ -289,7 +292,7 @@ _Format:_ `POST /<db>/<collection>`
     >   -H 'Content-Type: application/json' \
     >   -H 'Accept: application/json' \
     >   --data '{"title": "Some title", "content": "document content"}'
-    
+
     HTTP/1.1 201 CREATED
     Date: Thu, 02 Jul 2015 12:50:34 GMT
     Connection: keep-alive
@@ -300,7 +303,7 @@ _Format:_ `POST /<db>/<collection>`
     {
         "ok": 1
     }
-    
+
 **Updating a document:**
 _Format_: `PUT /<db>/<collection>/id`
 
@@ -315,7 +318,7 @@ _Format_: `PUT /<db>/<collection>/id`
     {
         "ok": 1
     }
-    
+
 **Deleting a document by id:**
 _Format:_ `DELETE /<db>/<collection>/id`
 
@@ -337,7 +340,7 @@ Content Type:
 Dependencies
 ------------
 
-* Are indicated in package.json. 
+* Are indicated in package.json.
 
 Auth
 ----
@@ -392,9 +395,9 @@ You can get the code by forking/cloning the repo at:
 Testing
 -------
 
-Integration tests use jasmine-node. 
+Integration tests use jasmine-node.
 
-Run 'jasmine-node' from the main folder: 
+Run 'jasmine-node' from the main folder:
 
 >jasmine-node .\ --verbose
 
