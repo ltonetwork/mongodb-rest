@@ -111,6 +111,11 @@ Here is an example JSON configuration object:
             "allowMethods": "GET,POST,PUT,DELETE,HEAD,OPTIONS",
             "allowCredentials": false
         },
+        "dbAccessControl": {
+            "foo_database": ["collection1", "collection2"],
+            "bar_database": ["collection2", "collection3"],
+            "zoo_database": [],
+        }
         "mongoOptions": {
             "serverOptions": {
             },
@@ -133,9 +138,15 @@ For backward compatibility `db` can also be set to an object that specified `hos
 		"host": "localhost"
 	},
 
+---
+
 `endpoint_root` can have one of two values: `server`, `database`. If it is ommited, the `server` value is presumed. `server` means that we can select a database for each query, setting its name in an url, like `GET /test_db/test_collection/foo_id`. If instead `database` value is set, than connection is restricted to a single database, given in config connection options: `"db": "mongodb://localhost:27017/test_db"`. Then all the urls should ommit db parameter. So the previous query will look like `GET /test_collection/foo_id`.
 
+---
+
 `server` specifies the configuration for the REST API server, it also defaults if not specified.
+
+---
 
 `mongoOptions` specifies MongoDB server and database connection parameters. These are passed directly to the MongoDB API.
 
@@ -151,6 +162,8 @@ Set `collectionOutputType` to `csv` to returns collections as csv data rather th
 
 If you are configuring the server procedurally you can assign a Javascript function to `transformCollection` which will transform each collection before returning it via HTTP.
 
+---
+
 The `accessControl` options allow you to set the following headers on the HTTP response:
 - Access-Control-Allow-Origin
 - Access-Control-Allow-Methods
@@ -158,6 +171,29 @@ The `accessControl` options allow you to set the following headers on the HTTP r
 
 Help for these headers can be found here:
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+
+---
+
+`dbAccessControl` can be used for limiting access only to certain databases or collections. If ommited, user can reach to any database and collection.
+
+If `endpoint_root` is set to `server`, than the syntax for this option is as follows:
+
+    {
+        "database_name": ["collection_name1", "collection_name2"],
+        "database_name2": [],
+    }
+
+This example allows access only to two databases. For `database_name` only two collections are accesible. For `database_name2` all collections are accesible.
+
+If `endpoint_root` is set to `database`, than the syntax is as follows:
+
+    [
+        "collection_name1", "collection_name2"
+    ]
+
+So it's just a list of accesible collections. If array is empty, all collections are accesible.
+
+---
 
 The `urlPrefix` option allows specification of a prefix for the REST API URLs. This defaults to an empty string, meaning no prefix which was the original behavior. For example, given the following REST API URL:
 
