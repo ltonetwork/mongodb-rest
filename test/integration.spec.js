@@ -21,7 +21,7 @@ var del = test.del;
 var Q = require('q');
 var extend = require("extend");
 
-describe('mongodb-rest', function () {
+describe('mongodb-rest:integration', function () {
 
     // Default configuration to use for some tests.
     var defaultConfiguration = {
@@ -169,6 +169,41 @@ describe('mongodb-rest', function () {
             })
             .then(function (result) {
                 expect(result.data).toContain(testDbName);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not retrieve names of databases if endpoint_root is set to "database"', function (done) {
+
+        var testDbName = test.genTestDbName();
+        var config = extend(true, {}, defaultConfiguration);
+        config.endpoint_root = 'database';
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return test.requestJson(test.genDbsUrl());
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([]);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, test.genTestCollectionName(), []);
+            })
+            .then(function () {
+                return test.requestJson(test.genDbsUrl());
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([]);
                 done();
             })
             .catch(function (err) {
@@ -676,4 +711,108 @@ describe('mongodb-rest', function () {
             });
     });
 
+
+    it('can not acces db, if it is forbidden in config', function (done) {
+
+        const testDbName = test.genTestDbName();
+        const collectionsUrl = test.genCollectionsUrl(testDbName);
+        const config = extend(true, {}, defaultConfiguration);
+
+        //Allow access only to 'foo' database
+        config.dbAccessControl = {foo: []};
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, test.genTestCollectionName(), []);
+            })
+            .then(function () {
+                return test.requestJson(collectionsUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toBe('Access to db is not allowed');
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not acces collection, if it is forbidden in config', function (done) {
+        const testDbName = test.genTestDbName();
+        const collectionName = test.genTestCollectionName();
+        const collectionsUrl = test.genCollectionsUrl(testDbName);
+        const config = extend(true, {}, defaultConfiguration);
+
+        //Allow access only to 'foo_collection'
+        config.dbAccessControl = {};
+        config.dbAccessControl[testDbName] = ['foo_collection'];
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, collectionName, []);
+            })
+            .then(function () {
+                return test.requestJson(collectionsUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toContain(collectionName);
+            })
+            .then(function () {
+                return test.requestJson(test.genCollectionUrl(testDbName, collectionName));
+            })
+            .then(function (result) {
+                expect(result.data).toBe('Access to db is not allowed');
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not acces collection, if it is forbidden in config, for "database" endpoint', function (done) {
+        const testDbName = test.genTestDbName();
+        const collectionName = test.genTestCollectionName();
+        const collectionUrl = test.genCollectionUrlDatabaseEndpoint(collectionName);
+        const config = extend(true, {}, defaultConfiguration);
+
+        //Allow access only to 'foo_collection'
+        config.dbAccessControl = ['foo_collection'];
+        config.endpoint_root = 'database';
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, collectionName, []);
+            })
+            .then(function () {
+                return test.requestJson(collectionUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toBe('Access to db is not allowed');
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
 });
