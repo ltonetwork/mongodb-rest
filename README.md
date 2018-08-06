@@ -115,7 +115,7 @@ Here is an example JSON configuration object:
             "foo_database": ["collection1", "collection2"],
             "bar_database": ["collection2", "collection3"],
             "zoo_database": [],
-        }
+        },
         "mongoOptions": {
             "serverOptions": {
             },
@@ -134,9 +134,9 @@ For documentation on the mongodb connection string: http://docs.mongodb.org/manu
 For backward compatibility `db` can also be set to an object that specified `host` and `port` as follows:
 
 	"db": {
-		"port": 27017,
-		"host": "localhost"
-	},
+        "port": 27017,
+        "host": "localhost"
+	}
 
 ---
 
