@@ -295,10 +295,11 @@ _Format:_ `POST /<db>/<collection>`
     Connection: keep-alive
     Content-Type: application/json; charset=utf-8
     X-Powered-By: Express
-    Location: /test/nested/5595339aa73107ad070e891a
     Content-Length: 15
     {
-        "ok": 1
+        "_id": "5595339aa73107ad070e891a",
+        "title": "Some title",
+        "content": "document content"
     }
     
 **Updating a document:**
@@ -313,7 +314,9 @@ _Format_: `PUT /<db>/<collection>/id`
     Content-Length: 15
     Date: Thu, 02 Jul 2015 12:53:00 GMT
     {
-        "ok": 1
+        "_id": "5595339aa73107ad070e891a",
+        "title": "New title",
+        "content": "New document content"
     }
     
 **Deleting a document by id:**
