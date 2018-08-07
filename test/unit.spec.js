@@ -4,8 +4,11 @@
  * Unit tests
  */
 
+const castId = require('../lib/helpers/cast-id');
 const endpoint = require('../lib/helpers/endpoint');
 const beforeRoute = require('../lib/before-route');
+const mongodb = require('mongodb');
+const BSON = mongodb.BSONPure;
 
 describe('mongodb-rest:unit', function () {
     function isDbEndpointProvider() {
@@ -157,6 +160,23 @@ describe('mongodb-rest:unit', function () {
                 expect(response.responseCode).toBe(spec.responseCode);
                 expect(response.responseMessage).toBe(spec.responseMessage);
             }
+        });
+    });
+
+    function castIdProvider() {
+        return [
+            {note: 'should not cast integer id', id: 23, expected: 23},
+            {note: 'should not cast numeric id', id: '23', expected: '23'},
+            {note: 'should not cast string id', id: 'foo', expected: 'foo'},
+            {note: 'should cast hex id', id: '5b68a4c62e5cfd380d73ea48', expected: new BSON.ObjectID('5b68a4c62e5cfd380d73ea48')},
+        ];
+    }
+
+    castIdProvider().forEach(function(spec) {
+        it(spec.note, function() {
+            const castedId = castId(spec.id);
+
+            expect(castedId).toEqual(spec.expected);
         });
     });
 });
