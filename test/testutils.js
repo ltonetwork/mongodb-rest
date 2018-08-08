@@ -1,4 +1,4 @@
-'use strict'; 
+'use strict';
 
 //
 // Utils for testing.
@@ -7,7 +7,7 @@
 var mongo = require('promised-mongo');
 var request = require('request');
 var Q = require('q');
-var connection = require('../lib/connection');
+var connection = require('../lib/helpers/connection');
 
 //
 // Drop the specified test database.
@@ -16,7 +16,7 @@ var dropDatabase = function (testDbName) {
     var db = mongo(testDbName);
     return db.dropDatabase()
         .then(function () {
-            db.close(); 
+            db.close();
         });
 };
 
@@ -33,14 +33,14 @@ var saveDocument = function (collection, document) {
             deferred.resolve(doc);
         }
     });
-        
+
     return deferred.promise;
 };
 
 //
 // Load data into a db collection.
-// 
-var loadFixture = function (testDbName, testCollectionName, data) {    
+//
+var loadFixture = function (testDbName, testCollectionName, data) {
 
     var db = mongo(testDbName);
     return db.createCollection(testCollectionName)
@@ -56,8 +56,8 @@ var loadFixture = function (testDbName, testCollectionName, data) {
 
 //
 // Load data into a db collection.
-// 
-var dropDatabaseAndLoadFixture = function (testDbName, testCollectionName, data) {    
+//
+var dropDatabaseAndLoadFixture = function (testDbName, testCollectionName, data) {
     return dropDatabase(testDbName)
         .then(function () {
             return loadFixture(testDbName, testCollectionName, data);
@@ -77,8 +77,8 @@ var requestHttp = function (url) {
             return;
         }
 
-        deferred.resolve({ 
-            data: body, 
+        deferred.resolve({
+            data: body,
             response: response,
         });
     });
@@ -98,8 +98,8 @@ var requestJson = function (url) {
             return;
         }
 
-        deferred.resolve({             
-            data: JSON.parse(body), 
+        deferred.resolve({
+            data: JSON.parse(body),
             response: response,
         });
     });
@@ -137,7 +137,7 @@ var post = function (url, data) {
     var deferred = Q.defer();
 
     request.post({
-            url: url, 
+            url: url,
             json: true,
             body: data,
         },
@@ -148,7 +148,7 @@ var post = function (url, data) {
                 return;
             }
 
-            deferred.resolve({ 
+            deferred.resolve({
                 data: body,
                 response: response,
             });
@@ -165,7 +165,7 @@ var put = function (collectionUrl, itemID, data) {
     var deferred = Q.defer();
     var itemUrl = collectionUrl + "/" + itemID.toString();
     request.put({
-        url: itemUrl, 
+        url: itemUrl,
         json: data,
     }, function (err, response, body) {
 
@@ -189,7 +189,7 @@ var del = function (collectionUrl, itemID) {
     var deferred = Q.defer();
     var itemUrl = collectionUrl + "/" + itemID.toString();
     request.del({
-        url: itemUrl, 
+        url: itemUrl,
     }, function (err, response, body) {
 
         if (err) {
@@ -229,7 +229,7 @@ module.exports = {
     startServer: function (config) {
         var deferred = Q.defer();
 
-        // Open the rest server for each test.        
+        // Open the rest server for each test.
         restServer.startServer(config, function (err) {
             if (err) {
                 deferred.reject(err);
@@ -259,7 +259,7 @@ module.exports = {
         return 'mongodb_test_collection' + nextCollectionNumber++;
     },
 
-    genCollectionsUrl: function (dbName) { 
+    genCollectionsUrl: function (dbName) {
         return url + dbName;
     },
 
@@ -267,5 +267,21 @@ module.exports = {
         return this.genCollectionsUrl(dbName) + '/' + collectionName;
     },
 
+    genBulkUrl: function (dbName) {
+        return this.genCollectionsUrl(dbName) + '/bulk';
+    },
+
+    genBulkUrlDatabaseEndpoint: function () {
+        return this.genCollectionsUrlDatabaseEndpoint() + 'bulk';
+    },
+
+    genCollectionsUrlDatabaseEndpoint: function () {
+        return url;
+    },
+
+    genCollectionUrlDatabaseEndpoint: function (collectionName) {
+        return this.genCollectionsUrlDatabaseEndpoint() + collectionName;
+    },
+
 };
-    
+
