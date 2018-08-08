@@ -372,7 +372,51 @@ _Format:_ `DELETE /<db>/<collection>/id`
         "ok": 1
     }
 
-Content Type:
+**Bulk write (insert, update and delete)**
+_Format:_ `POST /<db>/bulk`
+
+    $ curl 'http://localhost:3000/test/bulk' \
+    >   -D - \
+    >   -X POST \
+    >   -H 'Content-Type: application/json' \
+    >   -H 'Accept: application/json' \
+    >   --data '{"data": {"collection1": {"insert": [{"Title": "Some title"}, {"_id": "5595339aa73107ad070e891a", "Key": "Value"}], "update": [{"_id": 123, "New field": "new value"}]}, "collection2": {"delete": [{"name": "John"}, {"_id": "5595339aa73107ad070e891b"}]}}}'
+
+    HTTP/1.1 200 OK
+    Date: Thu, 02 Jul 2015 12:50:34 GMT
+    Connection: keep-alive
+    Content-Type: application/json; charset=utf-8
+    X-Powered-By: Express
+    Content-Length: 15
+    {
+        "ok": 1
+    }
+
+For bulk write operation the following syntax of POST body should be used:
+
+    {
+        "data": {
+            "collection1": {
+                "insert": [<doc1>, <doc2>, ...],
+                "update": [<doc3>, <doc4>, ...],
+                "delete": [<doc5>, <doc6>, ...],
+            },
+            "collection2": {
+                "insert": [<doc1>, <doc2>, ...],
+                "update": [<doc3>, <doc4>, ...],
+                "delete": [<doc5>, <doc6>, ...],
+            },
+            ...
+        }
+    }
+
+So `insert`, `update` and `delete` operations can be performed in a single request for multiple collections.
+
+Documents in `update` section should contain an `_id` field, that acts as a filter. The rest fields are used in mongo `$set` operator to update existing document.
+
+Documents in `insert` and `delete` section are not obligated to contain `_id` field.
+
+**Content Type:**
 
 * Please make sure `application/json` is used as Content-Type when using POST/PUT with request bodies.
 
