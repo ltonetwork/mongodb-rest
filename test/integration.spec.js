@@ -21,7 +21,7 @@ var del = test.del;
 var Q = require('q');
 var extend = require("extend");
 
-describe('mongodb-rest', function () {
+describe('mongodb-rest:integration', function () {
 
     // Default configuration to use for some tests.
     var defaultConfiguration = {
@@ -60,7 +60,7 @@ describe('mongodb-rest', function () {
                     done(err);
                 })
                 .done(function () {
-                    test.stopServer();    
+                    test.stopServer();
                 });
 
         }).not.toThrow();
@@ -82,7 +82,7 @@ describe('mongodb-rest', function () {
                     done(err);
                 })
                 .done(function () {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         }).not.toThrow();
     });
@@ -111,7 +111,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -129,7 +129,7 @@ describe('mongodb-rest', function () {
         test
             .startServer(oldStyleConfig)
             .then(function () {
-                return dropAndLoad(testDbName, testCollectionName, []);    
+                return dropAndLoad(testDbName, testCollectionName, []);
             })
             .then(function () {
                 return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
@@ -142,7 +142,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -158,7 +158,7 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return test.requestJson(test.genDbsUrl());
             })
-            .then(function (result) {                
+            .then(function (result) {
                 expect(result.data).not.toContain(testDbName);
             })
             .then(function () {
@@ -175,7 +175,42 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
+            });
+    });
+
+    it('can not retrieve names of databases if endpoint_root is set to "database"', function (done) {
+
+        var testDbName = test.genTestDbName();
+        var config = extend(true, {}, defaultConfiguration);
+        config.endpoint_root = 'database';
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return test.requestJson(test.genDbsUrl());
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([]);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, test.genTestCollectionName(), []);
+            })
+            .then(function () {
+                return test.requestJson(test.genDbsUrl());
+            })
+            .then(function (result) {
+                expect(result.data).toEqual([]);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
             });
     });
 
@@ -195,7 +230,7 @@ describe('mongodb-rest', function () {
             .then(function () {
                 return test.requestJson(collectionsUrl);
             })
-            .then(function (result) {                
+            .then(function (result) {
                 expect(result.data.length).toBe(0);
             })
             .then(function () {
@@ -218,7 +253,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -243,7 +278,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -285,7 +320,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -311,7 +346,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -353,7 +388,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -395,7 +430,7 @@ describe('mongodb-rest', function () {
                 if (headerRow[0] !== "\"_id\"") {
                     idIndex = 1;
                     itemIndex = 0;
-                } 
+                }
 
                 expect(headerRow[itemIndex]).toEqual("\"item\"");
                 expect(headerRow[idIndex]).toEqual("\"_id\"");
@@ -419,7 +454,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -459,7 +494,7 @@ describe('mongodb-rest', function () {
                 if (headerRow[0] !== "\"_id\"") {
                     idIndex = 1;
                     itemIndex = 0;
-                } 
+                }
 
                 expect(headerRow[itemIndex]).toEqual("\"item\"");
                 expect(headerRow[idIndex]).toEqual("\"_id\"");
@@ -483,7 +518,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -526,7 +561,7 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
@@ -549,7 +584,8 @@ describe('mongodb-rest', function () {
             })
             .then(function (result) {
                 expect(result.response.statusCode).toBe(201);
-                expect(result.data).toEqual({ ok: 1 });
+                expect(result.data.value).toEqual("hi there");
+                expect(result.data._id).toBeDefined();
 
                 return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
@@ -562,28 +598,16 @@ describe('mongodb-rest', function () {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
-    it('can update single document in db collection', function (done) {
+    it('can insert single document with custom id', function (done) {
 
-        var itemID = ObjectID();
-
-        var testData = [
-            {
-                _id: ObjectID(),
-                item: 1,
-            },
-            {
-                _id: itemID,
-                item: 2,
-            },
-            {
-                _id: ObjectID(),
-                item: 3,
-            },
-        ];
+        var postData = {
+            _id: "foo",
+            value: "hi there",
+        };
 
         var testDbName = test.genTestDbName();
         var testCollectionName = test.genTestCollectionName();
@@ -591,87 +615,264 @@ describe('mongodb-rest', function () {
         test
             .startServer(defaultConfiguration)
             .then(function () {
-                return dropAndLoad(testDbName, testCollectionName, testData);
+                return test.dropDatabase(testDbName);
             })
             .then(function () {
-
-                var newData = {
-                    item: 50,
-                };
-
-                return put(test.genCollectionUrl(testDbName, testCollectionName), itemID, newData);
+                return post(test.genCollectionUrl(testDbName, testCollectionName), postData);
             })
             .then(function (result) {
-                expect(result.response.statusCode).toBe(200);
-                expect(result.data).toEqual({ ok: 1 });
-
-                return itemJson(test.genCollectionUrl(testDbName, testCollectionName), itemID);
-            })
-            .then(function (result) {
-                expect(result.data._id).toEqual(itemID.toString());
-                expect(result.data.item).toBe(50);
-                done();
-            })
-            .catch(function (err) {
-                done(err);
-            })
-            .done(function () {
-                test.stopServer();    
-            });
-    });
-
-    it('can delete single document in db collection', function (done) {
-
-        var itemID = ObjectID();
-
-        var testData = [
-            {
-                _id: ObjectID(),
-                item: 1,
-            },
-            {
-                _id: itemID,
-                item: 2,
-            },
-            {
-                _id: ObjectID(),
-                item: 3,
-            },
-        ];
-
-        var testDbName = test.genTestDbName();
-        var testCollectionName = test.genTestCollectionName();
-
-        test
-            .startServer(defaultConfiguration)
-            .then(function () {
-                return dropAndLoad(testDbName, testCollectionName, testData); 
-            })
-            .then(function () {
-                return del(test.genCollectionUrl(testDbName, testCollectionName), itemID);
-            })
-            .then(function (result) {
-                expect(result.response.statusCode).toBe(200);
-                expect(JSON.parse(result.data)).toEqual({ ok: 1 });
-
-                return itemJson(test.genCollectionUrl(testDbName, testCollectionName), itemID);
-            })
-            .then(function (result) {
-                //todo: expect(result.response.statusCode).toBe(404);
-                expect(result.data).toEqual({ ok: 0 });
+                expect(result.response.statusCode).toBe(201);
+                expect(result.data.value).toEqual("hi there");
+                expect(result.data._id).toEqual("foo");
 
                 return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
             })
             .then(function (result) {
-                expect(result.data.length).toBe(2);
+                expect(result.data.length).toBe(1);
+                expect(result.data[0].value).toBe(postData.value);
                 done();
             })
             .catch(function (err) {
                 done(err);
             })
             .done(function () {
-                test.stopServer();    
+                test.stopServer();
             });
     });
 
+    function updateProvider() {
+        const mongoId = ObjectID();
+
+        return [
+            {note: 'can update single document in db collection', id: mongoId, expected: mongoId.toString()},
+            {note: 'can update single document with custom id', id: '23', expected: '23'},
+        ];
+    }
+
+    updateProvider().forEach(function(spec) {
+        it(spec.note, function (done) {
+            const id = spec.id;
+
+            const testData = [
+                {
+                    _id: ObjectID(),
+                    item: 1,
+                },
+                {
+                    _id: id,
+                    item: 2,
+                },
+                {
+                    _id: ObjectID(),
+                    item: 3,
+                },
+            ];
+
+            const testDbName = test.genTestDbName();
+            const testCollectionName = test.genTestCollectionName();
+
+            test
+                .startServer(defaultConfiguration)
+                .then(function () {
+                    return dropAndLoad(testDbName, testCollectionName, testData);
+                })
+                .then(function () {
+
+                    const newData = {
+                        item: 50,
+                    };
+
+                    return put(test.genCollectionUrl(testDbName, testCollectionName), id, newData);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data.item).toEqual(50);
+                    expect(result.data._id).toEqual(spec.expected);
+
+                    return itemJson(test.genCollectionUrl(testDbName, testCollectionName), id);
+                })
+                .then(function (result) {
+                    expect(result.data._id).toEqual(spec.expected);
+                    expect(result.data.item).toBe(50);
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();
+                });
+        });
+    });
+
+    function deleteProvider() {
+        const mongoId = ObjectID();
+
+        return [
+            {note: 'can delete single document in db collection', id: mongoId},
+            {note: 'can delete single document with custom id', id: '23'},
+        ];
+    }
+
+    deleteProvider().forEach(function(spec) {
+        it(spec.note, function (done) {
+            var id = spec.id;
+
+            var testData = [
+                {
+                    _id: ObjectID(),
+                    item: 1,
+                },
+                {
+                    _id: id,
+                    item: 2,
+                },
+                {
+                    _id: ObjectID(),
+                    item: 3,
+                },
+            ];
+
+            var testDbName = test.genTestDbName();
+            var testCollectionName = test.genTestCollectionName();
+
+            test
+                .startServer(defaultConfiguration)
+                .then(function () {
+                    return dropAndLoad(testDbName, testCollectionName, testData);
+                })
+                .then(function () {
+                    return del(test.genCollectionUrl(testDbName, testCollectionName), id);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(JSON.parse(result.data)).toEqual({ ok: 1 });
+
+                    return itemJson(test.genCollectionUrl(testDbName, testCollectionName), id);
+                })
+                .then(function (result) {
+                    //todo: expect(result.response.statusCode).toBe(404);
+                    expect(result.data).toEqual({ ok: 0 });
+
+                    return collectionJson(test.genCollectionUrl(testDbName, testCollectionName));
+                })
+                .then(function (result) {
+                    expect(result.data.length).toBe(2);
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();
+                });
+        });
+
+    });
+
+
+
+    it('can not acces db, if it is forbidden in config', function (done) {
+
+        const testDbName = test.genTestDbName();
+        const collectionsUrl = test.genCollectionsUrl(testDbName);
+        const config = extend(true, {}, defaultConfiguration);
+
+        //Allow access only to 'foo' database
+        config.dbAccessControl = {foo: []};
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, test.genTestCollectionName(), []);
+            })
+            .then(function () {
+                return test.requestJson(collectionsUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toBe('Access to db is not allowed');
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not acces collection, if it is forbidden in config', function (done) {
+        const testDbName = test.genTestDbName();
+        const collectionName = test.genTestCollectionName();
+        const collectionsUrl = test.genCollectionsUrl(testDbName);
+        const config = extend(true, {}, defaultConfiguration);
+
+        //Allow access only to 'foo_collection'
+        config.dbAccessControl = {};
+        config.dbAccessControl[testDbName] = ['foo_collection'];
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, collectionName, []);
+            })
+            .then(function () {
+                return test.requestJson(collectionsUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toContain(collectionName);
+            })
+            .then(function () {
+                return test.requestJson(test.genCollectionUrl(testDbName, collectionName));
+            })
+            .then(function (result) {
+                expect(result.data).toBe('Access to db is not allowed');
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not acces collection, if it is forbidden in config, for "database" endpoint', function (done) {
+        const testDbName = test.genTestDbName();
+        const collectionName = test.genTestCollectionName();
+        const collectionUrl = test.genCollectionUrlDatabaseEndpoint(collectionName);
+        const config = extend(true, {}, defaultConfiguration);
+
+        //Allow access only to 'foo_collection'
+        config.dbAccessControl = ['foo_collection'];
+        config.endpoint_root = 'database';
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return dropAndLoad(testDbName, collectionName, []);
+            })
+            .then(function () {
+                return test.requestJson(collectionUrl);
+            })
+            .then(function (result) {
+                expect(result.data).toBe('Access to db is not allowed');
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
 });
