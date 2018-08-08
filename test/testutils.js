@@ -267,6 +267,14 @@ module.exports = {
         return this.genCollectionsUrl(dbName) + '/' + collectionName;
     },
 
+    genBulkUrl: function (dbName) {
+        return this.genCollectionsUrl(dbName) + '/bulk';
+    },
+
+    genBulkUrlDatabaseEndpoint: function () {
+        return this.genCollectionsUrlDatabaseEndpoint() + 'bulk';
+    },
+
     genCollectionsUrlDatabaseEndpoint: function () {
         return url;
     },

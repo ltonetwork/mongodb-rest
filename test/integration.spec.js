@@ -21,6 +21,29 @@ var del = test.del;
 var Q = require('q');
 var extend = require("extend");
 
+const addMatchers = require('add-matchers');
+addMatchers({
+    toContainObject: function(element, array) {
+        for (var i = 0; i < array.length; i++) {
+            if (JSON.stringify(array[i]) === JSON.stringify(element)) return true;
+        }
+
+        return false;
+    },
+    toContainObjectWithId: function(element, array) {
+        array = array.slice();
+
+        for (var i = 0; i < array.length; i++) {
+            if (typeof array[i]._id === 'undefined') continue;
+            delete array[i]._id;
+
+            if (JSON.stringify(array[i]) === JSON.stringify(element)) return true;
+        }
+
+        return false;
+    }
+});
+
 describe('mongodb-rest:integration', function () {
 
     // Default configuration to use for some tests.
@@ -770,6 +793,163 @@ describe('mongodb-rest:integration', function () {
 
     });
 
+    function bulkWriteProvider() {
+        const testDbName = test.genTestDbName();
+        const customConfig = extend(true, {}, defaultConfiguration);
+
+        customConfig.db = 'mongodb://localhost:27017/' + testDbName;
+        customConfig.endpoint_root = 'database';
+
+        return [
+            {
+                note: 'can perform bulk write operation',
+                dbName: testDbName,
+                bulkUrl: test.genBulkUrl(testDbName),
+                collectionUrl: function(db, collection) {
+                    return test.genCollectionUrl(db, collection);
+                },
+                config: defaultConfiguration
+            },
+            {
+                note: 'can perform bulk write operation for "database" endpoint',
+                dbName: testDbName,
+                bulkUrl: test.genBulkUrlDatabaseEndpoint(),
+                collectionUrl: function(db, collection) {
+                    return test.genCollectionUrlDatabaseEndpoint(collection);
+                },
+                config: customConfig
+            },
+        ];
+    }
+
+    bulkWriteProvider().forEach(function(spec) {
+        it(spec.note, function (done) {
+            const testDbName = spec.dbName;
+            const testCollectionName1 = test.genTestCollectionName();
+            const testCollectionName2 = test.genTestCollectionName();
+            const bulkUrl = spec.bulkUrl;
+
+            const insertDocs1 = [
+                {foo: "bar"},
+                {_id: 23, test: "rest"},
+                {_id: '5b6ada0eff8885100c2ce964', test2: "rest-fest"}
+            ];
+            const insertDocs2 = [
+                {_id: 'foo_id', key: true},
+                {_id: '5b6ada0eff8885100c2ce900', foo_key: "foo-value"}
+            ];
+
+            const updateDocs1 = [
+                {_id: 23, test: "rest-updated"},
+                {_id: '5b6ada0eff8885100c2ce964', test2: "rest-fest-chest", more: "added"}
+            ];
+            const updateDocs2 = [
+                {_id: 'foo_id', key: false},
+                {_id: '5b6ada0eff8885100c2ce900', new_key: "new-value"}
+            ];
+
+            const deleteDocs1 = [
+                {foo: "bar"},
+                {_id: 23},
+            ];
+            const deleteDocs2 = [
+                {_id: 'foo_id'},
+                {_id: '5b6ada0eff8885100c2ce900'}
+            ];
+
+            const insertData = {data: {}};
+            insertData.data[testCollectionName1] = {insert: insertDocs1};
+            insertData.data[testCollectionName2] = {insert: insertDocs2};
+
+            const updateData = {data: {}};
+            updateData.data[testCollectionName1] = {update: updateDocs1};
+            updateData.data[testCollectionName2] = {update: updateDocs2};
+
+            const deleteData = {data: {}};
+            deleteData.data[testCollectionName1] = {delete: deleteDocs1};
+            deleteData.data[testCollectionName2] = {delete: deleteDocs2};
+
+            test
+                .startServer(spec.config)
+                .then(function () {
+                    return test.dropDatabase(testDbName);
+                })
+
+                //test insert
+                .then(function () {
+                    return post(bulkUrl, insertData);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data).toEqual({ok: 1});
+
+                    return collectionJson(spec.collectionUrl(testDbName, testCollectionName1));
+                })
+                .then(function (result) {
+                    expect(result.data.length).toBe(3);
+                    expect(result.data).toContainObjectWithId(insertDocs1[0]);
+                    expect(result.data).toContainObject(insertDocs1[1]);
+                    expect(result.data).toContainObject(insertDocs1[2]);
+
+                    return collectionJson(spec.collectionUrl(testDbName, testCollectionName2));
+                })
+                .then(function (result) {
+                    expect(result.data.length).toBe(2);
+                    expect(result.data).toContainObject(insertDocs2[0]);
+                    expect(result.data).toContainObject(insertDocs2[1]);
+
+                    return post(bulkUrl, updateData);
+                })
+
+                //test update
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data).toEqual({ok: 1});
+
+                    return collectionJson(spec.collectionUrl(testDbName, testCollectionName1));
+                })
+                .then(function (result) {
+                    expect(result.data.length).toBe(3);
+                    expect(result.data).toContainObjectWithId(insertDocs1[0]);
+                    expect(result.data).toContainObject(updateDocs1[0]);
+                    expect(result.data).toContainObject(updateDocs1[1]);
+
+                    return collectionJson(spec.collectionUrl(testDbName, testCollectionName2));
+                })
+                .then(function (result) {
+                    expect(result.data.length).toBe(2);
+                    expect(result.data).toContainObject(updateDocs2[0]);
+                    expect(result.data).toContainObject(extend({}, insertDocs2[1], updateDocs2[1]));
+
+                    return post(bulkUrl, deleteData);
+                })
+
+                //test delete
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data).toEqual({ok: 1});
+
+                    return collectionJson(spec.collectionUrl(testDbName, testCollectionName1));
+                })
+                .then(function (result) {
+                    expect(result.data.length).toBe(1);
+                    expect(result.data).toContainObject(updateDocs1[1]);
+
+                    return collectionJson(spec.collectionUrl(testDbName, testCollectionName2));
+                })
+                .then(function (result) {
+                    expect(result.data).toEqual([]);
+
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();
+                });
+        });
+    });
 
 
     it('can not acces db, if it is forbidden in config', function (done) {
