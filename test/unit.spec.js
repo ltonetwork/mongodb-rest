@@ -8,7 +8,7 @@ const castId = require('../lib/helpers/cast-id');
 const endpoint = require('../lib/helpers/endpoint');
 const beforeRoute = require('../lib/before-route');
 const mongodb = require('mongodb');
-const BSON = mongodb.BSONPure;
+const ObjectID = mongodb.ObjectID;
 
 describe('mongodb-rest:unit', function () {
     function isDbEndpointProvider() {
@@ -168,7 +168,7 @@ describe('mongodb-rest:unit', function () {
             {note: 'should not cast integer id', id: 23, expected: 23},
             {note: 'should not cast numeric id', id: '23', expected: '23'},
             {note: 'should not cast string id', id: 'foo', expected: 'foo'},
-            {note: 'should cast hex id', id: '5b68a4c62e5cfd380d73ea48', expected: new BSON.ObjectID('5b68a4c62e5cfd380d73ea48')},
+            {note: 'should cast hex id', id: '5b68a4c62e5cfd380d73ea48', expected: new ObjectID('5b68a4c62e5cfd380d73ea48')},
         ];
     }
 
@@ -176,7 +176,12 @@ describe('mongodb-rest:unit', function () {
         it(spec.note, function() {
             const castedId = castId(spec.id);
 
-            expect(castedId).toEqual(spec.expected);
+            if (spec.expected instanceof ObjectID) {
+                expect(castedId instanceof ObjectID).toBe(true);
+                expect(castedId.toString()).toEqual(spec.expected.toString());
+            } else {
+                expect(castedId).toEqual(spec.expected);
+            }
         });
     });
 });

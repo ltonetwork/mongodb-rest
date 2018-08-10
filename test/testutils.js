@@ -4,7 +4,8 @@
 // Utils for testing.
 //
 
-var mongo = require('promised-mongo');
+var mongo = require('mongodb');
+var MongoClient = mongo.MongoClient;
 var request = require('request');
 var Q = require('q');
 var connection = require('../lib/helpers/connection');
@@ -13,16 +14,15 @@ var connection = require('../lib/helpers/connection');
 // Drop the specified test database.
 //
 var dropDatabase = function (testDbName) {
-    var db = mongo(testDbName);
-    return db.dropDatabase()
-        .then(function () {
-            db.close();
-        });
+    var db = null;
+
+    return MongoClient.connect('mongodb://localhost:27017/' + testDbName)
+        .then(dbConn => (db = dbConn) && db.dropDatabase())
+        .then(() => db.close());
 };
 
 //
 // Save a document and return a promise.
-// This is a workaround, can't seem to do achieve this using the save fn in promised-mongo.
 var saveDocument = function (collection, document) {
     var deferred = Q.defer();
     collection.save(document, function (err, doc) {
@@ -41,17 +41,16 @@ var saveDocument = function (collection, document) {
 // Load data into a db collection.
 //
 var loadFixture = function (testDbName, testCollectionName, data) {
+    var db = null;
 
-    var db = mongo(testDbName);
-    return db.createCollection(testCollectionName)
+    return MongoClient.connect('mongodb://localhost:27017/' + testDbName)
+        .then(dbConn => (db = dbConn) && db.createCollection(testCollectionName))
         .then(function (collection) {
             return Q.all(data.map(function (dataItem) {
                 return saveDocument(collection, dataItem);
             }));
         })
-        .then(function () {
-            db.close();
-        });
+        .then(() => db.close());
 };
 
 //
