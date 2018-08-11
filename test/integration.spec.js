@@ -951,6 +951,115 @@ describe('mongodb-rest:integration', function () {
         });
     });
 
+    function findWithOptionsProvider() {
+        return [
+            {
+                note: 'can apply asc sorting',
+                query: '?sort={"item":1}',
+                assert: function(data) {
+                    return data[0].item === 1 && data[1].item === 2 && data[2].item === 3;
+                }
+            },
+            {
+                note: 'can apply desc sorting',
+                query: '?sort={"item":-1}',
+                assert: function(data) {
+                    return data[0].item === 3 && data[1].item === 2 && data[2].item === 1;
+                }
+            },
+            {
+                note: 'can apply "limit"',
+                query: '?sort={"item":-1}&limit=2',
+                assert: function(data) {
+                    return data.length === 2 && data[0].item === 3 && data[1].item === 2;
+                }
+            },
+            {
+                note: 'can apply "skip"',
+                query: '?sort={"item":-1}&limit=2&skip=1',
+                assert: function(data) {
+                    return data.length === 2 && data[0].item === 2 && data[1].item === 1;
+                }
+            },
+            {
+                note: 'can apply "explain"',
+                query: '?explain=1',
+                assert: function(data) {
+                    return typeof data.queryPlanner !== 'undefined';
+                }
+            },
+            {
+                note: 'can apply "fields"',
+                query: '?fields={"item":1}',
+                assert: function(data) {
+                    return data.length === 3 &&
+                        data[0]._id &&
+                        data[0].item &&
+                        typeof data[0].foo === 'undefined';
+                }
+            },
+            {
+                note: 'can apply "hint" - just test for no error',
+                query: '?hint={"$natural":-1}',
+                assert: function(data) {
+                    return data.length === 3;
+                }
+            },
+            {
+                note: 'can apply "snapshot" - just test for no error',
+                query: '?snapshot=1',
+                assert: function(data) {
+                    return data.length === 3;
+                }
+            },
+        ];
+    }
+
+    findWithOptionsProvider().forEach(function(spec) {
+        it(spec.note, function (done) {
+            const testData = [
+                {
+                    _id: ObjectID(),
+                    item: 1,
+                    foo: 'bar'
+                },
+                {
+                    _id: ObjectID(),
+                    item: 2,
+                    foo: 'baz'
+                },
+                {
+                    _id: ObjectID(),
+                    item: 3,
+                    foo: 'zoo'
+                },
+            ];
+
+            const testDbName = test.genTestDbName();
+            const testCollectionName = test.genTestCollectionName();
+            const assertData = spec.assert;
+
+            test
+                .startServer(defaultConfiguration)
+                .then(function () {
+                    return dropAndLoad(testDbName, testCollectionName, testData);
+                })
+                .then(function () {
+                    return collectionJson(test.genCollectionUrl(testDbName, testCollectionName) + spec.query);
+                })
+                .then(function (result) {
+                    expect(assertData(result.data)).toBe(true);
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();
+                });
+        });
+    });
+
 
     it('can not acces db, if it is forbidden in config', function (done) {
 
