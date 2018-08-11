@@ -420,21 +420,21 @@ Documents in `insert` and `delete` section are not obligated to contain `_id` fi
 
 **Content Type:**
 
-* Please make sure `application/json` is used as Content-Type when using POST/PUT with request bodies.
+Please make sure `application/json` is used as Content-Type when using POST/PUT with request bodies.
 
 Query options
 -------------
 
 When performing a query `GET /<db>/<collection>`, some options can be applyed together with filter. The following options are supported:
 
-    - skip *(int)*
-    - limit *(int)*
-    - sort *(object)*
-    - hint *(object)*
-    - fields *(object)*
-    - snapshot *(boolean)*
-    - count *(boolean)*
-    - explain *(boolean)*
+* skip *(int)*
+* limit *(int)*
+* sort *(object)*
+* hint *(object)*
+* fields *(object)*
+* snapshot *(boolean)*
+* count *(boolean)*
+* explain *(boolean)*
 
 For `explain` option, the explain is performed and returned for given query, no documents are returned.
 
@@ -449,7 +449,7 @@ An example of query with options:
 Dependencies
 ------------
 
-* Are indicated in package.json.
+Are indicated in package.json.
 
 Auth
 ----
