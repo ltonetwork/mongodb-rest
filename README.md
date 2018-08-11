@@ -35,6 +35,8 @@ Contents
 ](#logging)
 - [Supported REST API
 ](#supported-rest-api)
+- [Query options
+](#query-options)
 - [Dependencies
 ](#dependencies)
 - [Auth
@@ -424,6 +426,7 @@ Query options
 -------------
 
 When performing a query `GET /<db>/<collection>`, some options can be applyed together with filter. The following options are supported:
+
     - skip *(int)*
     - limit *(int)*
     - sort *(object)*
