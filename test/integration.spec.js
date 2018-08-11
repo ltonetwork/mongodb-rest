@@ -15,6 +15,7 @@ var requestHttp = test.requestHttp;
 var collectionJson = test.collectionJson;
 var itemJson = test.itemJson;
 var itemHttp = test.itemHttp;
+var patch = test.patch;
 var post = test.post;
 var put = test.put;
 var del = test.del;
@@ -663,16 +664,16 @@ describe('mongodb-rest:integration', function () {
             });
     });
 
-    function updateProvider() {
+    function replaceProvider() {
         const mongoId = ObjectID();
 
         return [
-            {note: 'can update single document in db collection', id: mongoId, expected: mongoId.toString()},
-            {note: 'can update single document with custom id', id: '23', expected: '23'},
+            {note: 'can replace single document in db collection', id: mongoId, expected: mongoId.toString()},
+            {note: 'can replace single document with custom id', id: '23', expected: '23'},
         ];
     }
 
-    updateProvider().forEach(function(spec) {
+    replaceProvider().forEach(function(spec) {
         it(spec.note, function (done) {
             const id = spec.id;
 
@@ -680,14 +681,17 @@ describe('mongodb-rest:integration', function () {
                 {
                     _id: ObjectID(),
                     item: 1,
+                    foo: 'bar'
                 },
                 {
                     _id: id,
                     item: 2,
+                    foo: 'baz'
                 },
                 {
                     _id: ObjectID(),
                     item: 3,
+                    foo: 'zoo'
                 },
             ];
 
@@ -710,6 +714,77 @@ describe('mongodb-rest:integration', function () {
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(200);
                     expect(result.data.item).toEqual(50);
+                    expect(typeof result.data.foo).toEqual('undefined');
+                    expect(result.data._id).toEqual(spec.expected);
+
+                    return itemJson(test.genCollectionUrl(testDbName, testCollectionName), id);
+                })
+                .then(function (result) {
+                    expect(result.data._id).toEqual(spec.expected);
+                    expect(result.data.item).toBe(50);
+                    done();
+                })
+                .catch(function (err) {
+                    done(err);
+                })
+                .done(function () {
+                    test.stopServer();
+                });
+        });
+    });
+
+    function updateProvider() {
+        const mongoId = ObjectID();
+
+        return [
+            {note: 'can update single document in db collection', id: mongoId, expected: mongoId.toString()},
+            {note: 'can update single document with custom id', id: '23', expected: '23'},
+        ];
+    }
+
+    updateProvider().forEach(function(spec) {
+        it(spec.note, function (done) {
+            const id = spec.id;
+
+            const testData = [
+                {
+                    _id: ObjectID(),
+                    item: 1,
+                },
+                {
+                    _id: id,
+                    item: 2,
+                    foo: 'baz',
+                    bar: 'test'
+                },
+                {
+                    _id: ObjectID(),
+                    item: 3,
+                },
+            ];
+
+            const testDbName = test.genTestDbName();
+            const testCollectionName = test.genTestCollectionName();
+
+            test
+                .startServer(defaultConfiguration)
+                .then(function () {
+                    return dropAndLoad(testDbName, testCollectionName, testData);
+                })
+                .then(function () {
+
+                    const updateData = {
+                        item: 50,
+                        bar: null
+                    };
+
+                    return patch(test.genCollectionUrl(testDbName, testCollectionName), id, updateData);
+                })
+                .then(function (result) {
+                    expect(result.response.statusCode).toBe(200);
+                    expect(result.data.item).toEqual(50);
+                    expect(result.data.foo).toEqual('baz');
+                    expect(typeof result.data.bar).toEqual('undefined');
                     expect(result.data._id).toEqual(spec.expected);
 
                     return itemJson(test.genCollectionUrl(testDbName, testCollectionName), id);

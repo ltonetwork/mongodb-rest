@@ -341,11 +341,28 @@ _Format:_ `POST /<db>/<collection>`
         "content": "document content"
     }
 
-**Updating a document:**
+**Replacing a document:**
 _Format_: `PUT /<db>/<collection>/id`
 
     $ curl -X "PUT" "http://localhost:3000/test/nested/5595339aa73107ad070e891a \
     > --data {"title": "New title", "content": "New document content"}'
+    HTTP/1.1 200 OK
+    Connection: keep-alive
+    Content-Type: application/json; charset=utf-8
+    X-Powered-By: Express
+    Content-Length: 15
+    Date: Thu, 02 Jul 2015 12:53:00 GMT
+    {
+        "_id": "5595339aa73107ad070e891a",
+        "title": "New title",
+        "content": "New document content"
+    }
+
+**Updating a document:**
+_Format_: `PATCH /<db>/<collection>/id`
+
+    $ curl -X "PUT" "http://localhost:3000/test/nested/5595339aa73107ad070e891a \
+    > --data {"title": "New title", "content": "New document content", "field_to_delete": null}'
     HTTP/1.1 200 OK
     Connection: keep-alive
     Content-Type: application/json; charset=utf-8
