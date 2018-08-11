@@ -438,7 +438,7 @@ When performing a query `GET /<db>/<collection>`, some options can be applyed to
 
 For `explain` option, the explain is performed and returned for given query, no documents are returned.
 
-For `count` option the response looks like `{count: 24}`, no documents are returned. Limit and skip options do influence on count.
+For `count` option the response looks like `{count: 24}`, no documents are returned. Limit and skip options do influence the count.
 
 An example of query with options:
 
