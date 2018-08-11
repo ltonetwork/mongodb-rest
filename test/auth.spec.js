@@ -5,7 +5,7 @@
 
 var test = require('./testutils');
 
-describe('mongodb-rest', function () {
+describe('mongodb-rest:auth', function () {
 
     var authDbName = 'mongodb_rest_test_auth';
     var authDbConnectionString = "mongodb://localhost/" + authDbName;
@@ -68,13 +68,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(400);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -91,13 +91,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(400);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -116,13 +116,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(401);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -148,13 +148,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(401);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -182,13 +182,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(200);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -225,13 +225,13 @@ describe('mongodb-rest', function () {
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(200);
                     expect(result.data.token).toBe(existingToken);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
     });
@@ -254,13 +254,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(401);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -281,13 +281,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(401);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -315,13 +315,13 @@ describe('mongodb-rest', function () {
                     expect(result.response.statusCode).toBe(200);
                     expect(result.data.length).toBe(1);
                     expect(result.data[0].some).toBe('data');
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -346,20 +346,20 @@ describe('mongodb-rest', function () {
                     expect(result.response.statusCode).toBe(200);
                     expect(result.data.length).toBe(1);
                     expect(result.data[0].some).toBe('data');
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
     });
 
     describe("post", function () {
         it("can't post with no token", function (done) {
-   
+
             var dbName = test.genTestDbName();
             var collectionName = test.genTestCollectionName();
             var collectionUrl = test.genCollectionUrl(dbName, collectionName);
@@ -376,13 +376,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(401);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
       });
 
@@ -404,13 +404,13 @@ describe('mongodb-rest', function () {
                 })
                 .then(function (result) {
                     expect(result.response.statusCode).toBe(401);
-                    done();                    
+                    done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -439,16 +439,16 @@ describe('mongodb-rest', function () {
                     return test.collectionJson(collectionUrl);
                 })
                 .then(function (result) {
-                    expect(result.response.statusCode).toBe(200); 
+                    expect(result.response.statusCode).toBe(200);
                     expect(result.data.length).toBe(1);
-                    expect(result.data[0].some).toBe('data'); 
+                    expect(result.data[0].some).toBe('data');
                     done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
 
@@ -475,16 +475,16 @@ describe('mongodb-rest', function () {
                     return test.collectionJson(collectionUrl);
                 })
                 .then(function (result) {
-                    expect(result.response.statusCode).toBe(200); 
+                    expect(result.response.statusCode).toBe(200);
                     expect(result.data.length).toBe(1);
-                    expect(result.data[0].some).toBe('data'); 
+                    expect(result.data[0].some).toBe('data');
                     done();
                 })
                 .catch(function (err) {
                     done(err);
                 })
                 .done(function() {
-                    test.stopServer();    
+                    test.stopServer();
                 });
         });
     });
