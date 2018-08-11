@@ -588,6 +588,51 @@ describe('mongodb-rest:integration', function () {
             });
     });
 
+    it('can retreive single document from db collection, if id is set in a query', function (done) {
+
+        const itemID = ObjectID();
+
+        const testData = [
+            {
+                _id: ObjectID(),
+                item: 1,
+            },
+            {
+                _id: itemID,
+                item: 2,
+            },
+            {
+                _id: ObjectID(),
+                item: 3,
+            },
+        ];
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const query = '?query={"_id":"' + itemID.toString() + '"}';
+
+        test
+            .startServer(defaultConfiguration)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return collectionJson(test.genCollectionUrl(testDbName, testCollectionName) + query);
+            })
+            .then(function (result) {
+                expect(result.data.length).toBe(1);
+                expect(result.data[0]._id).toEqual(itemID.toString());
+                expect(result.data[0].item).toBe(2);
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
     it('can insert single document into collection', function (done) {
 
         var postData = {
