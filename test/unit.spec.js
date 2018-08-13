@@ -6,6 +6,7 @@
 
 const castId = require('../lib/helpers/cast-id');
 const endpoint = require('../lib/helpers/endpoint');
+const preparePatchData = require('../lib/helpers/patch-data');
 const beforeRoute = require('../lib/before-route');
 const mongodb = require('mongodb');
 const ObjectID = mongodb.ObjectID;
@@ -182,6 +183,39 @@ describe('mongodb-rest:unit', function () {
             } else {
                 expect(castedId).toEqual(spec.expected);
             }
+        });
+    });
+
+    function patchDataProvider() {
+        return [
+            {
+                note: 'prepare patch data for empty data',
+                data: [],
+                expected: null
+            },
+            {
+                note: 'prepare patch data, if there are no delete fields',
+                data: {foo: 'bar', zoo: 'baz'},
+                expected: {$set: {foo: 'bar', zoo: 'baz'}}
+            },
+            {
+                note: 'prepare patch data, if there are no set fields',
+                data: {foo: null, zoo: null},
+                expected: {$unset: {foo: '', zoo: ''}}
+            },
+            {
+                note: 'prepare patch data with both delete and set fields',
+                data: {foo: 'bar', zoo: null},
+                expected: {$set: {foo: 'bar'}, $unset: {zoo: ''}}
+            },
+        ];
+    }
+
+    patchDataProvider().forEach(function(spec) {
+        it(spec.note, function() {
+            const data = preparePatchData(spec.data);
+
+            expect(data).toEqual(spec.expected);
         });
     });
 });

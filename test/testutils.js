@@ -142,7 +142,6 @@ var post = function (url, data) {
         },
         function (err, response, body) {
             if (err) {
-                console.log('failing pormise');
                 deferred.reject(err);
                 return;
             }
@@ -153,6 +152,31 @@ var post = function (url, data) {
             });
         }
     );
+
+    return deferred.promise;
+};
+
+//
+// Invoke a HTTP PATCH.
+//
+var patch = function (collectionUrl, itemID, data) {
+    var deferred = Q.defer();
+    var itemUrl = collectionUrl + "/" + itemID.toString();
+
+    request.patch({
+        url: itemUrl,
+        json: data,
+    }, function (err, response, body) {
+        if (err) {
+            deferred.reject(err);
+        }
+        else {
+            deferred.resolve({
+                data: body,
+                response: response,
+            });
+        }
+    });
 
     return deferred.promise;
 };
@@ -223,6 +247,7 @@ module.exports = {
     post: post,
     put: put,
     del: del,
+    patch: patch,
 
     // Start the rest server.
     startServer: function (config) {
