@@ -124,7 +124,29 @@ Here is an example JSON configuration object:
             }
         },
         "humanReadableOutput": true,
-        "urlPrefix": ""
+        "urlPrefix": "",
+        "schema": {
+            "foo_database": {
+                "collection1": {
+                    "definitions": {},
+                    "$schema": "http://json-schema.org/draft-06/schema#",
+                    "$id": "http://json-schema.org/draft-06/schema#",
+                    "type": "object",
+                    "properties": {
+                        "value": {
+                            "$id": "/properties/value",
+                            "type": "boolean",
+                            "title": "Foo boolean value",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": false,
+                            "examples": [
+                                false
+                            ]
+                        }
+                    }
+                }
+            }
+        }
     }
 
 `db` specifies the mongodb connection string for connection to the database. It defaults when not specified.
@@ -204,6 +226,10 @@ Setting a URL prefix of `/blah` will change the example REST API URL to:
 	/blah/database/collection
 
 The URL prefix should allow the REST API to co-exist with another REST API and can also be used a very primitive form of security (by setting the prefix to a _secret key_).
+
+---
+
+`schema` option defines json schemas for collections. So all the documents in given collections should match defined schemas. Schema validation is performed on `insert`, `replace` and `update` operations. If new document does not passes schema validation, response code `400` is returned.
 
 Logging
 -------

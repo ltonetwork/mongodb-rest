@@ -7,6 +7,7 @@
 const castId = require('../lib/helpers/cast-id');
 const endpoint = require('../lib/helpers/endpoint');
 const preparePatchData = require('../lib/helpers/patch-data');
+const getSchemaForRequest = require('../lib/helpers/request-schema');
 const beforeRoute = require('../lib/before-route');
 const mongodb = require('mongodb');
 const ObjectID = mongodb.ObjectID;
@@ -216,6 +217,68 @@ describe('mongodb-rest:unit', function () {
             const data = preparePatchData(spec.data);
 
             expect(data).toEqual(spec.expected);
+        });
+    });
+
+    function requestSchemaProvider() {
+        return [
+            {
+                note: 'returns null for schema, if schema is not set in config',
+                params: {db: 'foo_db', collection: 'foo_coll'},
+                config: {},
+                expected: null
+            },
+            {
+                note: 'returns null for schema, if schema is an empty object',
+                params: {db: 'foo_db', collection: 'foo_coll'},
+                config: {schema: {}},
+                expected: null
+            },
+            {
+                note: 'returns null for schema, if schema is not set for given db',
+                params: {db: 'foo_db', collection: 'foo_coll'},
+                config: {schema: {bar_db: {bar_coll: 'some_schema'}}},
+                expected: null
+            },
+            {
+                note: 'returns null for schema, if schema is not set for given collection',
+                params: {db: 'foo_db', collection: 'foo_coll'},
+                config: {schema: {foo_db: {bar_coll: 'some_schema'}}},
+                expected: null
+            },
+            {
+                note: 'returns null for schema, if schema is not set in config, for database endpoint',
+                params: {collection: 'foo_coll'},
+                config: {endpoint_root: 'database'},
+                expected: null
+            },
+            {
+                note: 'returns null for schema, if schema is an empty object, for database endpoint',
+                params: {collection: 'foo_coll'},
+                config: {schema: {}},
+                expected: null
+            },
+            {
+                note: 'returns schema for given request',
+                params: {db: 'foo_db', collection: 'foo_coll'},
+                config: {schema: {foo_db: {foo_coll: 'some_schema'}}},
+                expected: 'some_schema'
+            },
+            {
+                note: 'returns schema for given request, for database endpoint',
+                params: {collection: 'foo_coll'},
+                config: {schema: {foo_db: {foo_coll: 'some_schema'}}, endpoint_root: 'database'},
+                expected: 'some_schema'
+            },
+        ];
+    }
+
+    requestSchemaProvider().forEach(function(spec) {
+        it(spec.note, function() {
+            const request = {params: spec.params};
+            const result = getSchemaForRequest(request, spec.config);
+
+            expect(result).toBe(spec.expected);
         });
     });
 });

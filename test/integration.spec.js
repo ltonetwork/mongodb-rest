@@ -1130,4 +1130,363 @@ describe('mongodb-rest:integration', function () {
                 test.stopServer();
             });
     });
+
+    it('can not insert document, that does not pass json schema validation', function(done) {
+        const postData = {
+            value: "hi there",
+        };
+
+        const schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "http://json-schema.org/draft-06/schema#",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$id": "/properties/value",
+                    "type": "boolean",
+                    "title": "Foo boolean value",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                        false
+                    ]
+                }
+            }
+        };
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const config = extend(true, {}, defaultConfiguration);
+
+        config.schema = {};
+        config.schema[testDbName] = {};
+        config.schema[testDbName][testCollectionName] = schema;
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return post(test.genCollectionUrl(testDbName, testCollectionName), postData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(400);
+                expect(result.data.message).toBe("Document does not match predefined schema");
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can insert document, that passes json schema validation', function(done) {
+        const postData = {
+            value: true,
+        };
+
+        const schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "http://json-schema.org/draft-06/schema#",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$id": "/properties/value",
+                    "type": "boolean",
+                    "title": "Foo boolean value",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                        false
+                    ]
+                }
+            }
+        };
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const config = extend(true, {}, defaultConfiguration);
+
+        config.schema = {};
+        config.schema[testDbName] = {};
+        config.schema[testDbName][testCollectionName] = schema;
+
+        test
+            .startServer(config)
+            .then(function () {
+                return test.dropDatabase(testDbName);
+            })
+            .then(function () {
+                return post(test.genCollectionUrl(testDbName, testCollectionName), postData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(201);
+                expect(result.data.value).toBe(true);
+                expect(result.data._id).toBeDefined();
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not replace document, if new version does not pass json schema validation', function(done) {
+        const newData = {
+            value: "hi there",
+        };
+
+        const schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "http://json-schema.org/draft-06/schema#",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$id": "/properties/value",
+                    "type": "boolean",
+                    "title": "Foo boolean value",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                        false
+                    ]
+                }
+            }
+        };
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const config = extend(true, {}, defaultConfiguration);
+
+        const id = ObjectID();
+        const testData = [
+            {
+                _id: id,
+                value: true
+            }
+        ];
+
+        config.schema = {};
+        config.schema[testDbName] = {};
+        config.schema[testDbName][testCollectionName] = schema;
+
+        test
+            .startServer(config)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return put(test.genCollectionUrl(testDbName, testCollectionName), id, newData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(400);
+                expect(result.data.message).toBe("Updating document won't match predefined schema");
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can replace document, if new version passes json schema validation', function(done) {
+        const newData = {
+            value: false,
+        };
+
+        const schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "http://json-schema.org/draft-06/schema#",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$id": "/properties/value",
+                    "type": "boolean",
+                    "title": "Foo boolean value",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                        false
+                    ]
+                }
+            }
+        };
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const config = extend(true, {}, defaultConfiguration);
+
+        const id = ObjectID();
+        const testData = [
+            {
+                _id: id,
+                value: true
+            }
+        ];
+
+        config.schema = {};
+        config.schema[testDbName] = {};
+        config.schema[testDbName][testCollectionName] = schema;
+
+        test
+            .startServer(config)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return put(test.genCollectionUrl(testDbName, testCollectionName), id, newData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(200);
+                expect(result.data.value).toBe(false);
+                expect(result.data._id).toEqual(id.toString());
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can not update document, if updated document does not pass json schema validation', function(done) {
+        const updateData = {
+            value: "hi there",
+        };
+
+        const schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "http://json-schema.org/draft-06/schema#",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$id": "/properties/value",
+                    "type": "boolean",
+                    "title": "Foo boolean value",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                        false
+                    ]
+                }
+            }
+        };
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const config = extend(true, {}, defaultConfiguration);
+
+        const id = ObjectID();
+        const testData = [
+            {
+                _id: id,
+                value: true
+            }
+        ];
+
+        config.schema = {};
+        config.schema[testDbName] = {};
+        config.schema[testDbName][testCollectionName] = schema;
+
+        test
+            .startServer(config)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return patch(test.genCollectionUrl(testDbName, testCollectionName), id, updateData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(400);
+                expect(result.data.message).toBe("Updating document won't match predefined schema");
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
+
+    it('can update document, if updated document passes json schema validation', function(done) {
+        const updateData = {
+            value: false,
+        };
+
+        const schema = {
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-06/schema#",
+            "$id": "http://json-schema.org/draft-06/schema#",
+            "type": "object",
+            "properties": {
+                "value": {
+                    "$id": "/properties/value",
+                    "type": "boolean",
+                    "title": "Foo boolean value",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                        false
+                    ]
+                }
+            }
+        };
+
+        const testDbName = test.genTestDbName();
+        const testCollectionName = test.genTestCollectionName();
+        const config = extend(true, {}, defaultConfiguration);
+
+        const id = ObjectID();
+        const testData = [
+            {
+                _id: id,
+                value: true
+            }
+        ];
+
+        config.schema = {};
+        config.schema[testDbName] = {};
+        config.schema[testDbName][testCollectionName] = schema;
+
+        test
+            .startServer(config)
+            .then(function () {
+                return dropAndLoad(testDbName, testCollectionName, testData);
+            })
+            .then(function () {
+                return patch(test.genCollectionUrl(testDbName, testCollectionName), id, updateData);
+            })
+            .then(function (result) {
+                expect(result.response.statusCode).toBe(200);
+                expect(result.data.value).toBe(false);
+                expect(result.data._id).toBe(id.toString());
+
+                done();
+            })
+            .catch(function (err) {
+                done(err);
+            })
+            .done(function () {
+                test.stopServer();
+            });
+    });
 });
