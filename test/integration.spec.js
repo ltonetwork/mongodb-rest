@@ -1132,6 +1132,20 @@ describe('mongodb-rest:integration', function () {
                     return data.length === 3;
                 }
             },
+            {
+                note: 'can apply "count"',
+                query: '?count=1',
+                assert: function(data) {
+                    return data.count === 3;
+                }
+            },
+            {
+                note: 'can apply "count" with "limit"',
+                query: '?count=1&limit=2',
+                assert: function(data) {
+                    return data.count === 2;
+                }
+            },
         ];
     }
 
