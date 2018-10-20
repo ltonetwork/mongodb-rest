@@ -1,4 +1,4 @@
-mongodb-rest [![Build Status](https://travis-ci.org/codecapers/mongodb-rest.png)](https://travis-ci.org/codecapers/mongodb-rest)
+mongodb-rest
 ============
 
 A simple but incredibly useful REST API server for MongoDB using Node, using Express and the native node.js MongoDB driver.
@@ -6,8 +6,6 @@ A simple but incredibly useful REST API server for MongoDB using Node, using Exp
 As Tom has said this REST server has no security and is not fit for use in production. So be warned! Work is currently being done to improve the security of mongodb-rest, but this is still a work-in-progress.
 
 I have found this REST server to be invaluable for rapid prototyping web applications. When you don't care about security and you just need to try something out without investing the time to build a proper secure REST API.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 Recent Updates
 --------------
