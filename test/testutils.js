@@ -1,28 +1,28 @@
-'use strict'; 
+'use strict';
 
 //
 // Utils for testing.
 //
 
-var mongo = require('promised-mongo');
+var mongo = require('mongodb');
+var MongoClient = mongo.MongoClient;
 var request = require('request');
 var Q = require('q');
-var connection = require('../lib/connection');
+var connection = require('../lib/helpers/connection');
 
 //
 // Drop the specified test database.
 //
 var dropDatabase = function (testDbName) {
-    var db = mongo(testDbName);
-    return db.dropDatabase()
-        .then(function () {
-            db.close(); 
-        });
+    var db = null;
+
+    return MongoClient.connect('mongodb://localhost:27017/' + testDbName)
+        .then(dbConn => (db = dbConn) && db.dropDatabase())
+        .then(() => db.close());
 };
 
 //
 // Save a document and return a promise.
-// This is a workaround, can't seem to do achieve this using the save fn in promised-mongo.
 var saveDocument = function (collection, document) {
     var deferred = Q.defer();
     collection.save(document, function (err, doc) {
@@ -33,31 +33,30 @@ var saveDocument = function (collection, document) {
             deferred.resolve(doc);
         }
     });
-        
+
     return deferred.promise;
 };
 
 //
 // Load data into a db collection.
-// 
-var loadFixture = function (testDbName, testCollectionName, data) {    
+//
+var loadFixture = function (testDbName, testCollectionName, data) {
+    var db = null;
 
-    var db = mongo(testDbName);
-    return db.createCollection(testCollectionName)
+    return MongoClient.connect('mongodb://localhost:27017/' + testDbName)
+        .then(dbConn => (db = dbConn) && db.createCollection(testCollectionName))
         .then(function (collection) {
             return Q.all(data.map(function (dataItem) {
                 return saveDocument(collection, dataItem);
             }));
         })
-        .then(function () {
-            db.close();
-        });
+        .then(() => db.close());
 };
 
 //
 // Load data into a db collection.
-// 
-var dropDatabaseAndLoadFixture = function (testDbName, testCollectionName, data) {    
+//
+var dropDatabaseAndLoadFixture = function (testDbName, testCollectionName, data) {
     return dropDatabase(testDbName)
         .then(function () {
             return loadFixture(testDbName, testCollectionName, data);
@@ -77,8 +76,8 @@ var requestHttp = function (url) {
             return;
         }
 
-        deferred.resolve({ 
-            data: body, 
+        deferred.resolve({
+            data: body,
             response: response,
         });
     });
@@ -98,8 +97,8 @@ var requestJson = function (url) {
             return;
         }
 
-        deferred.resolve({             
-            data: JSON.parse(body), 
+        deferred.resolve({
+            data: JSON.parse(body),
             response: response,
         });
     });
@@ -137,23 +136,47 @@ var post = function (url, data) {
     var deferred = Q.defer();
 
     request.post({
-            url: url, 
+            url: url,
             json: true,
             body: data,
         },
         function (err, response, body) {
             if (err) {
-                console.log('failing pormise');
                 deferred.reject(err);
                 return;
             }
 
-            deferred.resolve({ 
+            deferred.resolve({
                 data: body,
                 response: response,
             });
         }
     );
+
+    return deferred.promise;
+};
+
+//
+// Invoke a HTTP PATCH.
+//
+var patch = function (collectionUrl, itemID, data) {
+    var deferred = Q.defer();
+    var itemUrl = collectionUrl + "/" + itemID.toString();
+
+    request.patch({
+        url: itemUrl,
+        json: data,
+    }, function (err, response, body) {
+        if (err) {
+            deferred.reject(err);
+        }
+        else {
+            deferred.resolve({
+                data: body,
+                response: response,
+            });
+        }
+    });
 
     return deferred.promise;
 };
@@ -165,7 +188,7 @@ var put = function (collectionUrl, itemID, data) {
     var deferred = Q.defer();
     var itemUrl = collectionUrl + "/" + itemID.toString();
     request.put({
-        url: itemUrl, 
+        url: itemUrl,
         json: data,
     }, function (err, response, body) {
 
@@ -189,7 +212,7 @@ var del = function (collectionUrl, itemID) {
     var deferred = Q.defer();
     var itemUrl = collectionUrl + "/" + itemID.toString();
     request.del({
-        url: itemUrl, 
+        url: itemUrl,
     }, function (err, response, body) {
 
         if (err) {
@@ -224,12 +247,13 @@ module.exports = {
     post: post,
     put: put,
     del: del,
+    patch: patch,
 
     // Start the rest server.
     startServer: function (config) {
         var deferred = Q.defer();
 
-        // Open the rest server for each test.        
+        // Open the rest server for each test.
         restServer.startServer(config, function (err) {
             if (err) {
                 deferred.reject(err);
@@ -259,7 +283,7 @@ module.exports = {
         return 'mongodb_test_collection' + nextCollectionNumber++;
     },
 
-    genCollectionsUrl: function (dbName) { 
+    genCollectionsUrl: function (dbName) {
         return url + dbName;
     },
 
@@ -267,5 +291,21 @@ module.exports = {
         return this.genCollectionsUrl(dbName) + '/' + collectionName;
     },
 
+    genBulkUrl: function (dbName) {
+        return this.genCollectionsUrl(dbName) + '/bulk';
+    },
+
+    genBulkUrlDatabaseEndpoint: function () {
+        return this.genCollectionsUrlDatabaseEndpoint() + 'bulk';
+    },
+
+    genCollectionsUrlDatabaseEndpoint: function () {
+        return url;
+    },
+
+    genCollectionUrlDatabaseEndpoint: function (collectionName) {
+        return this.genCollectionsUrlDatabaseEndpoint() + collectionName;
+    },
+
 };
-    
+

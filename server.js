@@ -15,7 +15,8 @@ const nocache = require('nocache');
 const bodyParser = require('body-parser');
 const https = require('https');
 const extend = require("extend");
-const resolveConfig = require('./lib/resolve-config');
+const initRoutes = require('./lib/routes');
+const resolveConfig = require('./lib/config/resolve-config');
 require('express-csv');
 
 var server = null;
@@ -49,6 +50,7 @@ function stopServer() {
 /**
  * Init express application
  * @param {object} app
+ * @param {object} config
  */
 function init(app, config) {
     app.use(nocache());
@@ -59,7 +61,7 @@ function init(app, config) {
     }
 
     if (config.accessControl) {
-        const accesscontrol = require('./lib/accesscontrol')(config);
+        const accesscontrol = require('./lib/auth/accesscontrol')(config);
         app.use(accesscontrol.handle);
     }
 
@@ -67,11 +69,12 @@ function init(app, config) {
         res.status(404);
     });
 
-    require('./lib/rest')(app, config);
+    initRoutes(app, config);
 }
 
 /**
  * Perform server launch
+ * @param {object} app
  * @param {object} config
  * @param {callback} onStarted
  */
